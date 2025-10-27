@@ -13,39 +13,37 @@ options.add_argument("--disable-gpu")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--window-size=1680,1050")
 
-# 啟動 WebDriver
-driver = webdriver.Chrome(options=options)
 
-# 先打開網站首頁（或任何同域名頁面），讓 Selenium 初始化 domain
-driver.get("https://www.pathofexile.com/")
-time.sleep(2)
-# 注入 cookie，成為登入中狀態
-cookie = {
-    "name": "POESESSID",
-    "value": "c4cecb5206f3f67ec1ad73f3fc7a2e31",
-    "domain": ".pathofexile.com",  # 注意 domain，要包含點
-    "path": "/",
-    "httpOnly": True,
-    "secure": True,
-}
-driver.add_cookie(cookie)
+def open_site_to_get_payload_data(url):
+    # 啟動 WebDriver
+    driver = webdriver.Chrome(options=options)
 
-try:
-    with open("/app/worker/interceptor.js", "r", encoding="utf-8") as f:
-        js_code = f.read()
-    # 然後再導航，腳本會在頁面 JS 執行前就先跑
-    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": js_code})
-    # # 直接在當前頁面執行（和在 console 貼上基本一樣）
-    # driver.execute_script(js_code)
+    # 先打開網站首頁（或任何同域名頁面），讓 Selenium 初始化 domain
+    driver.get("https://www.pathofexile.com/")
+    time.sleep(2)
+    # 注入 cookie，成為登入中狀態
+    cookie = {
+        "name": "POESESSID",
+        "value": "c4cecb5206f3f67ec1ad73f3fc7a2e31",
+        "domain": ".pathofexile.com",  # 注意 domain，要包含點
+        "path": "/",
+        "httpOnly": True,
+        "secure": True,
+    }
+    driver.add_cookie(cookie)
 
-    # 開啟目標網址
-    url = "https://www.pathofexile.com/trade2/search/poe2/Rise%20of%20the%20Abyssal/LWp0lv5tn"
-    driver.get(url)
-    time.sleep(5)
+    try:
+        with open("worker/interceptor.js", "r", encoding="utf-8") as f:
+            js_code = f.read()
+        # 然後再導航，腳本會在頁面 JS 執行前就先跑
+        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": js_code})
 
-    # 截圖並保存
-    driver.save_screenshot("./screenshot.png")
-    print("✅ Screenshot saved as screenshot.png")
+        driver.get(url)
+        time.sleep(5)
 
-finally:
-    driver.quit()
+        # 截圖並保存
+        driver.save_screenshot("./screenshot.png")
+        print("✅ Screenshot saved as screenshot.png")
+
+    finally:
+        driver.quit()
