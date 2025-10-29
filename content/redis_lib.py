@@ -7,8 +7,6 @@ import json
 
 RedisClient = redis.Redis(host=REDIS_HOST, port=6379, password=REDIS_AUTH, decode_responses=True)
 
-key = "poe:trade2:Rise_of_the_Abyssal:YppKeRe6cY"
-
 def set_trade_payload(tradeId, payloadData, poeType, leagueName):
     dbKey = 'poe:trade{poeType}:{leagueName}:{tradeId}'.format(
         poeType=str(poeType),
