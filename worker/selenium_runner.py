@@ -14,7 +14,7 @@ options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--window-size=1680,1050")
 
 
-def open_site_to_get_payload_data(url):
+def open_site_to_send_payload_data(url):
     # 啟動 WebDriver
     driver = webdriver.Chrome(options=options)
 

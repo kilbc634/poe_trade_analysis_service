@@ -2,9 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sys
 sys.stdout.reconfigure(line_buffering=True)
-import re
-from worker.selenium_runner import open_site_to_get_payload_data
-from redis_context.redis_lib import set_trade_payload, get_trade_payload
+from worker.selenium_runner import open_site_to_send_payload_data
+from content.redis_lib import set_trade_payload, get_trade_payload
+from content.common import parse_trade_url
 
 app = Flask(__name__)
 CORS(app)  # ✅ 允許瀏覽器跨來源呼叫
@@ -56,10 +56,25 @@ def get_payload_by_url():
         }), 400
 
     site_url = data["siteUrl"]
-    open_site_to_get_payload_data(site_url)
 
-    lastPath = re.search(r"/([^/?#]+)(?:[?#]|$)", site_url).group(1)
-    payloadData = get_trade_payload(lastPath)
+    urlData = parse_trade_url(site_url)
+    if not urlData:
+        return jsonify({"error": "URL format error"}), 400
+
+    payloadData = get_trade_payload(
+        urlData['tradeId'],
+        urlData['poeType'],
+        urlData['leagueName']
+    )
+
+    if not payloadData:
+        open_site_to_send_payload_data(site_url)
+
+        payloadData = get_trade_payload(
+            urlData['tradeId'],
+            urlData['poeType'],
+            urlData['leagueName']
+        )
 
     return jsonify({"payloadData": payloadData}), 200
 
