@@ -3,3 +3,5 @@ flask_cors
 selenium
 redis
 requests
+websockets
+aiohttp

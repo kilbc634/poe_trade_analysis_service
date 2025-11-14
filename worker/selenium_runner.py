@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+from setting import POESESSID
 
 # 設定 Chrome 選項
 options = Options()
@@ -24,7 +25,7 @@ def open_site_to_send_payload_data(url):
     # 注入 cookie，成為登入中狀態
     cookie = {
         "name": "POESESSID",
-        "value": "c4cecb5206f3f67ec1ad73f3fc7a2e31",
+        "value": POESESSID,
         "domain": ".pathofexile.com",  # 注意 domain，要包含點
         "path": "/",
         "httpOnly": True,
