@@ -1,3 +1,9 @@
+# 忽略 selector.ini
+script/selector.ini
+
+# 忽略所有 sampling-XXXX 資料夾
+sampling-*/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
