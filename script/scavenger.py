@@ -18,7 +18,7 @@ from loading_wait import wait_until_stash_visible
 from stash_click import click_slot
 
 # === 設定 ===
-QUERY_ID = "pJYWvykwu0"   # 你的 live feed query id
+QUERY_ID = "pJYBbvBwS0"   # 你的 live feed query id
 # QUERY_ID = "V5Lrp9gwip"
 WS_URL = f"wss://www.pathofexile.com/api/trade/live/Keepers/{QUERY_ID}"
 
@@ -29,7 +29,7 @@ HEADERS = {
 }
 
 HEADERS_WHISPER = {
-    **BASE_HEADERS,
+    **HEADERS,
     "X-Requested-With": "XMLHttpRequest"
 }
 
@@ -50,7 +50,7 @@ async def websocket_main():
 
             async for raw_msg in ws:
                 # 快速檢查是否含有 result（避免 decode 浪費）
-                if b'"result":"' not in raw_msg:
+                if "result" not in raw_msg:
                     continue
 
                 msg = json.loads(raw_msg)
@@ -85,7 +85,7 @@ async def websocket_main():
                     'item_token': item_token,
                     'item_data': item_data,
                     'hideout_token': hideout_token,
-                    'whisper_resp': f"<{whisper_resp.status_code}> {whisper_resp.text or ''}"
+                    'whisper_resp': f"<{whisper_resp.status_code}> {whisper_resp.text or ''}",
                     'after_time': datetime.now().strftime('%H:%M:%S'),
                 }
 
