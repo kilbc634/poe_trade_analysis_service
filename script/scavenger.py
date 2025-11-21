@@ -4,9 +4,11 @@ import certifi
 import json
 import websockets
 # import aiohttp
+import httpx
 from datetime import datetime
-import requests
+# import requests
 import time
+import traceback
 import sys, os
 # 取得根目錄路徑
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,81 +28,95 @@ HEADERS = {
     "Cookie": f"POESESSID={POESESSID}"
 }
 
+HEADERS_WHISPER = {
+    **BASE_HEADERS,
+    "X-Requested-With": "XMLHttpRequest"
+}
+
 async def websocket_main():
     ssl_context = ssl.create_default_context(cafile=certifi.where())
 
-    while True:
-        print("[WS] Connecting...")
+    print("[WS] Connecting...")
 
-        try:
-            async with websockets.connect(
-                WS_URL,
-                ssl=ssl_context,
-                extra_headers=HEADERS,
-                ping_interval=None,  # 必須關掉 heartbeat
-            ) as ws:
-                print("[WS] Connected")
+    # 單一 httpx client，保持連線池活著
+    async with httpx.AsyncClient(http2=True, timeout=2.0) as client:
+        async with websockets.connect(
+            WS_URL,
+            ssl=ssl_context,
+            extra_headers=HEADERS,
+            ping_interval=None,  # 必須關掉 heartbeat
+        ) as ws:
+            print("[WS] Connected")
 
-                async for raw_msg in ws:
-                    msg = json.loads(raw_msg)
+            async for raw_msg in ws:
+                # 快速檢查是否含有 result（避免 decode 浪費）
+                if b'"result":"' not in raw_msg:
+                    continue
 
-                    # Live feed 可能出現 "result" 或 "new"
-                    if "result" in msg:
-                        item_token = msg["result"]
-                        print(f"[WS] Got item_token = {item_token}")
+                msg = json.loads(raw_msg)
+                item_token = msg["result"]
 
-                        return item_token  # <-- 立即返回，整個 websocket_main 結束
- 
-        except websockets.exceptions.ConnectionClosed as e:
-            print(f"[WS CLOSED] code={e.code} reason={e.reason}")
+                # ====== STEP 1: Fetch API（取得商品資料） ======
+                fetch_url  = f"https://www.pathofexile.com/api/trade/fetch/{item_token}?query={QUERY_ID}"
 
-        except Exception as e:
-            print("[WS ERROR]", e)
+                fetch_resp = await client.get(
+                    fetch_url, 
+                    headers=HEADERS,
+                )
 
-        print("[WS] Reconnecting in 5s...")
-        await asyncio.sleep(5)
+                item_data = fetch_resp.json()
+                stash_x = item_data['result'][0]['listing']['stash']['x']
+                stash_y = item_data['result'][0]['listing']['stash']['y']
+                hideout_token  = item_data['result'][0]['listing']['hideout_token']
+
+                # ====== STEP 2: Whisper API（發動傳送） ======
+                whisper_url = "https://www.pathofexile.com/api/trade/whisper"
+                payload = {"token": hideout_token}
+
+                whisper_resp = await client.post(
+                    whisper_url,
+                    headers=HEADERS_WHISPER,
+                    json=payload,
+                )
+
+                # ====== AFTER: 之後可以不用求速度 ======
+
+                debug = {
+                    'item_token': item_token,
+                    'item_data': item_data,
+                    'hideout_token': hideout_token,
+                    'whisper_resp': f"<{whisper_resp.status_code}> {whisper_resp.text or ''}"
+                    'after_time': datetime.now().strftime('%H:%M:%S'),
+                }
+
+                # 沒搶到的話可能會回 404，或者是 {'success': False}
+                if whisper_resp.status_code == 200:
+                    whisper_data = whisper_resp.json()
+                    if whisper_data['success'] == True:
+                        return {
+                            'x': stash_x,
+                            'y': stash_y,
+                            'debug': debug,
+                        }
+
+                return {
+                    'error': 'failed',
+                    'debug': debug,
+                }
 
 def runner():
-    item_token = asyncio.run(websocket_main())
-    print(f"<NEW RESULT {datetime.now().strftime('%H:%M:%S')}>")
+    result = asyncio.run(websocket_main())
 
-    url = f"https://www.pathofexile.com/api/trade/fetch/{item_token}?query={QUERY_ID}"
-    resp = requests.get(url=url, headers=HEADERS)
+    print(result['debug']['item_data'])
+    print(result['debug']['whisper_resp'])
+    print(result['debug']['after_time'])
 
-    item_data = {}
-    if resp.status_code == 200:
-        data = resp.json()
-        print("[FETCH OK]", data)
-
-        item_data['x'] = data['result'][0]['listing']['stash']['x']
-        item_data['y'] = data['result'][0]['listing']['stash']['y']
-        item_data['hideout_token'] = data['result'][0]['listing']['hideout_token']
+    if 'error' not in result:
+        wait_until_stash_visible()
+        click_slot(result['x'], result['y'])
+        return True
     else:
-        print("[FETCH ERROR]", resp.status_code, url)
-
-    print(item_data)
-    if item_data:
-        # 1. 打API跳轉至藏身處
-        url = "https://www.pathofexile.com/api/trade/whisper"
-        whisper_headers = HEADERS
-        whisper_headers['x-requested-with'] = 'XMLHttpRequest'
-        resp = requests.post(url=url, headers=whisper_headers, json={
-            'token': item_data['hideout_token']
-        })
-        if resp.status_code == 200:
-            data = resp.json()
-            # {'success': False} 有可能出現這個
-            print("[whisper OK]", data)
-
-            if data['success'] == True:
-                # 2. 啟動loading等待腳本，直到loading結束後，接續拉貨腳本
-                wait_until_stash_visible()
-                click_slot(item_data['x'], item_data['y'])
-                return True
-        else:
-            print("[whisper ERROR]", resp.status_code)
-
-    return False
+        return False
 
 
 if __name__ == "__main__":
