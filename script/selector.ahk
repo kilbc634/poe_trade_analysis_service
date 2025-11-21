@@ -200,8 +200,8 @@ WM_MOUSEMOVE(wParam, lParam, msg, hwnd) {
         deltaY := currentY - dragStartY
         
         ; 计算新尺寸（保持左上角位置不变）
-        newW := Max(50, rectW + deltaX)
-        newH := Max(50, rectH + deltaY)
+        newW := Max(30, rectW + deltaX)
+        newH := Max(30, rectH + deltaY)
         
         ; 更新窗口大小
         WinMove, ahk_id %rectGui%,, rectX, rectY, newW, newH
