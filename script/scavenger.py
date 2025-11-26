@@ -18,7 +18,7 @@ from loading_wait import wait_until_stash_visible
 from stash_click import click_slot
 
 # === 設定 ===
-QUERY_ID = "pJYBbvBwS0"   # 你的 live feed query id
+QUERY_ID = "pJYWvykwu0"   # 你的 live feed query id
 # QUERY_ID = "V5Lrp9gwip"
 WS_URL = f"wss://www.pathofexile.com/api/trade/live/Keepers/{QUERY_ID}"
 
@@ -51,7 +51,8 @@ async def websocket_main():
             async for raw_msg in ws:
                 # 快速檢查是否含有 result（避免 decode 浪費）
                 if "result" not in raw_msg:
-                    continue
+                    print(f"[WS] {raw_msg}")
+                    continue         
 
                 msg = json.loads(raw_msg)
                 item_token = msg["result"]
@@ -59,10 +60,13 @@ async def websocket_main():
                 # ====== STEP 1: Fetch API（取得商品資料） ======
                 fetch_url  = f"https://www.pathofexile.com/api/trade/fetch/{item_token}?query={QUERY_ID}"
 
+                t1 = time.perf_counter()
                 fetch_resp = await client.get(
                     fetch_url, 
                     headers=HEADERS,
+                    timeout=30.0,
                 )
+                t1_elapsed = time.perf_counter() - t1
 
                 item_data = fetch_resp.json()
                 stash_x = item_data['result'][0]['listing']['stash']['x']
@@ -73,11 +77,21 @@ async def websocket_main():
                 whisper_url = "https://www.pathofexile.com/api/trade/whisper"
                 payload = {"token": hideout_token}
 
-                whisper_resp = await client.post(
-                    whisper_url,
-                    headers=HEADERS_WHISPER,
-                    json=payload,
-                )
+                t2 = time.perf_counter()
+                try:
+                    whisper_resp = await client.post(
+                        whisper_url,
+                        headers=HEADERS_WHISPER,
+                        json=payload,
+                        timeout=30.0,
+                    )
+                except:
+                    whisper_resp = {
+                        'status_code': 'error',
+                        'text': 'error'
+                    }
+                    traceback.print_exc()
+                t2_elapsed = time.perf_counter() - t2
 
                 # ====== AFTER: 之後可以不用求速度 ======
 
@@ -87,6 +101,8 @@ async def websocket_main():
                     'hideout_token': hideout_token,
                     'whisper_resp': f"<{whisper_resp.status_code}> {whisper_resp.text or ''}",
                     'after_time': datetime.now().strftime('%H:%M:%S'),
+                    'fetch_time': f"fetch {t1_elapsed*1000:.2f} ms",
+                    'whisper_time': f"whisper {t2_elapsed*1000:.2f} ms",
                 }
 
                 # 沒搶到的話可能會回 404，或者是 {'success': False}
@@ -110,6 +126,8 @@ def runner():
     print(result['debug']['item_data'])
     print(result['debug']['whisper_resp'])
     print(result['debug']['after_time'])
+    print(result['debug']['fetch_time'])
+    print(result['debug']['whisper_time'])
 
     if 'error' not in result:
         wait_until_stash_visible()
