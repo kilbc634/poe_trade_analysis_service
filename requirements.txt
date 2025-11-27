@@ -5,3 +5,4 @@ redis
 requests
 websockets
 aiohttp
+certifi
