@@ -10,20 +10,20 @@ import sys, os
 # === 自訂 Setting ===
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
-from setting import POESESSID
+from setting import POESESSID, QUERY_IDS
 
 # 你要同時監聽的 Query IDs
-QUERY_IDS = [
-    "pJYWvykwu0", # 獵首
-    "bG8VpbjzUL", # 魔血
-    "D6VdnK45u5", # 滅日
-    "OgKWdyWlTE", # 未鑑定崇高願景
-    "5n45nqXmfa", # 史瓦林
-    "QL3G8jdvCw", # 尼米斯
-    "yYpDowKlhR", # 卡蘭德之觸
-    "2Kn2ewJeIk", # 命運卡水
-    "9zdLOy9YCK", # 生育
-]
+# QUERY_IDS = [
+#     "pJYWvykwu0", # 獵首
+#     "bG8VpbjzUL", # 魔血
+#     "D6VdnK45u5", # 滅日
+#     "OgKWdyWlTE", # 未鑑定崇高願景
+#     "5n45nqXmfa", # 史瓦林
+#     "QL3G8jdvCw", # 尼米斯
+#     "yYpDowKlhR", # 卡蘭德之觸
+#     "2Kn2ewJeIk", # 命運卡水
+#     "9zdLOy9YCK", # 生育
+# ]
 
 HEADERS = {
     "Origin": "https://www.pathofexile.com",
