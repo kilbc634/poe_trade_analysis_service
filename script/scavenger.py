@@ -121,7 +121,11 @@ async def websocket_main():
                 }
 
 def runner():
-    result = asyncio.run(websocket_main())
+    try:
+        result = asyncio.run(websocket_main())
+    except:
+        traceback.print_exc()
+        return False
 
     print(result['debug']['item_data'])
     print(result['debug']['whisper_resp'])
@@ -138,11 +142,11 @@ def runner():
 
 
 if __name__ == "__main__":
-    while True:
+    for times in range(10):
         status = runner()
 
         if status == False:
-            print("Auto retry after 5s....")
+            print(f"Auto retry after 5s.... ({times})")
             time.sleep(5)
             continue
         elif status == True:
