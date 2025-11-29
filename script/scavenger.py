@@ -15,10 +15,10 @@ root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
 from setting import POESESSID
 from loading_wait import wait_until_stash_visible
-from stash_click import click_slot
+from stash_click import click_slot, go_hideout
 
 # === 設定 ===
-QUERY_ID = "pJYWvykwu0"   # 你的 live feed query id
+QUERY_ID = "ky74BWn6T5"   # 你的 live feed query id
 # QUERY_ID = "V5Lrp9gwip"
 WS_URL = f"wss://www.pathofexile.com/api/trade/live/Keepers/{QUERY_ID}"
 
@@ -136,13 +136,15 @@ def runner():
     if 'error' not in result:
         wait_until_stash_visible()
         click_slot(result['x'], result['y'])
+        time.sleep(3)
+        go_hideout()
         return True
     else:
         return False
 
 
 if __name__ == "__main__":
-    for times in range(10):
+    for times in range(20):
         status = runner()
 
         if status == False:
@@ -150,5 +152,5 @@ if __name__ == "__main__":
             time.sleep(5)
             continue
         elif status == True:
-            print("Done")
-            break
+            print("Done. buy a item")
+            continue

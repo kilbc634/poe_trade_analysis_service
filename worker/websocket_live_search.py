@@ -5,6 +5,7 @@ import json
 import websockets
 import aiohttp
 from datetime import datetime
+import time
 import sys, os
 
 # === 自訂 Setting ===
@@ -47,6 +48,7 @@ async def fetch_worker(session, query_id):
         url = f"https://www.pathofexile.com/api/trade/fetch/{item_id}?query={query_id}"
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+        t1 = time.perf_counter()
         try:
             async with session.get(url, headers=HEADERS) as resp:
                 if resp.status == 200:
@@ -59,6 +61,8 @@ async def fetch_worker(session, query_id):
 
         except Exception as e:
             log_line = f"[{timestamp}] FETCH EXCEPTION {item_id} {e}\n"
+        t1_elapsed = time.perf_counter() - t1
+        log_line += f"( fetch {t1_elapsed*1000:.2f} ms )\n"
 
         # 追加寫入 log
         with open(log_path, "a", encoding="utf-8") as f:

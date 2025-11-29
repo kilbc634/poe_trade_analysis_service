@@ -95,6 +95,23 @@ def click_slot(col: int, row: int):
     ahk.key_up("Ctrl")
     time.sleep(0.1)
 
+# -----------------------------------------------------
+# 返回自己的藏身處
+# -----------------------------------------------------
+def go_hideout():
+    # 1. 按 Enter，等待 1 秒
+    ahk.send_input("{Enter}")
+    time.sleep(1)
+
+    # 2. 依序輸入 "/hideout"（每個字元間隔 0.1 秒）
+    command = "/hideout"
+    for ch in command:
+        ahk.send_input(ch)
+        time.sleep(0.1)
+
+    # 3. 再次按下 Enter，等待 5 秒
+    ahk.send_input("{Enter}")
+    time.sleep(5)
 
 # 測試用：
 # click_slot(4, 7)
