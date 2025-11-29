@@ -32,6 +32,11 @@ HEADERS = {
     "Cookie": f"POESESSID={POESESSID}"
 }
 
+HEADERS_WHISPER = {
+    **HEADERS,
+    "X-Requested-With": "XMLHttpRequest"
+}
+
 # 每個 query_id 需要自己的 queue
 fetch_queues = {qid: asyncio.Queue() for qid in QUERY_IDS}
 
@@ -64,9 +69,28 @@ async def fetch_worker(session, query_id):
         t1_elapsed = time.perf_counter() - t1
         log_line += f"( fetch {t1_elapsed*1000:.2f} ms )\n"
 
+
+        whisper_url = "https://www.pathofexile.com/api/trade/whisper"
+        payload = {"token": data['result'][0]['listing']['hideout_token']}
+        t2 = time.perf_counter()
+        try:
+            async with session.post(whisper_url, headers=HEADERS_WHISPER, json=payload) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+
+                    log2_line = f"[{timestamp}] Whisper OK => {json.dumps(data, ensure_ascii=False)}\n"
+                else:
+                    log2_line = f"[{timestamp}] Whisper ERROR {resp.status} {item_id}\n"
+
+        except Exception as e:
+            log_line = f"[{timestamp}] Whisper EXCEPTION {item_id} {e}\n"
+        t2_elapsed = time.perf_counter() - t2
+        log2_line += f"( fetch {t2_elapsed*1000:.2f} ms )\n"
+
         # 追加寫入 log
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(log_line)
+            f.write(log2_line)
 
         fetch_queues[query_id].task_done()
 
