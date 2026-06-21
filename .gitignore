@@ -1,3 +1,5 @@
+.playwright-cli
+
 # 忽略 selector.ini
 script/selector.ini
 
