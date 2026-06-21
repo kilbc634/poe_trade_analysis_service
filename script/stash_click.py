@@ -1,14 +1,24 @@
 import configparser
 import time
 import random
+import sys, os
 from ahk import AHK
+# 取得根目錄路徑（讓 from setting import 可用）
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_dir)
+from setting import REALM
 
 ahk = AHK()
+
+# === 依 REALM 切資源資料夾（poe1 / poe2），路徑錨定本檔位置不受 cwd 影響 ===
+RESOURCE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resource", REALM)
 
 # -----------------------------------------------------
 # 設定讀取
 # -----------------------------------------------------
-def load_rectangle_settings(ini_path="resource/stash_table.ini"):
+def load_rectangle_settings(ini_path=None):
+    if ini_path is None:
+        ini_path = os.path.join(RESOURCE_DIR, "stash_table.ini")
     config = configparser.ConfigParser()
     config.read(ini_path)
 

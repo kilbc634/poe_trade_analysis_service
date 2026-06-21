@@ -1,14 +1,22 @@
 import cv2
 import time
+import sys, os
+# 取得根目錄路徑（讓 from setting import 可用）
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_dir)
+from setting import REALM
 from util_config import load_rect_from_ini
 from util_image import grab_region, detect_template
 
-# === 載入特徵 ===
-loading_rect = load_rect_from_ini("resource/loading_mask.ini")
-ui_rect      = load_rect_from_ini("resource/normal_UI.ini")
+# === 依 REALM 切資源資料夾（poe1 / poe2），路徑錨定本檔位置不受 cwd 影響 ===
+RESOURCE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resource", REALM)
 
-loading_tmpl = cv2.imread("resource/loading_mask.png")
-ui_tmpl      = cv2.imread("resource/normal_UI.png")
+# === 載入特徵 ===
+loading_rect = load_rect_from_ini(os.path.join(RESOURCE_DIR, "loading_mask.ini"))
+ui_rect      = load_rect_from_ini(os.path.join(RESOURCE_DIR, "normal_UI.ini"))
+
+loading_tmpl = cv2.imread(os.path.join(RESOURCE_DIR, "loading_mask.png"))
+ui_tmpl      = cv2.imread(os.path.join(RESOURCE_DIR, "normal_UI.png"))
 
 # 閾值可微調
 THRESH_LOADING = 0.95

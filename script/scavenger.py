@@ -10,17 +10,32 @@ from datetime import datetime
 import time
 import traceback
 import sys, os
+import urllib.parse
 # 取得根目錄路徑
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
-from setting import POESESSID
+from setting import POESESSID, REALM, LEAGUE
 from loading_wait import wait_until_stash_visible
 from stash_click import click_slot, go_hideout
 
 # === 設定 ===
-QUERY_ID = "ky74BWn6T5"   # 你的 live feed query id
+QUERY_ID = "wvwPd5dRib"   # 你的 live feed query id
 # QUERY_ID = "V5Lrp9gwip"
-WS_URL = f"wss://www.pathofexile.com/api/trade/live/Keepers/{QUERY_ID}"
+
+# === Realm 設定（poe1 / poe2），沿用 setting.py ===
+# POE1: /api/trade/...            live URL 不含 realm 段、fetch 不帶 realm 參數
+# POE2: /api/trade2/... + poe2    live URL 多一段 poe2、fetch 需 &realm=poe2
+LEAGUE_ENCODED = urllib.parse.quote(LEAGUE)
+if REALM == "poe2":
+    API_BASE = "trade2"
+    WS_LEAGUE_PATH = f"poe2/{LEAGUE_ENCODED}"
+    FETCH_REALM_QS = "&realm=poe2"
+else:
+    API_BASE = "trade"
+    WS_LEAGUE_PATH = LEAGUE_ENCODED
+    FETCH_REALM_QS = ""
+
+WS_URL = f"wss://www.pathofexile.com/api/{API_BASE}/live/{WS_LEAGUE_PATH}/{QUERY_ID}"
 
 HEADERS = {
     "Origin": "https://www.pathofexile.com",
@@ -58,7 +73,7 @@ async def websocket_main():
                 item_token = msg["result"]
 
                 # ====== STEP 1: Fetch API（取得商品資料） ======
-                fetch_url  = f"https://www.pathofexile.com/api/trade/fetch/{item_token}?query={QUERY_ID}"
+                fetch_url  = f"https://www.pathofexile.com/api/{API_BASE}/fetch/{item_token}?query={QUERY_ID}{FETCH_REALM_QS}"
 
                 t1 = time.perf_counter()
                 fetch_resp = await client.get(
@@ -74,7 +89,7 @@ async def websocket_main():
                 hideout_token  = item_data['result'][0]['listing']['hideout_token']
 
                 # ====== STEP 2: Whisper API（發動傳送） ======
-                whisper_url = "https://www.pathofexile.com/api/trade/whisper"
+                whisper_url = f"https://www.pathofexile.com/api/{API_BASE}/whisper"
                 payload = {"token": hideout_token}
 
                 t2 = time.perf_counter()
@@ -153,4 +168,5 @@ if __name__ == "__main__":
             continue
         elif status == True:
             print("Done. buy a item")
+            time.sleep(10)
             continue
