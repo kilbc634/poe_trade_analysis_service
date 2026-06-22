@@ -46,7 +46,7 @@ HEADERS_XHR = {
 
 # === 取得查詢 payload（來自雲端 payload 服務，內部走 Redis）===
 def get_payload(client):
-    url = SERVICE_HOST.rstrip("/") + "/trade/getPayloadByUrl"
+    url = SERVICE_HOST.rstrip("/") + "/trade/getPayloadByUrlV2"
     resp = client.post(url, json={"siteUrl": TRADE_URL}, timeout=30.0)
     resp.raise_for_status()
     return resp.json().get("payloadData")
