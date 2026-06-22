@@ -1,0 +1,154 @@
+import time
+import sys, os
+import traceback
+import urllib.parse
+import httpx
+
+# 取得根目錄路徑
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_dir)
+from setting import POESESSID, REALM, LEAGUE, SERVICE_HOST
+from loading_wait import wait_until_stash_visible
+from stash_click import click_slot, go_hideout
+
+# === 設定 ===
+# 目標查詢頁網址：用它向雲端 payload 服務換取「一般搜尋」所需的查詢 payload
+TRADE_URL = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/xxxxxx"
+POLL_INTERVAL = 5.0   # 每輪一般搜尋的間隔秒數（不求快；注意 trade API 有速率限制）
+MAX_FETCH = 10        # 一次 fetch 最多批次幾筆 listing
+
+# === Realm 設定（poe1 / poe2），沿用 setting.py ===
+# POE1: /api/trade/...            search/live URL 不含 realm 段、fetch 不帶 realm 參數
+# POE2: /api/trade2/... + poe2    search/live URL 多一段 poe2、fetch 需 &realm=poe2
+LEAGUE_ENCODED = urllib.parse.quote(LEAGUE)
+if REALM == "poe2":
+    API_BASE = "trade2"
+    LEAGUE_PATH = f"poe2/{LEAGUE_ENCODED}"
+    FETCH_REALM_QS = "&realm=poe2"
+else:
+    API_BASE = "trade"
+    LEAGUE_PATH = LEAGUE_ENCODED
+    FETCH_REALM_QS = ""
+
+SEARCH_URL  = f"https://www.pathofexile.com/api/{API_BASE}/search/{LEAGUE_PATH}"
+WHISPER_URL = f"https://www.pathofexile.com/api/{API_BASE}/whisper"
+
+HEADERS = {
+    "Origin": "https://www.pathofexile.com",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+    "Cookie": f"POESESSID={POESESSID}",
+}
+HEADERS_XHR = {
+    **HEADERS,
+    "X-Requested-With": "XMLHttpRequest",
+}
+
+
+# === 取得查詢 payload（來自雲端 payload 服務，內部走 Redis）===
+def get_payload(client):
+    url = SERVICE_HOST.rstrip("/") + "/trade/getPayloadByUrl"
+    resp = client.post(url, json={"siteUrl": TRADE_URL}, timeout=30.0)
+    resp.raise_for_status()
+    return resp.json().get("payloadData")
+
+
+# === 一般搜尋：POST 完整 payload，回傳 (query_id, [result hashes]) ===
+def search(client, payload):
+    resp = client.post(SEARCH_URL, headers=HEADERS_XHR, json=payload, timeout=30.0)
+    resp.raise_for_status()
+    data = resp.json()
+    return data.get("id"), (data.get("result") or [])
+
+
+# === Fetch：批次取得 listing 詳情，回傳 result 陣列 ===
+def fetch(client, query_id, hashes):
+    ids = ",".join(hashes[:MAX_FETCH])
+    url = f"https://www.pathofexile.com/api/{API_BASE}/fetch/{ids}?query={query_id}{FETCH_REALM_QS}"
+    resp = client.get(url, headers=HEADERS, timeout=30.0)
+    resp.raise_for_status()
+    return resp.json().get("result") or []
+
+
+# === Whisper：發送 hideout_token 觸發傳送到賣家藏身處 ===
+def whisper(client, hideout_token):
+    return client.post(WHISPER_URL, headers=HEADERS_XHR, json={"token": hideout_token}, timeout=30.0)
+
+
+# === 傳送成功後的影像辨識 + 自動購買（與 scavenger.py 相同）===
+def buy_flow(stash_x, stash_y):
+    wait_until_stash_visible()
+    click_slot(stash_x, stash_y)
+    time.sleep(3)
+    go_hideout()
+
+
+def main():
+    print(f"[CFG] REALM={REALM} LEAGUE={LEAGUE}")
+    print(f"[CFG] SEARCH_URL={SEARCH_URL}")
+
+    seen = set()  # 已嘗試 whisper 過的 listing id，避免每輪重複密語同一筆
+
+    with httpx.Client(timeout=30.0) as client:
+        # 1) 先向雲端 payload 服務取得查詢 payload（只取一次）
+        try:
+            payload = get_payload(client)
+        except Exception:
+            traceback.print_exc()
+            print("[ERR] 呼叫 payload 服務失敗，請確認 SERVICE_HOST 與雲端服務狀態")
+            return
+        if not payload:
+            print("[ERR] 取不到 payload，請確認 TRADE_URL 是否正確、Redis 是否已有對應資料")
+            return
+        print("[OK] 已取得查詢 payload，開始輪詢一般搜尋...")
+
+        # 2) 持續輪詢一般搜尋
+        while True:
+            try:
+                query_id, hashes = search(client, payload)
+                rows = fetch(client, query_id, hashes) if hashes else []
+
+                # 找第一筆「還沒嘗試過」且有 listing 的結果
+                target = None
+                for row in rows:
+                    if not row or not row.get("listing"):
+                        continue
+                    if row.get("id") in seen:
+                        continue
+                    target = row
+                    break
+
+                if target is None:
+                    time.sleep(POLL_INTERVAL)
+                    continue
+
+                listing = target["listing"]
+                seen.add(target["id"])
+                stash_x = listing["stash"]["x"]
+                stash_y = listing["stash"]["y"]
+                hideout_token = listing["hideout_token"]
+
+                wresp = whisper(client, hideout_token)
+                print(f"[WHISPER] <{wresp.status_code}> {(wresp.text or '')[:120]} | "
+                      f"seller={listing['account']['name']} stash=({stash_x},{stash_y})")
+
+                # 判定傳送是否成功
+                success = False
+                if wresp.status_code == 200:
+                    try:
+                        success = wresp.json().get("success") is True
+                    except Exception:
+                        success = False
+
+                if success:
+                    print("[BUY] 傳送成功 → 執行影像辨識購買流程...")
+                    buy_flow(stash_x, stash_y)
+                    print("[BUY] 完成一次購買")
+
+            except Exception:
+                traceback.print_exc()
+
+            time.sleep(POLL_INTERVAL)
+
+
+if __name__ == "__main__":
+    main()
