@@ -149,9 +149,12 @@ def runner():
     print(result['debug']['whisper_time'])
 
     if 'error' not in result:
-        wait_until_stash_visible()
+        # 影像辨識等商店 UI；逾時(非 loading 階段 >30s)則強制返回藏身處，進下一輪
+        if not wait_until_stash_visible():
+            print("等待商店 UI 逾時 → 強制 go_hideout，進入下一輪")
+            go_hideout()
+            return False
         click_slot(result['x'], result['y'])
-        time.sleep(3)
         go_hideout()
         return True
     else:
@@ -168,5 +171,4 @@ if __name__ == "__main__":
             continue
         elif status == True:
             print("Done. buy a item")
-            time.sleep(10)
             continue

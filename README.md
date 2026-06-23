@@ -19,7 +19,7 @@ Path of Exile（流亡黯道）官方交易站的**自動監聽 + 自動購買**
 | `worker/websocket_live_search.py` | 服務端 | Live Search 監聽：依 `QUERY_IDS` 連 WebSocket，收到掛單即 fetch 並寫 log |
 | `worker/selenium_runner.py` + `worker/interceptor.js` | 服務端 | 舊版 selenium 截包（`getPayloadByUrl` 的 fallback，POE2 已改用 GET API，保留備援） |
 | `script/scavenger.py` | Local | **Live Search 搶快版**：WebSocket → whisper → 影像辨識購買 |
-| `script/scavenger_search.py` | Local | **一般搜尋輪詢版**（不搶快）：向服務端取 payload → 輪詢搜尋 → whisper → 影像辨識購買 |
+| `script/wholesalers.py` | Local | **一般搜尋輪詢版**（不搶快）：向服務端取 payload → 輪詢搜尋 → whisper → 影像辨識購買 |
 | `script/loading_wait.py` / `stash_click.py` / `util_image.py` / `util_config.py` | Local | 影像辨識（OpenCV）、滑鼠操作（AHK）、區域設定 |
 | `script/selector.py` | Local | 校準工具：按 F3 框選螢幕區域，產生 `resource/<realm>/*.ini/.png` |
 | `script/resource/poe1/`、`poe2/` | Local | 各 realm 的影像辨識區域座標與模板（`loading_mask`、`normal_UI`、`stash_table`） |
@@ -109,13 +109,13 @@ $env:POESESSID = "<你的POESESSID>"
 $env:SERVICE_HOST = "http://<雲端位址>:16666/"   # 一般搜尋版需要
 ```
 
-### A. 一般搜尋輪詢版（不搶快）— `scavenger_search.py`
+### A. 一般搜尋輪詢版（不搶快）— `wholesalers.py`
 
-1. 編輯 `script/scavenger_search.py` 最上方的 `TRADE_URL`，填入你的 POE2 查詢頁網址（含 query_id）。
+1. 編輯 `script/wholesalers.py` 最上方的 `TRADE_URL`，填入你的 POE2 查詢頁網址（含 query_id）。
 2. 執行：
    ```bash
    cd script
-   python scavenger_search.py
+   python wholesalers.py
    ```
    流程：向服務端 `getPayloadByUrlV2` 取 payload → 輪詢一般搜尋 → 找到掛單 → whisper 傳送 → 影像辨識購買 → 回藏身處。
 

@@ -7,8 +7,12 @@ from ahk import AHK
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
 from setting import REALM
+from loading_wait import wait_until_loading_done
 
 ahk = AHK()
+
+# go_hideout 後鼠標初始化的安全位置（避免游標停在物品上彈出 tooltip 擋住 normal_UI）
+SAFE_MOUSE_POS = (28, 154)
 
 # === 依 REALM 切資源資料夾（poe1 / poe2），路徑錨定本檔位置不受 cwd 影響 ===
 RESOURCE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resource", REALM)
@@ -96,14 +100,17 @@ def click_slot(col: int, row: int):
     # 3. 模擬真人：先按住 ctrl → 0.2秒 → 左鍵按住 0.2秒 → 放開
     # -------------------------------------------------
     ahk.key_down("Ctrl")
-    time.sleep(0.1)
+    time.sleep(0.2)
 
     ahk.send_input("{LButton down}")  # 按下左鍵
-    time.sleep(0.1)
+    time.sleep(0.2)
     ahk.send_input("{LButton up}")    # 放開左鍵
+    time.sleep(0.1)
 
     ahk.key_up("Ctrl")
     time.sleep(0.1)
+
+    time.sleep(3)
 
 # -----------------------------------------------------
 # 返回自己的藏身處
@@ -119,9 +126,14 @@ def go_hideout():
         ahk.send_input(ch)
         time.sleep(0.1)
 
-    # 3. 再次按下 Enter，等待 5 秒
+    # 3. 再次按下 Enter 送出指令
     ahk.send_input("{Enter}")
-    time.sleep(5)
+
+    # 4. 條件式等待：偵測 loading 畫面，loading_mask 消失後再等 3 秒
+    wait_until_loading_done()
+
+    # 5. 鼠標位置初始化到安全位置（避免下一輪游標停在物品上彈出 tooltip 擋住 normal_UI）
+    ahk.mouse_move(SAFE_MOUSE_POS[0], SAFE_MOUSE_POS[1], speed=0)
 
 # 測試用：
 # click_slot(4, 7)

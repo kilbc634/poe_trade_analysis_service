@@ -13,7 +13,7 @@ from stash_click import click_slot, go_hideout
 
 # === 設定 ===
 # 目標查詢頁網址：用它向雲端 payload 服務換取「一般搜尋」所需的查詢 payload
-TRADE_URL = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/xxxxxx"
+TRADE_URL = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/pJ8475yXH0"
 POLL_INTERVAL = 5.0   # 每輪一般搜尋的間隔秒數（不求快；注意 trade API 有速率限制）
 MAX_FETCH = 10        # 一次 fetch 最多批次幾筆 listing
 
@@ -76,10 +76,14 @@ def whisper(client, hideout_token):
 
 # === 傳送成功後的影像辨識 + 自動購買（與 scavenger.py 相同）===
 def buy_flow(stash_x, stash_y):
-    wait_until_stash_visible()
+    # 影像辨識等商店 UI；逾時(非 loading 階段 >30s)則強制返回藏身處，進下一輪
+    if not wait_until_stash_visible():
+        print("[BUY] 等待商店 UI 逾時 → 強制 go_hideout，進入下一輪")
+        go_hideout()
+        return False
     click_slot(stash_x, stash_y)
-    time.sleep(3)
     go_hideout()
+    return True
 
 
 def main():
@@ -111,6 +115,8 @@ def main():
                 target = None
                 for row in rows:
                     if not row or not row.get("listing"):
+                        continue
+                    if row.get("gone"):     # 已被買走/失效（trade 網頁呈 disable 狀態），跳過
                         continue
                     if row.get("id") in seen:
                         continue
