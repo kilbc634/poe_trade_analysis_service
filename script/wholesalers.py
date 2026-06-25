@@ -13,8 +13,8 @@ from stash_click import click_slot, go_hideout
 
 # === 設定 ===
 # 目標查詢頁網址：用它向雲端 payload 服務換取「一般搜尋」所需的查詢 payload
-TRADE_URL = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/pJ8475yXH0"
-POLL_INTERVAL = 5.0   # 每輪一般搜尋的間隔秒數（不求快；注意 trade API 有速率限制）
+TRADE_URL = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/8rW8W56GFV"
+POLL_INTERVAL = 2.0   # 每輪一般搜尋的間隔秒數（不求快；注意 trade API 有速率限制）
 MAX_FETCH = 10        # 一次 fetch 最多批次幾筆 listing
 
 # === Realm 設定（poe1 / poe2），沿用 setting.py ===
@@ -106,7 +106,7 @@ def main():
         print("[OK] 已取得查詢 payload，開始輪詢一般搜尋...")
 
         # 2) 持續輪詢一般搜尋
-        while True:
+        for times in range(40):
             try:
                 query_id, hashes = search(client, payload)
                 rows = fetch(client, query_id, hashes) if hashes else []
@@ -148,7 +148,7 @@ def main():
                 if success:
                     print("[BUY] 傳送成功 → 執行影像辨識購買流程...")
                     buy_flow(stash_x, stash_y)
-                    print("[BUY] 完成一次購買")
+                    print(f"[BUY] 完成一次購買 ({times+1})")
 
             except Exception:
                 traceback.print_exc()
