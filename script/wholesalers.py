@@ -7,13 +7,15 @@ import httpx
 # 取得根目錄路徑
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
-from setting import POESESSID, REALM, LEAGUE, SERVICE_HOST
+from setting import POESESSID, REALM, LEAGUE, SERVICE_HOST, QUERY_IDS
 from loading_wait import wait_until_stash_visible
 from stash_click import click_slot, go_hideout
 
 # === 設定 ===
-# 目標查詢頁網址：用它向雲端 payload 服務換取「一般搜尋」所需的查詢 payload
-TRADE_URL = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/8rW8W56GFV"
+# 查詢目標固定取 QUERY_IDS 的第一個（本腳本為單線程，只支援單一查詢）
+if not QUERY_IDS:
+    raise RuntimeError("QUERY_IDS 為空，請於環境變數設定（本腳本只取第一個）")
+QUERY_ID = QUERY_IDS[0]
 POLL_INTERVAL = 2.0   # 每輪一般搜尋的間隔秒數（不求快；注意 trade API 有速率限制）
 MAX_FETCH = 10        # 一次 fetch 最多批次幾筆 listing
 
@@ -32,6 +34,9 @@ else:
 
 SEARCH_URL  = f"https://www.pathofexile.com/api/{API_BASE}/search/{LEAGUE_PATH}"
 WHISPER_URL = f"https://www.pathofexile.com/api/{API_BASE}/whisper"
+
+# 由 QUERY_ID 組出交易頁網址，向雲端 payload 服務(getPayloadByUrlV2)換取查詢 payload
+TRADE_URL = f"https://www.pathofexile.com/{API_BASE}/search/{LEAGUE_PATH}/{QUERY_ID}"
 
 HEADERS = {
     "Origin": "https://www.pathofexile.com",

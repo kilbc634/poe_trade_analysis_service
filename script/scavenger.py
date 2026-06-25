@@ -14,13 +14,15 @@ import urllib.parse
 # 取得根目錄路徑
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
-from setting import POESESSID, REALM, LEAGUE
+from setting import POESESSID, REALM, LEAGUE, QUERY_IDS
 from loading_wait import wait_until_stash_visible
 from stash_click import click_slot, go_hideout
 
 # === 設定 ===
-QUERY_ID = "wvwPd5dRib"   # 你的 live feed query id
-# QUERY_ID = "V5Lrp9gwip"
+# 查詢目標固定取 QUERY_IDS 的第一個（本腳本為單線程，只支援單一查詢）
+if not QUERY_IDS:
+    raise RuntimeError("QUERY_IDS 為空，請於環境變數設定（本腳本只取第一個）")
+QUERY_ID = QUERY_IDS[0]
 
 # === Realm 設定（poe1 / poe2），沿用 setting.py ===
 # POE1: /api/trade/...            live URL 不含 realm 段、fetch 不帶 realm 參數
