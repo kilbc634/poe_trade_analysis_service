@@ -1,0 +1,3873 @@
+accessory		Crimson Amulet	
+accessory		Gold Amulet	
+accessory		Pearlescent Amulet	
+accessory		Azure Amulet	
+accessory		Amber Amulet	
+accessory		Jade Amulet	
+accessory		Lapis Amulet	
+accessory		Lunar Amulet	
+accessory		Bloodstone Amulet	
+accessory		Stellar Amulet	
+accessory		Solar Amulet	
+accessory		Lament Amulet	
+accessory		Portent Amulet	
+accessory		Absent Amulet	
+accessory		Corona Amulet	
+accessory		Twisted Amulet	
+accessory		Distorted Amulet	
+accessory		Dusk Amulet	
+accessory		Gloam Amulet	
+accessory		Penumbra Amulet	
+accessory		Tenebrous Amulet	
+accessory		Veridical Chain	
+accessory		Runemastered Veridical Chain	
+accessory		Rawhide Belt	
+accessory		Utility Belt	
+accessory		Fine Belt	
+accessory		Linen Belt	
+accessory		Wide Belt	
+accessory		Long Belt	
+accessory		Plate Belt	
+accessory		Ornate Belt	
+accessory		Mail Belt	
+accessory		Double Belt	
+accessory		Heavy Belt	
+accessory		Runemastered Heavy Belt	
+accessory		Stalking Belt	
+accessory		Invoking Belt	
+accessory		Sinew Belt	
+accessory		Forking Belt	
+accessory		Iron Ring	
+accessory		Gold Ring	
+accessory		Unset Ring	
+accessory		Abyssal Signet	
+accessory		Two-Stone Ring	
+accessory		Lazuli Ring	
+accessory		Ruby Ring	
+accessory		Sapphire Ring	
+accessory		Topaz Ring	
+accessory		Amethyst Ring	
+accessory		Emerald Ring	
+accessory		Pearl Ring	
+accessory		Prismatic Ring	
+accessory		Biostatic Ring	
+accessory		Vitalic Ring	
+accessory		Mnemonic Ring	
+accessory		Kinetic Ring	
+accessory		Oneiric Ring	
+accessory		Grasping Ring	
+accessory		Ring	
+accessory		Breach Ring	
+accessory		Refined Breach Ring	
+accessory		Dusk Ring	
+accessory		Gloam Ring	
+accessory		Penumbra Ring	
+accessory		Tenebrous Ring	
+accessory	Andvarius	Gold Ring	FLAG:unique
+accessory	Astramentis	Stellar Amulet	FLAG:unique
+accessory	Beacon of Azis	Solar Amulet	FLAG:unique
+accessory	Berek's Grip	Two-Stone Ring	FLAG:unique
+accessory	Berek's Pass	Two-Stone Ring	FLAG:unique
+accessory	Berek's Respite	Two-Stone Ring	FLAG:unique
+accessory	Bijouborne	Double Belt	FLAG:unique
+accessory	Birthright Buckle	Wide Belt	FLAG:unique
+accessory	Blackflame	Amethyst Ring	FLAG:unique
+accessory	Blackheart	Iron Ring	FLAG:unique
+accessory	Blistering Bond	Ruby Ring	FLAG:unique
+accessory	Byrnabas	Wide Belt	FLAG:unique
+accessory	Bursting Decay	Unset Ring	FLAG:unique
+accessory	Call of the Brotherhood	Topaz Ring	FLAG:unique
+accessory	Carnage Heart	Amber Amulet	FLAG:unique
+accessory	Cat O' Nine Tails	Utility Belt	FLAG:unique
+accessory	Choir of the Storm	Jade Amulet	FLAG:unique
+accessory	Coward's Legacy	Mail Belt	FLAG:unique
+accessory	Cracklecreep	Ruby Ring	FLAG:unique
+accessory	Darkness Enthroned	Fine Belt	FLAG:unique
+accessory	Death Rush	Emerald Ring	FLAG:unique
+accessory	Defiance of Destiny	Jade Amulet	FLAG:unique
+accessory	Doedre's Damning	Lazuli Ring	FLAG:unique
+accessory	Dream Fragments	Sapphire Ring	FLAG:unique
+accessory	Eventide Petals	Veridical Chain	FLAG:unique
+accessory	Eventide Petals	Runemastered Veridical Chain	FLAG:unique
+accessory	Evergrasping Ring	Pearl Ring	FLAG:unique
+accessory	Eye of Chayula	Gold Amulet	FLAG:unique
+accessory	Fireflower	Solar Amulet	FLAG:unique
+accessory	Fixation of Yix	Stellar Amulet	FLAG:unique
+accessory	Gifts from Above	Prismatic Ring	FLAG:unique
+accessory	Glowswarm	Lazuli Ring	FLAG:unique
+accessory	Goregirdle	Plate Belt	FLAG:unique
+accessory	Grip of Kulemak	Abyssal Signet	FLAG:unique
+accessory	Headhunter	Heavy Belt	FLAG:unique
+accessory	Heartbound Loop	Pearl Ring	FLAG:unique
+accessory	Hinekora's Sight	Stellar Amulet	FLAG:unique
+accessory	Icefang Orbit	Iron Ring	FLAG:unique
+accessory	Idol of Uldurn	Crimson Amulet	FLAG:unique
+accessory	Igniferis	Crimson Amulet	FLAG:unique
+accessory	Immaculate Adherence	Solar Amulet	FLAG:unique
+accessory	Infernoclasp	Plate Belt	FLAG:unique
+accessory	Ingenuity	Utility Belt	FLAG:unique
+accessory	Kalandra's Touch	Ring	FLAG:unique
+accessory	Keelhaul	Linen Belt	FLAG:unique
+accessory	Levinstone	Topaz Ring	FLAG:unique
+accessory	Ligurium Talisman	Lapis Amulet	FLAG:unique
+accessory	Mageblood	Utility Belt	FLAG:unique
+accessory	Meginord's Girdle	Rawhide Belt	FLAG:unique
+accessory	Midnight Braid	Rawhide Belt	FLAG:unique
+accessory	Ming's Heart	Amethyst Ring	FLAG:unique
+accessory	Original Sin	Amethyst Ring	FLAG:unique
+accessory	Perandus Seal	Gold Ring	FLAG:unique
+accessory	Polcirkeln	Sapphire Ring	FLAG:unique
+accessory	Prized Pain	Iron Ring	FLAG:unique
+accessory	Revered Resin	Amber Amulet	FLAG:unique
+accessory	Rondel of Fragility	Lunar Amulet	FLAG:unique
+accessory	Ryslatha's Coil	Ornate Belt	FLAG:unique
+accessory	Seed of Cataclysm	Lazuli Ring	FLAG:unique
+accessory	Eshtera's Path	Ring	FLAG:unique
+accessory	Safrin's Resolve	Ring	FLAG:unique
+accessory	Zaida's Longevity	Ring	FLAG:unique
+accessory	Serpent's Egg	Gold Amulet	FLAG:unique
+accessory	Shavronne's Satchel	Fine Belt	FLAG:unique
+accessory	Snakepit	Pearl Ring	FLAG:unique
+accessory	Soul Tether	Long Belt	FLAG:unique
+accessory	Stone of Lazhwar	Lapis Amulet	FLAG:unique
+accessory	Strugglescream	Stellar Amulet	FLAG:unique
+accessory	Surefooted Sigil	Jade Amulet	FLAG:unique
+accessory	The Anvil	Bloodstone Amulet	FLAG:unique
+accessory	The Burrower	Topaz Ring	FLAG:unique
+accessory	The Everlasting Gaze	Azure Amulet	FLAG:unique
+accessory	The Gnashing Sash	Wide Belt	FLAG:unique
+accessory	The Pandemonius	Lapis Amulet	FLAG:unique
+accessory	The Taming	Prismatic Ring	FLAG:unique
+accessory	Thief's Torment	Emerald Ring	FLAG:unique
+accessory	Umbilicus Immortalis	Linen Belt	FLAG:unique
+accessory	Ungil's Harmony	Azure Amulet	FLAG:unique
+accessory	Veilpiercer	Amethyst Ring	FLAG:unique
+accessory	Venopuncture	Iron Ring	FLAG:unique
+accessory	Ventor's Gamble	Gold Ring	FLAG:unique
+accessory	Vigilant View	Emerald Ring	FLAG:unique
+accessory	Waistgate	Heavy Belt	FLAG:unique
+accessory	Waistgate	Runemastered Heavy Belt	FLAG:unique
+accessory	Whisper of the Brotherhood	Sapphire Ring	FLAG:unique
+accessory	Xoph's Blood	Amber Amulet	FLAG:unique
+accessory	Yoke of Suffering	Bloodstone Amulet	FLAG:unique
+accessory	Zerphi's Genesis	Heavy Belt	FLAG:unique
+armour		Leather Vest	
+armour		Smuggler Coat	
+armour		Corsair Coat	
+armour		Runeforged Corsair Coat	
+armour		Runeforged Smuggler Coat	
+armour		Runemastered Smuggler Coat	
+armour		Strider Vest	
+armour		Runemastered Strider Vest	
+armour		Exquisite Vest	
+armour		Runemastered Exquisite Vest	
+armour		Armoured Vest	
+armour		Runemastered Armoured Vest	
+armour		Runeforged Leather Vest	
+armour		Runemastered Leather Vest	
+armour		Quilted Vest	
+armour		Patchwork Vest	
+armour		Runeforged Quilted Vest	
+armour		Runemastered Quilted Vest	
+armour		Pathfinder Coat	
+armour		Hunting Coat	
+armour		Swiftstalker Coat	
+armour		Runeforged Swiftstalker Coat	
+armour		Runeforged Pathfinder Coat	
+armour		Runemastered Pathfinder Coat	
+armour		Shrouded Vest	
+armour		Runeforged Shrouded Vest	
+armour		Runemastered Shrouded Vest	
+armour		Rhoahide Coat	
+armour		Riding Coat	
+armour		Runeforged Rhoahide Coat	
+armour		Runemastered Rhoahide Coat	
+armour		Studded Vest	
+armour		Layered Vest	
+armour		Runeforged Layered Vest	
+armour		Slipstrike Vest	
+armour		Runeforged Slipstrike Vest	
+armour		Runeforged Studded Vest	
+armour		Runemastered Studded Vest	
+armour		Scout's Vest	
+armour		Runner Vest	
+armour		Runeforged Runner Vest	
+armour		Runeforged Scout's Vest	
+armour		Runemastered Scout's Vest	
+armour		Serpentscale Coat	
+armour		Lizardscale Coat	
+armour		Runeforged Lizardscale Coat	
+armour		Wyrmscale Coat	
+armour		Runeforged Wyrmscale Coat	
+armour		Runeforged Serpentscale Coat	
+armour		Runemastered Serpentscale Coat	
+armour		Corsair Vest	
+armour		Runeforged Corsair Vest	
+armour		Hermit Garb	
+armour		Assassin Garb	
+armour		Runemastered Assassin Garb	
+armour		Ascetic Garb	
+armour		Runeforged Hermit Garb	
+armour		Runemastered Hermit Garb	
+armour		Waxed Jacket	
+armour		Oiled Jacket	
+armour		Sleek Jacket	
+armour		Runeforged Sleek Jacket	
+armour		Runeforged Waxed Jacket	
+armour		Runemastered Waxed Jacket	
+armour		Marabout Garb	
+armour		Evangelist Garb	
+armour		Runeforged Marabout Garb	
+armour		Runemastered Marabout Garb	
+armour		Wayfarer Jacket	
+armour		Itinerant Jacket	
+armour		Runeforged Itinerant Jacket	
+armour		Rambler Jacket	
+armour		Runeforged Rambler Jacket	
+armour		Runeforged Wayfarer Jacket	
+armour		Runemastered Wayfarer Jacket	
+armour		Anchorite Garb	
+armour		Hatungo Garb	
+armour		Runeforged Hatungo Garb	
+armour		Runeforged Anchorite Garb	
+armour		Runemastered Anchorite Garb	
+armour		Scalper's Jacket	
+armour		Hawker's Jacket	
+armour		Runeforged Hawker's Jacket	
+armour		Falconer's Jacket	
+armour		Runeforged Falconer's Jacket	
+armour		Runeforged Scalper's Jacket	
+armour		Runemastered Scalper's Jacket	
+armour		Scoundrel Jacket	
+armour		Runeforged Scoundrel Jacket	
+armour		Austere Garb	
+armour		Runeforged Austere Garb	
+armour		Runeforged Ascetic Garb	
+armour		Primal Markings	
+armour		Runemastered Primal Markings	
+armour		Tattered Robe	
+armour		Mystic Raiment	
+armour		Feathered Raiment	
+armour		Runeforged Feathered Raiment	
+armour		Runeforged Mystic Raiment	
+armour		Plated Raiment	
+armour		Runemastered Plated Raiment	
+armour		Havoc Raiment	
+armour		Runemastered Havoc Raiment	
+armour		Enlightened Robe	
+armour		Runemastered Enlightened Robe	
+armour		Runeforged Tattered Robe	
+armour		Runemastered Tattered Robe	
+armour		Feathered Robe	
+armour		Avian Robe	
+armour		Runeforged Feathered Robe	
+armour		Runemastered Feathered Robe	
+armour		Hexer's Robe	
+armour		Cursespeaker's Robe	
+armour		Vile Robe	
+armour		Runeforged Vile Robe	
+armour		Runeforged Hexer's Robe	
+armour		Runemastered Hexer's Robe	
+armour		Bone Raiment	
+armour		Runeforged Bone Raiment	
+armour		Runemastered Bone Raiment	
+armour		Silk Robe	
+armour		Luxurious Robe	
+armour		Runeforged Silk Robe	
+armour		Runemastered Silk Robe	
+armour		Keth Raiment	
+armour		River Raiment	
+armour		Runeforged River Raiment	
+armour		Flowing Raiment	
+armour		Runeforged Flowing Raiment	
+armour		Runeforged Keth Raiment	
+armour		Runemastered Keth Raiment	
+armour		Votive Raiment	
+armour		Adherent's Raiment	
+armour		Runeforged Adherent's Raiment	
+armour		Runeforged Votive Raiment	
+armour		Runemastered Votive Raiment	
+armour		Altar Robe	
+armour		Ceremonial Robe	
+armour		Runeforged Ceremonial Robe	
+armour		Sacramental Robe	
+armour		Runeforged Sacramental Robe	
+armour		Runeforged Altar Robe	
+armour		Runemastered Altar Robe	
+armour		Elementalist Robe	
+armour		Runeforged Elementalist Robe	
+armour		Runemastered Elementalist Robe	
+armour		Rusted Cuirass	
+armour		Chieftain Cuirass	
+armour		Warlord Cuirass	
+armour		Runeforged Warlord Cuirass	
+armour		Runeforged Chieftain Cuirass	
+armour		Champion Cuirass	
+armour		Runeforged Champion Cuirass	
+armour		Conqueror Plate	
+armour		Runeforged Conqueror Plate	
+armour		Runeforged Rusted Cuirass	
+armour		Runemastered Rusted Cuirass	
+armour		Fur Plate	
+armour		Barbarian Plate	
+armour		Runeforged Fur Plate	
+armour		Iron Cuirass	
+armour		Rugged Cuirass	
+armour		Soldier Cuirass	
+armour		Runeforged Soldier Cuirass	
+armour		Runeforged Iron Cuirass	
+armour		Runemastered Iron Cuirass	
+armour		Raider Plate	
+armour		Runeforged Raider Plate	
+armour		Maraketh Cuirass	
+armour		Sandsworn Cuirass	
+armour		Runeforged Maraketh Cuirass	
+armour		Runemastered Maraketh Cuirass	
+armour		Steel Plate	
+armour		Elegant Plate	
+armour		Runeforged Elegant Plate	
+armour		Ornate Plate	
+armour		Runeforged Ornate Plate	
+armour		Runeforged Steel Plate	
+armour		Runemastered Steel Plate	
+armour		Full Plate	
+armour		Heavy Plate	
+armour		Runeforged Heavy Plate	
+armour		Runeforged Full Plate	
+armour		Runemastered Full Plate	
+armour		Vaal Cuirass	
+armour		Stone Cuirass	
+armour		Runeforged Stone Cuirass	
+armour		Utzaal Cuirass	
+armour		Runeforged Utzaal Cuirass	
+armour		Runeforged Vaal Cuirass	
+armour		Runemastered Vaal Cuirass	
+armour		Juggernaut Plate	
+armour		Runeforged Juggernaut Plate	
+armour		Chain Mail	
+armour		Heroic Armour	
+armour		Runemastered Heroic Armour	
+armour		Ring Mail	
+armour		Runeforged Chain Mail	
+armour		Runemastered Chain Mail	
+armour		Rogue Armour	
+armour		Scoundrel Armour	
+armour		Dastard Armour	
+armour		Runeforged Dastard Armour	
+armour		Runeforged Rogue Armour	
+armour		Runemastered Rogue Armour	
+armour		Vagabond Armour	
+armour		Wanderer Armour	
+armour		Runeforged Vagabond Armour	
+armour		Runemastered Vagabond Armour	
+armour		Cloaked Mail	
+armour		Shrouded Mail	
+armour		Runeforged Shrouded Mail	
+armour		Mantled Mail	
+armour		Runeforged Mantled Mail	
+armour		Runeforged Cloaked Mail	
+armour		Runemastered Cloaked Mail	
+armour		Explorer Armour	
+armour		Trailblazer Armour	
+armour		Runeforged Trailblazer Armour	
+armour		Runeforged Explorer Armour	
+armour		Runemastered Explorer Armour	
+armour		Scale Mail	
+armour		Golden Mail	
+armour		Runeforged Golden Mail	
+armour		Death Mail	
+armour		Runeforged Death Mail	
+armour		Runeforged Scale Mail	
+armour		Runemastered Scale Mail	
+armour		Knight Armour	
+armour		Runeforged Knight Armour	
+armour		Runemastered Knight Armour	
+armour		Ancestral Mail	
+armour		Thane Mail	
+armour		Runeforged Thane Mail	
+armour		Runeforged Ancestral Mail	
+armour		Runemastered Ancestral Mail	
+armour		Lamellar Mail	
+armour		Grand Regalia	
+armour		Runemastered Grand Regalia	
+armour		Sacrificial Regalia	
+armour		Runeforged Sacrificial Regalia	
+armour		Runemastered Sacrificial Regalia	
+armour		Grasping Mail	
+armour		Runeforged Grasping Mail	
+armour		Runemastered Grasping Mail	
+armour		Runefather's Grasping Mail	
+armour		Garment	
+armour		Runeforged Garment	
+armour		Pilgrim Vestments	
+armour		Revered Vestments	
+armour		Runemastered Revered Vestments	
+armour		Corvus Mantle	
+armour		Runemastered Corvus Mantle	
+armour		Templar Vestments	
+armour		Runeforged Pilgrim Vestments	
+armour		Runemastered Pilgrim Vestments	
+armour		Pelt Mantle	
+armour		Bearskin Mantle	
+armour		Wolfskin Mantle	
+armour		Runeforged Wolfskin Mantle	
+armour		Runeforged Pelt Mantle	
+armour		Mail Vestments	
+armour		Chain Vestments	
+armour		Runeforged Mail Vestments	
+armour		Runemastered Mail Vestments	
+armour		Shaman Mantle	
+armour		Occultist Mantle	
+armour		Runeforged Occultist Mantle	
+armour		Conjurer Mantle	
+armour		Runeforged Conjurer Mantle	
+armour		Runeforged Shaman Mantle	
+armour		Runemastered Shaman Mantle	
+armour		Ironclad Vestments	
+armour		Plated Vestments	
+armour		Runeforged Plated Vestments	
+armour		Runeforged Ironclad Vestments	
+armour		Runemastered Ironclad Vestments	
+armour		Sacrificial Mantle	
+armour		Heartcarver Mantle	
+armour		Runeforged Heartcarver Mantle	
+armour		Death Mantle	
+armour		Runeforged Death Mantle	
+armour		Runeforged Sacrificial Mantle	
+armour		Runemastered Sacrificial Mantle	
+armour		Cleric Vestments	
+armour		Runeforged Cleric Vestments	
+armour		Runemastered Cleric Vestments	
+armour		Tideseer Mantle	
+armour		Seastorm Mantle	
+armour		Runeforged Seastorm Mantle	
+armour		Runeforged Tideseer Mantle	
+armour		Runemastered Tideseer Mantle	
+armour		Gilded Vestments	
+armour		Runemastered Gilded Vestments	
+armour		Ornate Ringmail	
+armour		Runemastered Ornate Ringmail	
+armour		Ancient Mail	
+armour		Runemastered Ancient Mail	
+armour		Rawhide Boots	
+armour		Runeforged Rawhide Boots	
+armour		Laced Boots	
+armour		Bound Boots	
+armour		Cinched Boots	
+armour		Runeforged Cinched Boots	
+armour		Runemastered Cinched Boots	
+armour		Runeforged Laced Boots	
+armour		Runemastered Laced Boots	
+armour		Embossed Boots	
+armour		Sleek Boots	
+armour		Runeforged Embossed Boots	
+armour		Runemastered Embossed Boots	
+armour		Steeltoe Boots	
+armour		Studded Boots	
+armour		Runeforged Studded Boots	
+armour		Cavalry Boots	
+armour		Runeforged Cavalry Boots	
+armour		Runeforged Steeltoe Boots	
+armour		Lizardscale Boots	
+armour		Serpentscale Boots	
+armour		Runeforged Serpentscale Boots	
+armour		Dragonscale Boots	
+armour		Runeforged Dragonscale Boots	
+armour		Runeforged Lizardscale Boots	
+armour		Runemastered Lizardscale Boots	
+armour		Flared Boots	
+armour		Drakeskin Boots	
+armour		Runeforged Drakeskin Boots	
+armour		Runeforged Flared Boots	
+armour		Frayed Shoes	
+armour		Wayfarer Shoes	
+armour		Wanderer Shoes	
+armour		Runeforged Wanderer Shoes	
+armour		Runeforged Frayed Shoes	
+armour		Threaded Shoes	
+armour		Silverbuckled Shoes	
+armour		Charmed Shoes	
+armour		Runeforged Charmed Shoes	
+armour		Runeforged Threaded Shoes	
+armour		Runemastered Threaded Shoes	
+armour		Hunting Shoes	
+armour		Treerunner Shoes	
+armour		Runeforged Treerunner Shoes	
+armour		Quickslip Shoes	
+armour		Runeforged Quickslip Shoes	
+armour		Runeforged Hunting Shoes	
+armour		Runemastered Hunting Shoes	
+armour		Steelpoint Shoes	
+armour		Daggerfoot Shoes	
+armour		Runeforged Daggerfoot Shoes	
+armour		Runeforged Steelpoint Shoes	
+armour		Velour Shoes	
+armour		Runemastered Velour Shoes	
+armour		Straw Sandals	
+armour		Runeforged Straw Sandals	
+armour		Runemastered Straw Sandals	
+armour		Wrapped Sandals	
+armour		Laced Sandals	
+armour		Bound Sandals	
+armour		Runeforged Bound Sandals	
+armour		Runeforged Wrapped Sandals	
+armour		Runemastered Wrapped Sandals	
+armour		Lattice Sandals	
+armour		Bangled Sandals	
+armour		Runeforged Lattice Sandals	
+armour		Runemastered Lattice Sandals	
+armour		Silk Slippers	
+armour		Elegant Slippers	
+armour		Runeforged Elegant Slippers	
+armour		Luxurious Slippers	
+armour		Runeforged Luxurious Slippers	
+armour		Runeforged Silk Slippers	
+armour		Runemastered Silk Slippers	
+armour		Feathered Sandals	
+armour		Dunerunner Sandals	
+armour		Runeforged Dunerunner Sandals	
+armour		Sandsworn Sandals	
+armour		Runeforged Sandsworn Sandals	
+armour		Runeforged Feathered Sandals	
+armour		Runemastered Feathered Sandals	
+armour		Flax Sandals	
+armour		Sekhema Sandals	
+armour		Runeforged Sekhema Sandals	
+armour		Runeforged Flax Sandals	
+armour		Rough Greaves	
+armour		Runeforged Rough Greaves	
+armour		Runemastered Rough Greaves	
+armour		Iron Greaves	
+armour		Plated Greaves	
+armour		Bulwark Greaves	
+armour		Runeforged Bulwark Greaves	
+armour		Runeforged Iron Greaves	
+armour		Runemastered Iron Greaves	
+armour		Bronze Greaves	
+armour		Lionheart Greaves	
+armour		Runeforged Bronze Greaves	
+armour		Runemastered Bronze Greaves	
+armour		Trimmed Greaves	
+armour		Elegant Greaves	
+armour		Runeforged Elegant Greaves	
+armour		Ornate Greaves	
+armour		Runeforged Ornate Greaves	
+armour		Runeforged Trimmed Greaves	
+armour		Runemastered Trimmed Greaves	
+armour		Stone Greaves	
+armour		Carved Greaves	
+armour		Runeforged Carved Greaves	
+armour		Vaal Greaves	
+armour		Runeforged Vaal Greaves	
+armour		Runeforged Stone Greaves	
+armour		Runemastered Stone Greaves	
+armour		Reefsteel Greaves	
+armour		Tasalian Greaves	
+armour		Runeforged Tasalian Greaves	
+armour		Runeforged Reefsteel Greaves	
+armour		Mail Sabatons	
+armour		Soldiering Sabatons	
+armour		Veteran Sabatons	
+armour		Runeforged Veteran Sabatons	
+armour		Runeforged Mail Sabatons	
+armour		Runemastered Mail Sabatons	
+armour		Braced Sabatons	
+armour		Goldwork Sabatons	
+armour		Noble Sabatons	
+armour		Runeforged Noble Sabatons	
+armour		Runeforged Braced Sabatons	
+armour		Runemastered Braced Sabatons	
+armour		Stacked Sabatons	
+armour		Bastion Sabatons	
+armour		Runeforged Bastion Sabatons	
+armour		Fortress Sabatons	
+armour		Runeforged Fortress Sabatons	
+armour		Runeforged Stacked Sabatons	
+armour		Runemastered Stacked Sabatons	
+armour		Covered Sabatons	
+armour		Blacksteel Sabatons	
+armour		Runeforged Blacksteel Sabatons	
+armour		Runeforged Covered Sabatons	
+armour		Runemastered Covered Sabatons	
+armour		Grand Cuisses	
+armour		Runemastered Grand Cuisses	
+armour		Padded Leggings	
+armour		Adherent Leggings	
+armour		Faithful Leggings	
+armour		Runeforged Faithful Leggings	
+armour		Runeforged Padded Leggings	
+armour		Secured Leggings	
+armour		Bound Leggings	
+armour		Apostle Leggings	
+armour		Runeforged Apostle Leggings	
+armour		Runeforged Secured Leggings	
+armour		Runemastered Secured Leggings	
+armour		Pelt Leggings	
+armour		Shamanistic Leggings	
+armour		Runeforged Shamanistic Leggings	
+armour		Warlock Leggings	
+armour		Runeforged Warlock Leggings	
+armour		Runeforged Pelt Leggings	
+armour		Weaver Leggings	
+armour		Cryptic Leggings	
+armour		Runeforged Cryptic Leggings	
+armour		Runeforged Weaver Leggings	
+armour		Ancient Leggings	
+armour		Runemastered Ancient Leggings	
+armour		Twig Focus	
+armour		Whorl Focus	
+armour		Tasalian Focus	
+armour		Runeforged Tasalian Focus	
+armour		Runeforged Whorl Focus	
+armour		Runeforged Twig Focus	
+armour		Runemastered Twig Focus	
+armour		Woven Focus	
+armour		Wreath Focus	
+armour		Runeforged Woven Focus	
+armour		Runemastered Woven Focus	
+armour		Antler Focus	
+armour		Staghorn Focus	
+armour		Druidic Focus	
+armour		Runeforged Druidic Focus	
+armour		Runeforged Antler Focus	
+armour		Runemastered Antler Focus	
+armour		Engraved Focus	
+armour		Runeforged Engraved Focus	
+armour		Runemastered Engraved Focus	
+armour		Tonal Focus	
+armour		Jingling Focus	
+armour		Runeforged Tonal Focus	
+armour		Runemastered Tonal Focus	
+armour		Crystal Focus	
+armour		Arrayed Focus	
+armour		Runeforged Arrayed Focus	
+armour		Leyline Focus	
+armour		Runeforged Leyline Focus	
+armour		Runeforged Crystal Focus	
+armour		Runemastered Crystal Focus	
+armour		Voodoo Focus	
+armour		Cultist Focus	
+armour		Runeforged Cultist Focus	
+armour		Runeforged Voodoo Focus	
+armour		Runemastered Voodoo Focus	
+armour		Plumed Focus	
+armour		Hallowed Focus	
+armour		Runeforged Hallowed Focus	
+armour		Sacred Focus	
+armour		Runeforged Sacred Focus	
+armour		Runeforged Plumed Focus	
+armour		Runemastered Plumed Focus	
+armour		Runed Focus	
+armour		Runeforged Runed Focus	
+armour		Suede Bracers	
+armour		Runeforged Suede Bracers	
+armour		Runemastered Suede Bracers	
+armour		Firm Bracers	
+armour		Hunting Bracers	
+armour		Stalking Bracers	
+armour		Runeforged Stalking Bracers	
+armour		Runeforged Firm Bracers	
+armour		Runemastered Firm Bracers	
+armour		Bound Bracers	
+armour		Swift Bracers	
+armour		Runeforged Bound Bracers	
+armour		Sectioned Bracers	
+armour		Refined Bracers	
+armour		Runeforged Refined Bracers	
+armour		Grand Bracers	
+armour		Runeforged Grand Bracers	
+armour		Runeforged Sectioned Bracers	
+armour		Runemastered Sectioned Bracers	
+armour		Spined Bracers	
+armour		Spiked Bracers	
+armour		Runeforged Spiked Bracers	
+armour		Barbed Bracers	
+armour		Runeforged Barbed Bracers	
+armour		Runeforged Spined Bracers	
+armour		Runemastered Spined Bracers	
+armour		Fine Bracers	
+armour		Polished Bracers	
+armour		Runeforged Polished Bracers	
+armour		Runeforged Fine Bracers	
+armour		Runemastered Fine Bracers	
+armour		Engraved Bracers	
+armour		Gauze Wraps	
+armour		Bandage Wraps	
+armour		War Wraps	
+armour		Runeforged War Wraps	
+armour		Runeforged Gauze Wraps	
+armour		Runemastered Gauze Wraps	
+armour		Linen Wraps	
+armour		Cambric Wraps	
+armour		Elegant Wraps	
+armour		Runeforged Elegant Wraps	
+armour		Runeforged Linen Wraps	
+armour		Runemastered Linen Wraps	
+armour		Spiral Wraps	
+armour		Adorned Wraps	
+armour		Runeforged Adorned Wraps	
+armour		Vaal Wraps	
+armour		Runeforged Vaal Wraps	
+armour		Runeforged Spiral Wraps	
+armour		Runemastered Spiral Wraps	
+armour		Buckled Wraps	
+armour		Secured Wraps	
+armour		Runeforged Secured Wraps	
+armour		Runeforged Buckled Wraps	
+armour		Furtive Wraps	
+armour		Runemastered Furtive Wraps	
+armour		Utility Wraps	
+armour		Runemastered Utility Wraps	
+armour		Torn Gloves	
+armour		Runeforged Torn Gloves	
+armour		Runemastered Torn Gloves	
+armour		Sombre Gloves	
+armour		Ominous Gloves	
+armour		Grim Gloves	
+armour		Runeforged Grim Gloves	
+armour		Runeforged Sombre Gloves	
+armour		Runemastered Sombre Gloves	
+armour		Stitched Gloves	
+armour		Embellished Gloves	
+armour		Runeforged Stitched Gloves	
+armour		Runemastered Stitched Gloves	
+armour		Jewelled Gloves	
+armour		Baroque Gloves	
+armour		Runeforged Baroque Gloves	
+armour		Opulent Gloves	
+armour		Runeforged Opulent Gloves	
+armour		Runeforged Jewelled Gloves	
+armour		Runemastered Jewelled Gloves	
+armour		Intricate Gloves	
+armour		Gold Gloves	
+armour		Runeforged Gold Gloves	
+armour		Vaal Gloves	
+armour		Runeforged Vaal Gloves	
+armour		Runeforged Intricate Gloves	
+armour		Runemastered Intricate Gloves	
+armour		Pauascale Gloves	
+armour		Sirenscale Gloves	
+armour		Runeforged Sirenscale Gloves	
+armour		Runeforged Pauascale Gloves	
+armour		Runemastered Pauascale Gloves	
+armour		Embroidered Gloves	
+armour		Runemastered Embroidered Gloves	
+armour		Stocky Mitts	
+armour		Runeforged Stocky Mitts	
+armour		Runemastered Stocky Mitts	
+armour		Riveted Mitts	
+armour		Plated Mitts	
+armour		Knightly Mitts	
+armour		Runeforged Knightly Mitts	
+armour		Runeforged Riveted Mitts	
+armour		Runemastered Riveted Mitts	
+armour		Tempered Mitts	
+armour		Elegant Mitts	
+armour		Runeforged Tempered Mitts	
+armour		Runemastered Tempered Mitts	
+armour		Bolstered Mitts	
+armour		Ancient Mitts	
+armour		Runeforged Ancient Mitts	
+armour		Ornate Mitts	
+armour		Runeforged Ornate Mitts	
+armour		Runeforged Bolstered Mitts	
+armour		Runemastered Bolstered Mitts	
+armour		Moulded Mitts	
+armour		Feathered Mitts	
+armour		Runeforged Feathered Mitts	
+armour		Vaal Mitts	
+armour		Runeforged Vaal Mitts	
+armour		Runeforged Moulded Mitts	
+armour		Runemastered Moulded Mitts	
+armour		Detailed Mitts	
+armour		Massive Mitts	
+armour		Runeforged Massive Mitts	
+armour		Runeforged Detailed Mitts	
+armour		Titan Mitts	
+armour		Runemastered Titan Mitts	
+armour		Ringmail Gauntlets	
+armour		Ironmail Gauntlets	
+armour		Steelmail Gauntlets	
+armour		Runeforged Steelmail Gauntlets	
+armour		Runeforged Ringmail Gauntlets	
+armour		Runemastered Ringmail Gauntlets	
+armour		Layered Gauntlets	
+armour		Captain Gauntlets	
+armour		Commander Gauntlets	
+armour		Runeforged Commander Gauntlets	
+armour		Runeforged Layered Gauntlets	
+armour		Runemastered Layered Gauntlets	
+armour		Doubled Gauntlets	
+armour		Zealot Gauntlets	
+armour		Runeforged Zealot Gauntlets	
+armour		Cultist Gauntlets	
+armour		Runeforged Cultist Gauntlets	
+armour		Runeforged Doubled Gauntlets	
+armour		Runemastered Doubled Gauntlets	
+armour		Plate Gauntlets	
+armour		Blacksteel Gauntlets	
+armour		Runeforged Blacksteel Gauntlets	
+armour		Runeforged Plate Gauntlets	
+armour		Runemastered Plate Gauntlets	
+armour		Burnished Gauntlets	
+armour		Runemastered Burnished Gauntlets	
+armour		Ornate Gauntlets	
+armour		Grand Manchettes	
+armour		Runemastered Grand Manchettes	
+armour		Rope Cuffs	
+armour		Braided Cuffs	
+armour		Bound Cuffs	
+armour		Runeforged Bound Cuffs	
+armour		Runeforged Rope Cuffs	
+armour		Runemastered Rope Cuffs	
+armour		Aged Cuffs	
+armour		Heirloom Cuffs	
+armour		Ancient Cuffs	
+armour		Runeforged Ancient Cuffs	
+armour		Runeforged Aged Cuffs	
+armour		Runemastered Aged Cuffs	
+armour		Goldcast Cuffs	
+armour		Ornate Cuffs	
+armour		Runeforged Ornate Cuffs	
+armour		Gleaming Cuffs	
+armour		Runeforged Gleaming Cuffs	
+armour		Runeforged Goldcast Cuffs	
+armour		Runemastered Goldcast Cuffs	
+armour		Kalguuran Cuffs	
+armour		Adherent Cuffs	
+armour		Runeforged Adherent Cuffs	
+armour		Runeforged Kalguuran Cuffs	
+armour		Runemastered Verisium Cuffs	
+armour		Tethering Bands	
+armour		Golden Visage	
+armour		Shabby Hood	
+armour		Covert Hood	
+armour		Runemastered Covert Hood	
+armour		Armoured Cap	
+armour		Runemastered Armoured Cap	
+armour		Rotted Hood	
+armour		Runeforged Shabby Hood	
+armour		Runemastered Shabby Hood	
+armour		Felt Cap	
+armour		Wool Cap	
+armour		Woven Cap	
+armour		Runeforged Woven Cap	
+armour		Runeforged Felt Cap	
+armour		Runemastered Felt Cap	
+armour		Lace Hood	
+armour		Narrow Hood	
+armour		Runeforged Lace Hood	
+armour		Swathed Cap	
+armour		Wrapped Cap	
+armour		Runeforged Wrapped Cap	
+armour		Desert Cap	
+armour		Runeforged Desert Cap	
+armour		Runeforged Swathed Cap	
+armour		Hunter Hood	
+armour		Deerstalker Hood	
+armour		Runeforged Deerstalker Hood	
+armour		Trapper Hood	
+armour		Runeforged Trapper Hood	
+armour		Runeforged Hunter Hood	
+armour		Runemastered Hunter Hood	
+armour		Viper Cap	
+armour		Runeforged Viper Cap	
+armour		Runemastered Viper Cap	
+armour		Corsair Cap	
+armour		Freebooter Cap	
+armour		Runeforged Freebooter Cap	
+armour		Runeforged Corsair Cap	
+armour		Runemastered Corsair Cap	
+armour		Leatherbound Hood	
+armour		Runeforged Leatherbound Hood	
+armour		Runemastered Leatherbound Hood	
+armour		Velvet Cap	
+armour		Runemastered Velvet Cap	
+armour		Hewn Mask	
+armour		Oak Mask	
+armour		Runeforged Hewn Mask	
+armour		Runemastered Hewn Mask	
+armour		Face Mask	
+armour		Bandit Mask	
+armour		Brigand Mask	
+armour		Runeforged Brigand Mask	
+armour		Runeforged Face Mask	
+armour		Runemastered Face Mask	
+armour		Hooded Mask	
+armour		Skulking Mask	
+armour		Runeforged Hooded Mask	
+armour		Runemastered Hooded Mask	
+armour		Veiled Mask	
+armour		Pariah Mask	
+armour		Runeforged Pariah Mask	
+armour		Faridun Mask	
+armour		Runeforged Faridun Mask	
+armour		Runeforged Veiled Mask	
+armour		Runemastered Veiled Mask	
+armour		Tribal Mask	
+armour		Avian Mask	
+armour		Runeforged Avian Mask	
+armour		Soaring Mask	
+armour		Runeforged Soaring Mask	
+armour		Runeforged Tribal Mask	
+armour		Runemastered Tribal Mask	
+armour		Solid Mask	
+armour		Grinning Mask	
+armour		Runeforged Grinning Mask	
+armour		Runeforged Solid Mask	
+armour		Runemastered Solid Mask	
+armour		Death Mask	
+armour		Runemastered Death Mask	
+armour		Twig Circlet	
+armour		Magus Tiara	
+armour		Runemastered Magus Tiara	
+armour		Druidic Circlet	
+armour		Runeforged Twig Circlet	
+armour		Runemastered Twig Circlet	
+armour		Wicker Tiara	
+armour		Avian Tiara	
+armour		Skycrown Tiara	
+armour		Runeforged Skycrown Tiara	
+armour		Runeforged Wicker Tiara	
+armour		Runemastered Wicker Tiara	
+armour		Beaded Circlet	
+armour		Desert Circlet	
+armour		Runeforged Beaded Circlet	
+armour		Runemastered Beaded Circlet	
+armour		Chain Tiara	
+armour		Sandsworn Tiara	
+armour		Runeforged Sandsworn Tiara	
+armour		Sorcerous Tiara	
+armour		Runeforged Sorcerous Tiara	
+armour		Runeforged Chain Tiara	
+armour		Runemastered Chain Tiara	
+armour		Feathered Tiara	
+armour		Jungle Tiara	
+armour		Runeforged Jungle Tiara	
+armour		Kamasan Tiara	
+armour		Runeforged Kamasan Tiara	
+armour		Runeforged Feathered Tiara	
+armour		Runemastered Feathered Tiara	
+armour		Gold Circlet	
+armour		Runeforged Gold Circlet	
+armour		Runemastered Gold Circlet	
+armour		Vermeil Circlet	
+armour		Runeforged Vermeil Circlet	
+armour		Runemastered Vermeil Circlet	
+armour		Jade Tiara	
+armour		Ancestral Tiara	
+armour		Runeforged Ancestral Tiara	
+armour		Runeforged Jade Tiara	
+armour		Runemastered Jade Tiara	
+armour		Rusted Greathelm	
+armour		Corroded Greathelm	
+armour		Runeforged Rusted Greathelm	
+armour		Runemastered Rusted Greathelm	
+armour		Soldier Greathelm	
+armour		Mercenary Greathelm	
+armour		Warmonger Greathelm	
+armour		Runeforged Warmonger Greathelm	
+armour		Runeforged Soldier Greathelm	
+armour		Runemastered Soldier Greathelm	
+armour		Wrapped Greathelm	
+armour		Homeguard Greathelm	
+armour		Runeforged Wrapped Greathelm	
+armour		Runemastered Wrapped Greathelm	
+armour		Spired Greathelm	
+armour		Elegant Greathelm	
+armour		Runeforged Elegant Greathelm	
+armour		Masked Greathelm	
+armour		Runeforged Masked Greathelm	
+armour		Runeforged Spired Greathelm	
+armour		Runemastered Spired Greathelm	
+armour		Elite Greathelm	
+armour		Noble Greathelm	
+armour		Runeforged Noble Greathelm	
+armour		Paragon Greathelm	
+armour		Runeforged Paragon Greathelm	
+armour		Runeforged Elite Greathelm	
+armour		Runemastered Elite Greathelm	
+armour		Warrior Greathelm	
+armour		Runeforged Warrior Greathelm	
+armour		Runemastered Warrior Greathelm	
+armour		Commander Greathelm	
+armour		Imperial Greathelm	
+armour		Runeforged Imperial Greathelm	
+armour		Runeforged Commander Greathelm	
+armour		Fierce Greathelm	
+armour		Runeforged Fierce Greathelm	
+armour		Runemastered Fierce Greathelm	
+armour		Brimmed Helm	
+armour		Domed Helm	
+armour		Runeforged Brimmed Helm	
+armour		Runemastered Brimmed Helm	
+armour		Guarded Helm	
+armour		Engraved Helm	
+armour		Warded Helm	
+armour		Runeforged Warded Helm	
+armour		Runeforged Guarded Helm	
+armour		Runemastered Guarded Helm	
+armour		Visored Helm	
+armour		Soldier Helm	
+armour		Runeforged Visored Helm	
+armour		Runemastered Visored Helm	
+armour		Cowled Helm	
+armour		Cabalist Helm	
+armour		Runeforged Cabalist Helm	
+armour		Cryptic Helm	
+armour		Runeforged Cryptic Helm	
+armour		Runeforged Cowled Helm	
+armour		Runemastered Cowled Helm	
+armour		Shielded Helm	
+armour		Cassis Helm	
+armour		Runeforged Gladiatorial Helm	
+armour		Champion Helm	
+armour		Runeforged Champion Helm	
+armour		Runeforged Shielded Helm	
+armour		Runemastered Shielded Helm	
+armour		Closed Helm	
+armour		Gladiatorial Helm	
+armour		Runeforged Closed Helm	
+armour		Decorated Helm	
+armour		Runemastered Decorated Helm	
+armour		Grand Visage	
+armour		Runemastered Grand Visage	
+armour		Ancient Visor	
+armour		Runemastered Ancient Visor	
+armour		Iron Crown	
+armour		Mailed Crown	
+armour		Runeforged Iron Crown	
+armour		Runemastered Iron Crown	
+armour		Horned Crown	
+armour		Forest Crown	
+armour		Druidic Crown	
+armour		Runeforged Druidic Crown	
+armour		Runeforged Horned Crown	
+armour		Runemastered Horned Crown	
+armour		Cultist Crown	
+armour		Zealot Crown	
+armour		Runeforged Cultist Crown	
+armour		Runemastered Cultist Crown	
+armour		Martyr Crown	
+armour		Hallowed Crown	
+armour		Runeforged Hallowed Crown	
+armour		Saintly Crown	
+armour		Runeforged Saintly Crown	
+armour		Runeforged Martyr Crown	
+armour		Runemastered Martyr Crown	
+armour		Heavy Crown	
+armour		Inquisitor Crown	
+armour		Runeforged Inquisitor Crown	
+armour		Divine Crown	
+armour		Runeforged Divine Crown	
+armour		Runeforged Heavy Crown	
+armour		Runemastered Heavy Crown	
+armour		Spiritbone Crown	
+armour		Cryptic Crown	
+armour		Runeforged Cryptic Crown	
+armour		Runeforged Spiritbone Crown	
+armour		Runemastered Spiritbone Crown	
+armour		Tenebrous Crown	
+armour		Runemastered Tenebrous Crown	
+armour		Leather Buckler	
+armour		Pearl Buckler	
+armour		Runeforged Pearl Buckler	
+armour		Ornate Buckler	
+armour		Runemastered Ornate Buckler	
+armour		Array Buckler	
+armour		Runemastered Array Buckler	
+armour		Runeforged Leather Buckler	
+armour		Runemastered Leather Buckler	
+armour		Wooden Buckler	
+armour		Oak Buckler	
+armour		Runeforged Wooden Buckler	
+armour		Runemastered Wooden Buckler	
+armour		Plated Buckler	
+armour		Painted Buckler	
+armour		Runeforged Ornate Buckler	
+armour		Runeforged Plated Buckler	
+armour		Runemastered Plated Buckler	
+armour		Iron Buckler	
+armour		Runeforged Iron Buckler	
+armour		Runemastered Iron Buckler	
+armour		Ridged Buckler	
+armour		Coiled Buckler	
+armour		Runeforged Ridged Buckler	
+armour		Runemastered Ridged Buckler	
+armour		Spiked Buckler	
+armour		Spikeward Buckler	
+armour		Runeforged Spikeward Buckler	
+armour		Gutspike Buckler	
+armour		Runeforged Gutspike Buckler	
+armour		Runeforged Spiked Buckler	
+armour		Runemastered Spiked Buckler	
+armour		Ringed Buckler	
+armour		Jingling Buckler	
+armour		Runeforged Jingling Buckler	
+armour		Runeforged Ringed Buckler	
+armour		Edged Buckler	
+armour		Bladeguard Buckler	
+armour		Runeforged Bladeguard Buckler	
+armour		Ancient Buckler	
+armour		Runeforged Ancient Buckler	
+armour		Runeforged Edged Buckler	
+armour		Laminate Buckler	
+armour		Desert Buckler	
+armour		Runeforged Desert Buckler	
+armour		Runeforged Laminate Buckler	
+armour		Splintered Tower Shield	
+armour		Ancestor Tower Shield	
+armour		Tawhoan Tower Shield	
+armour		Runeforged Tawhoan Tower Shield	
+armour		Runeforged Ancestor Tower Shield	
+armour		Blacksteel Tower Shield	
+armour		Runemastered Blacksteel Tower Shield	
+armour		Runeforged Splintered Tower Shield	
+armour		Runemastered Splintered Tower Shield	
+armour		Painted Tower Shield	
+armour		Aged Tower Shield	
+armour		Runeforged Painted Tower Shield	
+armour		Runemastered Painted Tower Shield	
+armour		Braced Tower Shield	
+armour		Metalworked Tower Shield	
+armour		Royal Tower Shield	
+armour		Runeforged Royal Tower Shield	
+armour		Runeforged Braced Tower Shield	
+armour		Runemastered Braced Tower Shield	
+armour		Barricade Tower Shield	
+armour		Runeforged Barricade Tower Shield	
+armour		Runemastered Barricade Tower Shield	
+armour		Effigial Tower Shield	
+armour		Cultist Tower Shield	
+armour		Runeforged Effigial Tower Shield	
+armour		Rampart Tower Shield	
+armour		Bulwark Tower Shield	
+armour		Runeforged Bulwark Tower Shield	
+armour		Fortress Tower Shield	
+armour		Runeforged Fortress Tower Shield	
+armour		Runeforged Rampart Tower Shield	
+armour		Runemastered Rampart Tower Shield	
+armour		Heraldric Tower Shield	
+armour		Noble Tower Shield	
+armour		Runeforged Noble Tower Shield	
+armour		Runeforged Heraldric Tower Shield	
+armour		Runemastered Heraldric Tower Shield	
+armour		Stone Tower Shield	
+armour		Goldworked Tower Shield	
+armour		Runeforged Goldworked Tower Shield	
+armour		Vaal Tower Shield	
+armour		Runeforged Vaal Tower Shield	
+armour		Runemastered Vaal Tower Shield	
+armour		Runeforged Stone Tower Shield	
+armour		Crucible Tower Shield	
+armour		Runeforged Crucible Tower Shield	
+armour		Runemastered Crucible Tower Shield	
+armour		Hardwood Targe	
+armour		Golden Targe	
+armour		Runeforged Golden Targe	
+armour		Ironwood Targe	
+armour		Runeforged Hardwood Targe	
+armour		Runemastered Hardwood Targe	
+armour		Pelage Targe	
+armour		Fur-lined Targe	
+armour		Mammoth Targe	
+armour		Runeforged Mammoth Targe	
+armour		Runeforged Pelage Targe	
+armour		Studded Targe	
+armour		Mercenary Targe	
+armour		Runeforged Studded Targe	
+armour		Crescent Targe	
+armour		Polished Targe	
+armour		Runeforged Polished Targe	
+armour		Baroque Targe	
+armour		Runeforged Baroque Targe	
+armour		Runeforged Crescent Targe	
+armour		Runemastered Crescent Targe	
+armour		Chiseled Targe	
+armour		Stone Targe	
+armour		Runeforged Stone Targe	
+armour		Runeforged Chiseled Targe	
+armour		Feathered Targe	
+armour		Avian Targe	
+armour		Runeforged Avian Targe	
+armour		Soaring Targe	
+armour		Runeforged Soaring Targe	
+armour		Runeforged Feathered Targe	
+armour		Stratified Targe	
+armour		Runeforged Stratified Targe	
+armour		Carved Targe	
+armour		Runeforged Carved Targe	
+armour		Venerable Defender	
+armour		Runemastered Venerable Defender	
+armour		Blazon Crest Shield	
+armour		Painted Crest Shield	
+armour		Runeforged Blazon Crest Shield	
+armour		Runemastered Blazon Crest Shield	
+armour		Sigil Crest Shield	
+armour		Engraved Crest Shield	
+armour		Intricate Crest Shield	
+armour		Runeforged Intricate Crest Shield	
+armour		Runemastered Intricate Crest Shield	
+armour		Runeforged Sigil Crest Shield	
+armour		Runemastered Sigil Crest Shield	
+armour		Emblem Crest Shield	
+armour		Descry Crest Shield	
+armour		Runeforged Emblem Crest Shield	
+armour		Runemastered Emblem Crest Shield	
+armour		Jingling Crest Shield	
+armour		Dekharan Crest Shield	
+armour		Runeforged Dekharan Crest Shield	
+armour		Sekheman Crest Shield	
+armour		Runeforged Sekheman Crest Shield	
+armour		Runeforged Jingling Crest Shield	
+armour		Runemastered Jingling Crest Shield	
+armour		Sectarian Crest Shield	
+armour		Quartered Crest Shield	
+armour		Runeforged Quartered Crest Shield	
+armour		Runeforged Sectarian Crest Shield	
+armour		Omen Crest Shield	
+armour		Glowering Crest Shield	
+armour		Runeforged Glowering Crest Shield	
+armour		Vaal Crest Shield	
+armour		Runeforged Vaal Crest Shield	
+armour		Runeforged Omen Crest Shield	
+armour		Runemastered Omen Crest Shield	
+armour		Wayward Crest Shield	
+armour		Blacksteel Crest Shield	
+armour		Runeforged Blacksteel Crest Shield	
+armour		Runeforged Wayward Crest Shield	
+armour		Seer Crest Shield	
+armour		Runeforged Seer Crest Shield	
+armour		Glacial Fortress	
+armour		Runemastered Glacial Fortress	
+armour		Broadhead Quiver	
+armour		Volant Quiver	
+armour		Visceral Quiver	
+armour		Fire Quiver	
+armour		Sacral Quiver	
+armour		Two-Point Quiver	
+armour		Blunt Quiver	
+armour		Toxic Quiver	
+armour		Serrated Quiver	
+armour		Primed Quiver	
+armour		Penetrating Quiver	
+armour	Ab Aeterno	Grand Cuisses	FLAG:unique
+armour	Ab Aeterno	Runemastered Grand Cuisses	FLAG:unique
+armour	Aerisvane's Wings	Burnished Gauntlets	FLAG:unique
+armour	Aerisvane's Wings	Runemastered Burnished Gauntlets	FLAG:unique
+armour	Alkem Eira	Blazon Crest Shield	FLAG:unique
+armour	Alkem Eira	Runemastered Blazon Crest Shield	FLAG:unique
+armour	Alpha's Howl	Armoured Cap	FLAG:unique
+armour	Alpha's Howl	Runemastered Armoured Cap	FLAG:unique
+armour	Apep's Supremacy	Voodoo Focus	FLAG:unique
+armour	Apep's Supremacy	Runemastered Voodoo Focus	FLAG:unique
+armour	Apron of Emiran	Hermit Garb	FLAG:unique
+armour	Apron of Emiran	Runemastered Hermit Garb	FLAG:unique
+armour	Arvil's Wheel	Hardwood Targe	FLAG:unique
+armour	Arvil's Wheel	Runemastered Hardwood Targe	FLAG:unique
+armour	Ashrend	Pathfinder Coat	FLAG:unique
+armour	Ashrend	Runemastered Pathfinder Coat	FLAG:unique
+armour	Asphyxia's Wrath	Broadhead Quiver	FLAG:unique
+armour	Assailum	Closed Helm	FLAG:unique
+armour	Atsak's Sight	Veiled Mask	FLAG:unique
+armour	Atsak's Sight	Runemastered Veiled Mask	FLAG:unique
+armour	Atziri's Acuity	Moulded Mitts	FLAG:unique
+armour	Atziri's Acuity	Runemastered Moulded Mitts	FLAG:unique
+armour	Atziri's Disdain	Gold Circlet	FLAG:unique
+armour	Atziri's Disdain	Runemastered Gold Circlet	FLAG:unique
+armour	Atziri's Splendour	Sacrificial Regalia	FLAG:unique
+armour	Atziri's Splendour	Runemastered Sacrificial Regalia	FLAG:unique
+armour	Atziri's Step	Cinched Boots	FLAG:unique
+armour	Atziri's Step	Runemastered Cinched Boots	FLAG:unique
+armour	Aurseize	Layered Gauntlets	FLAG:unique
+armour	Aurseize	Runemastered Layered Gauntlets	FLAG:unique
+armour	Beetlebite	Velour Shoes	FLAG:unique
+armour	Beetlebite	Runemastered Velour Shoes	FLAG:unique
+armour	Belly of the Beast	Explorer Armour	FLAG:unique
+armour	Belly of the Beast	Runemastered Explorer Armour	FLAG:unique
+armour	Beyond Reach	Visceral Quiver	FLAG:unique
+armour	Birth of Fury	Stone Greaves	FLAG:unique
+armour	Birth of Fury	Runemastered Stone Greaves	FLAG:unique
+armour	Bitterbloom	Feathered Robe	FLAG:unique
+armour	Bitterbloom	Runemastered Feathered Robe	FLAG:unique
+armour	Blackbraid	Fur Plate	FLAG:unique
+armour	Blackbraid	Runeforged Fur Plate	FLAG:unique
+armour	Blackgleam	Fire Quiver	FLAG:unique
+armour	Black Sun Crest	Wrapped Greathelm	FLAG:unique
+armour	Black Sun Crest	Runemastered Wrapped Greathelm	FLAG:unique
+armour	Blessed Bonds	Linen Wraps	FLAG:unique
+armour	Bloodbarrier	Iron Buckler	FLAG:unique
+armour	Bloodbarrier	Runemastered Iron Buckler	FLAG:unique
+armour	Blood Price	Fierce Greathelm	FLAG:unique
+armour	Blood Price	Runemastered Fierce Greathelm	FLAG:unique
+armour	Blueflame Bracers	Goldcast Cuffs	FLAG:unique
+armour	Blueflame Bracers	Runemastered Goldcast Cuffs	FLAG:unique
+armour	Bones of Ullr	Lattice Sandals	FLAG:unique
+armour	Bones of Ullr	Runemastered Lattice Sandals	FLAG:unique
+armour	Bramblejack	Rusted Cuirass	FLAG:unique
+armour	Bramblejack	Runemastered Rusted Cuirass	FLAG:unique
+armour	Briarpatch	Laced Boots	FLAG:unique
+armour	Briarpatch	Runemastered Laced Boots	FLAG:unique
+armour	Briskwrap	Rhoahide Coat	FLAG:unique
+armour	Briskwrap	Runemastered Rhoahide Coat	FLAG:unique
+armour	Bristleboar	Leather Vest	FLAG:unique
+armour	Bristleboar	Runemastered Leather Vest	FLAG:unique
+armour	Bronzebeard	Horned Crown	FLAG:unique
+armour	Bronzebeard	Runemastered Horned Crown	FLAG:unique
+armour	Bushwhack	Lizardscale Boots	FLAG:unique
+armour	Bushwhack	Runemastered Lizardscale Boots	FLAG:unique
+armour	Cadiro's Gambit	Primed Quiver	FLAG:unique
+armour	Calgyra's Arc	Ornate Buckler	FLAG:unique
+armour	Calgyra's Arc	Runemastered Ornate Buckler	FLAG:unique
+armour	Candlemaker	Sombre Gloves	FLAG:unique
+armour	Candlemaker	Runemastered Sombre Gloves	FLAG:unique
+armour	Carrion Call	Engraved Focus	FLAG:unique
+armour	Carrion Call	Runemastered Engraved Focus	FLAG:unique
+armour	Chernobog's Pillar	Blacksteel Tower Shield	FLAG:unique
+armour	Chernobog's Pillar	Runemastered Blacksteel Tower Shield	FLAG:unique
+armour	Cloak of Defiance	Havoc Raiment	FLAG:unique
+armour	Cloak of Defiance	Runemastered Havoc Raiment	FLAG:unique
+armour	Cloak of Flame	Silk Robe	FLAG:unique
+armour	Cloak of Flame	Runemastered Silk Robe	FLAG:unique
+armour	Coat of Red	Chain Mail	FLAG:unique
+armour	Coat of Red	Runemastered Chain Mail	FLAG:unique
+armour	Constricting Command	Viper Cap	FLAG:unique
+armour	Constricting Command	Runemastered Viper Cap	FLAG:unique
+armour	Cornathaum	Heavy Crown	FLAG:unique
+armour	Cornathaum	Runemastered Heavy Crown	FLAG:unique
+armour	Corona of the Red Sun	Warrior Greathelm	FLAG:unique
+armour	Corona of the Red Sun	Runemastered Warrior Greathelm	FLAG:unique
+armour	Corpsewade	Iron Greaves	FLAG:unique
+armour	Corpsewade	Runemastered Iron Greaves	FLAG:unique
+armour	Cospri's Will	Assassin Garb	FLAG:unique
+armour	Cospri's Will	Runemastered Assassin Garb	FLAG:unique
+armour	Couture of Crimson	Gilded Vestments	FLAG:unique
+armour	Couture of Crimson	Runemastered Gilded Vestments	FLAG:unique
+armour	Crest of Ardura	Jingling Crest Shield	FLAG:unique
+armour	Crest of Ardura	Runemastered Jingling Crest Shield	FLAG:unique
+armour	Crown of Eyes	Vermeil Circlet	FLAG:unique
+armour	Crown of Eyes	Runemastered Vermeil Circlet	FLAG:unique
+armour	Crown of the Pale King	Cultist Crown	FLAG:unique
+armour	Crown of the Pale King	Runemastered Cultist Crown	FLAG:unique
+armour	Crown of the Victor	Iron Crown	FLAG:unique
+armour	Crown of the Victor	Runemastered Iron Crown	FLAG:unique
+armour	Crown of Thorns	Twig Circlet	FLAG:unique
+armour	Crown of Thorns	Runemastered Twig Circlet	FLAG:unique
+armour	Darkray Vectors	Braced Sabatons	FLAG:unique
+armour	Darkray Vectors	Runemastered Braced Sabatons	FLAG:unique
+armour	Death Articulated	Ornate Gauntlets	FLAG:unique
+armour	Deathblow	Doubled Gauntlets	FLAG:unique
+armour	Deathblow	Runemastered Doubled Gauntlets	FLAG:unique
+armour	Deathrattle	Twig Focus	FLAG:unique
+armour	Deathrattle	Runemastered Twig Focus	FLAG:unique
+armour	Decree of Acuity	Ancient Visor	FLAG:unique
+armour	Decree of Acuity	Runemastered Ancient Visor	FLAG:unique
+armour	Decree of Flight	Ancient Leggings	FLAG:unique
+armour	Decree of Flight	Runemastered Ancient Leggings	FLAG:unique
+armour	Decree of Loyalty	Ancient Mail	FLAG:unique
+armour	Decree of Loyalty	Runemastered Ancient Mail	FLAG:unique
+armour	Deidbell	Elite Greathelm	FLAG:unique
+armour	Deidbell	Runemastered Elite Greathelm	FLAG:unique
+armour	Demigod's Virtue	Golden Visage	FLAG:unique
+armour	Demon Stitcher	Intricate Gloves	FLAG:unique
+armour	Demon Stitcher	Runemastered Intricate Gloves	FLAG:unique
+armour	Dionadair	Splintered Tower Shield	FLAG:unique
+armour	Dionadair	Runemastered Splintered Tower Shield	FLAG:unique
+armour	Doedre's Tenure	Stitched Gloves	FLAG:unique
+armour	Doedre's Tenure	Runemastered Stitched Gloves	FLAG:unique
+armour	Doomgate	Braced Tower Shield	FLAG:unique
+armour	Doomgate	Runemastered Braced Tower Shield	FLAG:unique
+armour	Doryani's Prototype	Scale Mail	FLAG:unique
+armour	Doryani's Prototype	Runemastered Scale Mail	FLAG:unique
+armour	Dreadfist	Bolstered Mitts	FLAG:unique
+armour	Dreadfist	Runemastered Bolstered Mitts	FLAG:unique
+armour	Drillneck	Penetrating Quiver	FLAG:unique
+armour	Dunkelhalt	Leather Buckler	FLAG:unique
+armour	Dunkelhalt	Runemastered Leather Buckler	FLAG:unique
+armour	Dustbloom	Studded Vest	FLAG:unique
+armour	Dustbloom	Runemastered Studded Vest	FLAG:unique
+armour	Edyrn's Tusks	Iron Cuirass	FLAG:unique
+armour	Edyrn's Tusks	Runemastered Iron Cuirass	FLAG:unique
+armour	Effigy of Cruelty	Antler Focus	FLAG:unique
+armour	Effigy of Cruelty	Runemastered Antler Focus	FLAG:unique
+armour	Elevore	Hunter Hood	FLAG:unique
+armour	Elevore	Runemastered Hunter Hood	FLAG:unique
+armour	Empire's Grasp	Titan Mitts	FLAG:unique
+armour	Empire's Grasp	Runemastered Titan Mitts	FLAG:unique
+armour	Enfolding Dawn	Pilgrim Vestments	FLAG:unique
+armour	Enfolding Dawn	Runemastered Pilgrim Vestments	FLAG:unique
+armour	Erian's Cobble	Guarded Helm	FLAG:unique
+armour	Erian's Cobble	Runemastered Guarded Helm	FLAG:unique
+armour	Essentia Sanguis	Furtive Wraps	FLAG:unique
+armour	Essentia Sanguis	Runemastered Furtive Wraps	FLAG:unique
+armour	Eyes of the Runefather	Venerable Defender	FLAG:unique
+armour	Eyes of the Runefather	Runemastered Venerable Defender	FLAG:unique
+armour	Ezomyte Peak	Soldier Greathelm	FLAG:unique
+armour	Ezomyte Peak	Runemastered Soldier Greathelm	FLAG:unique
+armour	Facebreaker	Stocky Mitts	FLAG:unique
+armour	Facebreaker	Runemastered Stocky Mitts	FLAG:unique
+armour	Feathered Fortress	Crescent Targe	FLAG:unique
+armour	Feathered Fortress	Runemastered Crescent Targe	FLAG:unique
+armour	Forbidden Gaze	Chain Tiara	FLAG:unique
+armour	Forgotten Warden	Primal Markings	FLAG:unique
+armour	Forgotten Warden	Runemastered Primal Markings	FLAG:unique
+armour	Foxshade	Quilted Vest	FLAG:unique
+armour	Foxshade	Runemastered Quilted Vest	FLAG:unique
+armour	Gamblesprint	Embossed Boots	FLAG:unique
+armour	Gamblesprint	Runemastered Embossed Boots	FLAG:unique
+armour	Geofri's Sanctuary	Revered Vestments	FLAG:unique
+armour	Ghostmarch	Threaded Shoes	FLAG:unique
+armour	Ghostmarch	Runemastered Threaded Shoes	FLAG:unique
+armour	Ghostwrithe	Tattered Robe	FLAG:unique
+armour	Ghostwrithe	Runemastered Tattered Robe	FLAG:unique
+armour	Glimpse of Chaos	Tribal Mask	FLAG:unique
+armour	Glimpse of Chaos	Runemastered Tribal Mask	FLAG:unique
+armour	Gloamgown	Elementalist Robe	FLAG:unique
+armour	Gloamgown	Runemastered Elementalist Robe	FLAG:unique
+armour	Gloomform	Waxed Jacket	FLAG:unique
+armour	Gloomform	Runemastered Waxed Jacket	FLAG:unique
+armour	Goldrim	Felt Cap	FLAG:unique
+armour	Goldrim	Runemastered Felt Cap	FLAG:unique
+armour	Gravebind	Rope Cuffs	FLAG:unique
+armour	Gravebind	Runemastered Rope Cuffs	FLAG:unique
+armour	Greed's Embrace	Vaal Cuirass	FLAG:unique
+armour	Greed's Embrace	Runemastered Vaal Cuirass	FLAG:unique
+armour	Greymake	Brimmed Helm	FLAG:unique
+armour	Greymake	Runemastered Brimmed Helm	FLAG:unique
+armour	Grip of Winter	Firm Bracers	FLAG:unique
+armour	Grip of Winter	Runemastered Firm Bracers	FLAG:unique
+armour	Hand of Wisdom and Action	Spiral Wraps	FLAG:unique
+armour	Hand of Wisdom and Action	Runemastered Spiral Wraps	FLAG:unique
+armour	Hand of Wisdom and Action	Furtive Wraps	FLAG:unique
+armour	Hateforge	Moulded Mitts	FLAG:unique
+armour	Hateforge	Runemastered Moulded Mitts	FLAG:unique
+armour	Heatshiver	Velvet Cap	FLAG:unique
+armour	Heatshiver	Runemastered Velvet Cap	FLAG:unique
+armour	Horns of Bynden	Rusted Greathelm	FLAG:unique
+armour	Horns of Bynden	Runemastered Rusted Greathelm	FLAG:unique
+armour	Horror's Flight	Engraved Bracers	FLAG:unique
+armour	Reverie	Shaman Mantle	FLAG:unique
+armour	Reverie	Runemastered Shaman Mantle	FLAG:unique
+armour	Hyrri's Ire	Armoured Vest	FLAG:unique
+armour	Hyrri's Ire	Runemastered Armoured Vest	FLAG:unique
+armour	Icetomb	Mail Vestments	FLAG:unique
+armour	Icetomb	Runemastered Mail Vestments	FLAG:unique
+armour	Idle Hands	Sectioned Bracers	FLAG:unique
+armour	Idle Hands	Runemastered Sectioned Bracers	FLAG:unique
+armour	Indigon	Magus Tiara	FLAG:unique
+armour	Indigon	Runemastered Magus Tiara	FLAG:unique
+armour	Innsmouth	Shabby Hood	FLAG:unique
+armour	Innsmouth	Runemastered Shabby Hood	FLAG:unique
+armour	Irongrasp	Vagabond Armour	FLAG:unique
+armour	Irongrasp	Runemastered Vagabond Armour	FLAG:unique
+armour	Ironride	Visored Helm	FLAG:unique
+armour	Ironride	Runemastered Visored Helm	FLAG:unique
+armour	Jarngreipr	Ringmail Gauntlets	FLAG:unique
+armour	Jarngreipr	Runemastered Ringmail Gauntlets	FLAG:unique
+armour	Kaltenhalt	Ridged Buckler	FLAG:unique
+armour	Kaltenhalt	Runemastered Ridged Buckler	FLAG:unique
+armour	Kaom's Heart	Conqueror Plate	FLAG:unique
+armour	Kaom's Heart	Runeforged Conqueror Plate	FLAG:unique
+armour	Keeper of the Arc	Spiritbone Crown	FLAG:unique
+armour	Keeper of the Arc	Runemastered Spiritbone Crown	FLAG:unique
+armour	Killjoy	Linen Wraps	FLAG:unique
+armour	Killjoy	Runemastered Linen Wraps	FLAG:unique
+armour	Kingsguard	Full Plate	FLAG:unique
+armour	Kingsguard	Runemastered Full Plate	FLAG:unique
+armour	Kitoko's Current	Jewelled Gloves	FLAG:unique
+armour	Kitoko's Current	Runemastered Jewelled Gloves	FLAG:unique
+armour	Leer Cast	Hooded Mask	FLAG:unique
+armour	Leer Cast	Runemastered Hooded Mask	FLAG:unique
+armour	Legionstride	Rough Greaves	FLAG:unique
+armour	Legionstride	Runemastered Rough Greaves	FLAG:unique
+armour	Leopold's Applause	Embroidered Gloves	FLAG:unique
+armour	Leopold's Applause	Runemastered Embroidered Gloves	FLAG:unique
+armour	Lightning Coil	Ancestral Mail	FLAG:unique
+armour	Lightning Coil	Runemastered Ancestral Mail	FLAG:unique
+armour	Lochtonial Caress	Tempered Mitts	FLAG:unique
+armour	Lochtonial Caress	Runemastered Tempered Mitts	FLAG:unique
+armour	Loreweave	Ornate Ringmail	FLAG:unique
+armour	Loreweave	Runemastered Ornate Ringmail	FLAG:unique
+armour	Luminous Pace	Straw Sandals	FLAG:unique
+armour	Luminous Pace	Runemastered Straw Sandals	FLAG:unique
+armour	Lycosidae	Rampart Tower Shield	FLAG:unique
+armour	Lycosidae	Runemastered Rampart Tower Shield	FLAG:unique
+armour	Mahuxotl's Machination	Omen Crest Shield	FLAG:unique
+armour	Maligaro's Virtuosity	Fine Bracers	FLAG:unique
+armour	Maligaro's Virtuosity	Runemastered Fine Bracers	FLAG:unique
+armour	Mask of the Sanguimancer	Face Mask	FLAG:unique
+armour	Mask of the Sanguimancer	Runemastered Face Mask	FLAG:unique
+armour	Mask of the Stitched Demon	Feathered Tiara	FLAG:unique
+armour	Mask of the Stitched Demon	Runemastered Feathered Tiara	FLAG:unique
+armour	Merit of Service	Pelage Targe	FLAG:unique
+armour	Mind of the Council	Death Mask	FLAG:unique
+armour	Mind of the Council	Runemastered Death Mask	FLAG:unique
+armour	Morior Invictus	Grand Regalia	FLAG:unique
+armour	Morior Invictus	Runemastered Grand Regalia	FLAG:unique
+armour	Murkshaft	Toxic Quiver	FLAG:unique
+armour	Myris Uxor	Covert Hood	FLAG:unique
+armour	Myris Uxor	Runemastered Covert Hood	FLAG:unique
+armour	Necromantle	Bone Raiment	FLAG:unique
+armour	Necromantle	Runemastered Bone Raiment	FLAG:unique
+armour	Nightfall	Glacial Fortress	FLAG:unique
+armour	Nightfall	Runemastered Glacial Fortress	FLAG:unique
+armour	Nightscale	Pauascale Gloves	FLAG:unique
+armour	Nightscale	Runemastered Pauascale Gloves	FLAG:unique
+armour	Nocturne	Wooden Buckler	FLAG:unique
+armour	Nocturne	Runemastered Wooden Buckler	FLAG:unique
+armour	Northpaw	Suede Bracers	FLAG:unique
+armour	Northpaw	Runemastered Suede Bracers	FLAG:unique
+armour	Oaksworn	Sigil Crest Shield	FLAG:unique
+armour	Oaksworn	Runemastered Sigil Crest Shield	FLAG:unique
+armour	Obern's Bastion	Stacked Sabatons	FLAG:unique
+armour	Obern's Bastion	Runemastered Stacked Sabatons	FLAG:unique
+armour	Painter's Servant	Torn Gloves	FLAG:unique
+armour	Painter's Servant	Runemastered Torn Gloves	FLAG:unique
+armour	Pariah's Embrace	Cloaked Mail	FLAG:unique
+armour	Pariah's Embrace	Runemastered Cloaked Mail	FLAG:unique
+armour	Perfidy	Knight Armour	FLAG:unique
+armour	Perfidy	Runemastered Knight Armour	FLAG:unique
+armour	Plaguefinger	Gauze Wraps	FLAG:unique
+armour	Plaguefinger	Runemastered Gauze Wraps	FLAG:unique
+armour	Powertread	Hunting Shoes	FLAG:unique
+armour	Powertread	Runemastered Hunting Shoes	FLAG:unique
+armour	Pragmatism	Explorer Armour	FLAG:unique
+armour	Pragmatism	Runemastered Explorer Armour	FLAG:unique
+armour	Prayers for Rain	Keth Raiment	FLAG:unique
+armour	Prayers for Rain	Runemastered Keth Raiment	FLAG:unique
+armour	Prism Guardian	Intricate Crest Shield	FLAG:unique
+armour	Prism Guardian	Runemastered Intricate Crest Shield	FLAG:unique
+armour	Quatl's Molt	Serpentscale Coat	FLAG:unique
+armour	Quatl's Molt	Runemastered Serpentscale Coat	FLAG:unique
+armour	Queen of the Forest	Smuggler Coat	FLAG:unique
+armour	Queen of the Forest	Runemastered Smuggler Coat	FLAG:unique
+armour	Radiant Grief	Lace Hood	FLAG:unique
+armour	Radiant Grief	Runeforged Lace Hood	FLAG:unique
+armour	Rathpith Globe	Sacred Focus	FLAG:unique
+armour	Rathpith Globe	Runemastered Plumed Focus	FLAG:unique
+armour	Rearguard	Blunt Quiver	FLAG:unique
+armour	Redblade Banner	Heraldric Tower Shield	FLAG:unique
+armour	Redblade Banner	Runemastered Heraldric Tower Shield	FLAG:unique
+armour	Redflare Conduit	Anchorite Garb	FLAG:unique
+armour	Redflare Conduit	Runemastered Anchorite Garb	FLAG:unique
+armour	Rise of the Phoenix	Omen Crest Shield	FLAG:unique
+armour	Rise of the Phoenix	Runemastered Omen Crest Shield	FLAG:unique
+armour	Rondel de Ezo	Plated Buckler	FLAG:unique
+armour	Rondel de Ezo	Runemastered Plated Buckler	FLAG:unique
+armour	Sacrosanctum	Corvus Mantle	FLAG:unique
+armour	Sacrosanctum	Runemastered Corvus Mantle	FLAG:unique
+armour	Saffell's Frame	Emblem Crest Shield	FLAG:unique
+armour	Saffell's Frame	Runemastered Emblem Crest Shield	FLAG:unique
+armour	Sands of Silk	Shrouded Vest	FLAG:unique
+armour	Sands of Silk	Runemastered Shrouded Vest	FLAG:unique
+armour	Sandstorm Visage	Chain Tiara	FLAG:unique
+armour	Sandstorm Visage	Runemastered Chain Tiara	FLAG:unique
+armour	Scold's Bridle	Jade Tiara	FLAG:unique
+armour	Scold's Bridle	Runemastered Jade Tiara	FLAG:unique
+armour	Serpent's Lesson	Tonal Focus	FLAG:unique
+armour	Serpent's Lesson	Runemastered Tonal Focus	FLAG:unique
+armour	Shackles of the Wretched	Aged Cuffs	FLAG:unique
+armour	Shackles of the Wretched	Runemastered Aged Cuffs	FLAG:unique
+armour	Shankgonne	Covered Sabatons	FLAG:unique
+armour	Shankgonne	Runemastered Covered Sabatons	FLAG:unique
+armour	Sierran Inheritance	Marabout Garb	FLAG:unique
+armour	Sierran Inheritance	Runemastered Marabout Garb	FLAG:unique
+armour	Silks of Veneration	Enlightened Robe	FLAG:unique
+armour	Silks of Veneration	Runemastered Enlightened Robe	FLAG:unique
+armour	Silverthorne	Spiked Buckler	FLAG:unique
+armour	Silverthorne	Runemastered Spiked Buckler	FLAG:unique
+armour	Sine Aequo	Grand Manchettes	FLAG:unique
+armour	Sine Aequo	Runemastered Grand Manchettes	FLAG:unique
+armour	Skin of the Loyal	Garment	FLAG:unique
+armour	Skin of the Loyal	Runeforged Garment	FLAG:unique
+armour	Snakebite	Spined Bracers	FLAG:unique
+armour	Snakebite	Runemastered Spined Bracers	FLAG:unique
+armour	Solus Ipse	Grand Visage	FLAG:unique
+armour	Solus Ipse	Runemastered Grand Visage	FLAG:unique
+armour	Soul Mantle	Sacrificial Mantle	FLAG:unique
+armour	Soul Mantle	Runemastered Sacrificial Mantle	FLAG:unique
+armour	Starkonja's Head	Leatherbound Hood	FLAG:unique
+armour	Starkonja's Head	Runemastered Leatherbound Hood	FLAG:unique
+armour	Sunsplinter	Array Buckler	FLAG:unique
+armour	Sunsplinter	Runemastered Array Buckler	FLAG:unique
+armour	Svalinn	Crucible Tower Shield	FLAG:unique
+armour	Svalinn	Runemastered Crucible Tower Shield	FLAG:unique
+armour	Tabula Rasa	Garment	FLAG:unique
+armour	Tabula Rasa	Runeforged Garment	FLAG:unique
+armour	Temporalis	Silk Robe	FLAG:unique
+armour	Temporalis	Runemastered Silk Robe	FLAG:unique
+armour	Tetzlapokal's Desire	Votive Raiment	FLAG:unique
+armour	Tetzlapokal's Desire	Runemastered Votive Raiment	FLAG:unique
+armour	The Auspex	Exquisite Vest	FLAG:unique
+armour	The Auspex	Runemastered Exquisite Vest	FLAG:unique
+armour	The Barrow Dweller	Rogue Armour	FLAG:unique
+armour	The Barrow Dweller	Runemastered Rogue Armour	FLAG:unique
+armour	The Black Doubt	Hexer's Robe	FLAG:unique
+armour	The Black Doubt	Runemastered Hexer's Robe	FLAG:unique
+armour	The Black Insignia	Corsair Cap	FLAG:unique
+armour	The Black Insignia	Runemastered Corsair Cap	FLAG:unique
+armour	The Brass Dome	Champion Cuirass	FLAG:unique
+armour	The Brass Dome	Runeforged Champion Cuirass	FLAG:unique
+armour	The Bringer of Rain	Decorated Helm	FLAG:unique
+armour	The Bringer of Rain	Runemastered Decorated Helm	FLAG:unique
+armour	The Coming Calamity	Heroic Armour	FLAG:unique
+armour	The Coming Calamity	Runemastered Heroic Armour	FLAG:unique
+armour	The Covenant	Altar Robe	FLAG:unique
+armour	The Covenant	Runemastered Altar Robe	FLAG:unique
+armour	The Dancing Mirage	Wayfarer Jacket	FLAG:unique
+armour	The Dancing Mirage	Runemastered Wayfarer Jacket	FLAG:unique
+armour	The Deepest Tower	Spiritbone Crown	FLAG:unique
+armour	The Devouring Diadem	Wicker Tiara	FLAG:unique
+armour	The Devouring Diadem	Runemastered Wicker Tiara	FLAG:unique
+armour	The Eternal Spark	Crystal Focus	FLAG:unique
+armour	The Eternal Spark	Runemastered Crystal Focus	FLAG:unique
+armour	The Fallen Formation	Lamellar Mail	FLAG:unique
+armour	The Hollow Mask	Hewn Mask	FLAG:unique
+armour	The Hollow Mask	Runemastered Hewn Mask	FLAG:unique
+armour	The Road Warrior	Raider Plate	FLAG:unique
+armour	The Infinite Pursuit	Bronze Greaves	FLAG:unique
+armour	The Infinite Pursuit	Runemastered Bronze Greaves	FLAG:unique
+armour	The Knight-errant	Mail Sabatons	FLAG:unique
+armour	The Knight-errant	Runemastered Mail Sabatons	FLAG:unique
+armour	The Lethal Draw	Sacral Quiver	FLAG:unique
+armour	The Master's Reach	Tethering Bands	FLAG:unique
+armour	The Mutable Star	Cleric Vestments	FLAG:unique
+armour	The Mutable Star	Runemastered Cleric Vestments	FLAG:unique
+armour	The Prisoner's Manacles	Kalguuran Cuffs	FLAG:unique
+armour	The Prisoner's Manacles	Runemastered Verisium Cuffs	FLAG:unique
+armour	The Rat Cage	Scout's Vest	FLAG:unique
+armour	The Rat Cage	Runemastered Scout's Vest	FLAG:unique
+armour	The Smiling Knight	Cowled Helm	FLAG:unique
+armour	The Smiling Knight	Runemastered Cowled Helm	FLAG:unique
+armour	The Sunken Vessel	Knight Armour	FLAG:unique
+armour	The Sunken Vessel	Runemastered Knight Armour	FLAG:unique
+armour	The Surrender	Vaal Tower Shield	FLAG:unique
+armour	The Surrender	Runemastered Vaal Tower Shield	FLAG:unique
+armour	The Surrender	Stone Tower Shield	FLAG:unique
+armour	The Three Dragons	Solid Mask	FLAG:unique
+armour	The Three Dragons	Runemastered Solid Mask	FLAG:unique
+armour	The Unleashed	Revered Vestments	FLAG:unique
+armour	The Unleashed	Runemastered Revered Vestments	FLAG:unique
+armour	The Vertex	Tribal Mask	FLAG:unique
+armour	The Vertex	Runemastered Tribal Mask	FLAG:unique
+armour	The Vile Knight	Shielded Helm	FLAG:unique
+armour	The Vile Knight	Runemastered Shielded Helm	FLAG:unique
+armour	The Wailing Wall	Effigial Tower Shield	FLAG:unique
+armour	Threaded Light	Woven Focus	FLAG:unique
+armour	Threaded Light	Runemastered Woven Focus	FLAG:unique
+armour	Thrillsteel	Spired Greathelm	FLAG:unique
+armour	Thrillsteel	Runemastered Spired Greathelm	FLAG:unique
+armour	Thunderfist	Utility Wraps	FLAG:unique
+armour	Thunderfist	Runemastered Utility Wraps	FLAG:unique
+armour	Thunderstep	Steeltoe Boots	FLAG:unique
+armour	Titanrot Cataphract	Maraketh Cuirass	FLAG:unique
+armour	Titanrot Cataphract	Runemastered Maraketh Cuirass	FLAG:unique
+armour	Trampletoe	Trimmed Greaves	FLAG:unique
+armour	Trampletoe	Runemastered Trimmed Greaves	FLAG:unique
+armour	Treefingers	Riveted Mitts	FLAG:unique
+armour	Treefingers	Runemastered Riveted Mitts	FLAG:unique
+armour	Valako's Vice	Plate Gauntlets	FLAG:unique
+armour	Valako's Vice	Runemastered Plate Gauntlets	FLAG:unique
+armour	Veil of the Night	Martyr Crown	FLAG:unique
+armour	Veil of the Night	Runemastered Martyr Crown	FLAG:unique
+armour	Vestige of Darkness	Tenebrous Crown	FLAG:unique
+armour	Vestige of Darkness	Runemastered Tenebrous Crown	FLAG:unique
+armour	Visage of Ayah	Beaded Circlet	FLAG:unique
+armour	Visage of Ayah	Runemastered Beaded Circlet	FLAG:unique
+armour	Vis Mortis	Plated Raiment	FLAG:unique
+armour	Vis Mortis	Runemastered Plated Raiment	FLAG:unique
+armour	Voll's Protector	Plated Vestments	FLAG:unique
+armour	Voll's Protector	Runemastered Ironclad Vestments	FLAG:unique
+armour	Voll's Protector	Ironclad Vestments	FLAG:unique
+armour	Wake of Destruction	Secured Leggings	FLAG:unique
+armour	Wake of Destruction	Runemastered Secured Leggings	FLAG:unique
+armour	Wandering Reliquary	Steel Plate	FLAG:unique
+armour	Wandering Reliquary	Runemastered Steel Plate	FLAG:unique
+armour	Wanderlust	Wrapped Sandals	FLAG:unique
+armour	Wanderlust	Runemastered Wrapped Sandals	FLAG:unique
+armour	Waveshaper	Tideseer Mantle	FLAG:unique
+armour	Waveshaper	Runemastered Tideseer Mantle	FLAG:unique
+armour	Widow's Reign	Knight Armour	FLAG:unique
+armour	Widow's Reign	Runemastered Knight Armour	FLAG:unique
+armour	Window to Paradise	Barricade Tower Shield	FLAG:unique
+armour	Window to Paradise	Runemastered Barricade Tower Shield	FLAG:unique
+armour	Windscream	Feathered Sandals	FLAG:unique
+armour	Windscream	Runemastered Feathered Sandals	FLAG:unique
+armour	Wings of Caelyn	Rusted Greathelm	FLAG:unique
+armour	Wings of Caelyn	Runemastered Rusted Greathelm	FLAG:unique
+armour	Wondertrap	Silk Slippers	FLAG:unique
+armour	Wondertrap	Runemastered Silk Slippers	FLAG:unique
+armour	Wulfsbane	Painted Tower Shield	FLAG:unique
+armour	Wulfsbane	Runemastered Painted Tower Shield	FLAG:unique
+armour	Yriel's Fostering	Strider Vest	FLAG:unique
+armour	Yriel's Fostering	Runemastered Strider Vest	FLAG:unique
+armour	Zerphi's Serape	Scalper's Jacket	FLAG:unique
+armour	Zerphi's Serape	Runemastered Scalper's Jacket	FLAG:unique
+currency		Preserved Rib	
+currency		Ancient Rib	
+currency		Gnawed Rib	
+currency		Altered Collarbone	
+currency		Preserved Cranium	
+currency		Preserved Collarbone	
+currency		Ancient Collarbone	
+currency		Gnawed Collarbone	
+currency		Preserved Vertebrae	
+currency		Preserved Jawbone	
+currency		Ancient Jawbone	
+currency		Gnawed Jawbone	
+currency		Artificer's Orb	
+currency		Artificer's Shard	
+currency		Orb of Augmentation	
+currency		Greater Orb of Augmentation	
+currency		Perfect Orb of Augmentation	
+currency		Exalted Orb	
+currency		Greater Exalted Orb	
+currency		Perfect Exalted Orb	
+currency		Lesser Jeweller's Orb	
+currency		Greater Jeweller's Orb	
+currency		Perfect Jeweller's Orb	
+currency		Simulacrum Splinter	
+currency		Void Flux	
+currency		Chilling Flux	
+currency		Blazing Flux	
+currency		Crackling Flux	
+currency		Armourer's Scrap	
+currency		Breach Splinter	
+currency		Vaal Orb	
+currency		Essence of the Abyss	
+currency		Essence of the Breach	
+currency		Essence of Delirium	
+currency		Essence of Horror	
+currency		Essence of Hysteria	
+currency		Essence of Insanity	
+currency		Mirror of Kalandra	
+currency		Essence of Command	
+currency		Essence of Battle	
+currency		Essence of the Infinite	
+currency		Essence of Sorcery	
+currency		Essence of Ruin	
+currency		Essence of Ice	
+currency		Essence of Thawing	
+currency		Essence of Seeking	
+currency		Essence of Enhancement	
+currency		Essence of Flames	
+currency		Essence of Insulation	
+currency		Essence of the Body	
+currency		Essence of Electricity	
+currency		Essence of Grounding	
+currency		Essence of the Mind	
+currency		Essence of Abrasion	
+currency		Essence of Opulence	
+currency		Essence of Haste	
+currency		Essence of Alacrity	
+currency		Runic Splinter	
+currency		Glassblower's Bauble	
+currency		Fracturing Orb	
+currency		Gemcutter's Prism	
+currency		Greater Essence of Command	
+currency		Greater Essence of Battle	
+currency		Greater Essence of the Infinite	
+currency		Greater Essence of Sorcery	
+currency		Greater Essence of Ruin	
+currency		Greater Essence of Ice	
+currency		Greater Essence of Thawing	
+currency		Greater Essence of Seeking	
+currency		Greater Essence of Enhancement	
+currency		Greater Essence of Flames	
+currency		Greater Essence of Insulation	
+currency		Greater Essence of the Body	
+currency		Greater Essence of Electricity	
+currency		Greater Essence of Grounding	
+currency		Greater Essence of the Mind	
+currency		Greater Essence of Abrasion	
+currency		Greater Essence of Opulence	
+currency		Greater Essence of Haste	
+currency		Greater Essence of Alacrity	
+currency		Hinekora's Lock	
+currency		Scroll of Wisdom	
+currency		[DNT] Incursion Gemcutter's Prism (not visible to players)	
+currency		Vaal Arcanist's Infuser	
+currency		Ancient Infuser	
+currency		Architect's Orb	
+currency		Crystallised Corruption	
+currency		Orb of Extraction	
+currency		Vaal Catalysing Infuser	
+currency		Vaal Blacksmith's Infuser	
+currency		Core Destabiliser	
+currency		Kopec's Orb of Sacrifice	
+currency		Yugul's Orb of Sacrifice	
+currency		Kamasa's Orb of Sacrifice	
+currency		Yaomac's Orb of Sacrifice	
+currency		Vaal Cultivation Orb	
+currency		Vaal Siphoner	
+currency		Vaal Armourer's Infuser	
+currency		[DNT] Not Shown To Players	
+currency		Reaver Catalyst	
+currency		Adaptive Catalyst	
+currency		Sibilant Catalyst	
+currency		Chayula's Catalyst	
+currency		Tul's Catalyst	
+currency		Carapace Catalyst	
+currency		Xoph's Catalyst	
+currency		Flesh Catalyst	
+currency		Esh's Catalyst	
+currency		Neural Catalyst	
+currency		Necrotic Catalyst	
+currency		Uul-Netol's Catalyst	
+currency		Skittering Catalyst	
+currency		Refined Reaver Catalyst	
+currency		Refined Adaptive Catalyst	
+currency		Refined Sibilant Catalyst	
+currency		Refined Chayula's Catalyst	
+currency		Refined Tul's Catalyst	
+currency		Refined Carapace Catalyst	
+currency		Refined Xoph's Catalyst	
+currency		Refined Flesh Catalyst	
+currency		Refined Esh's Catalyst	
+currency		Refined Neural Catalyst	
+currency		Refined Necrotic Catalyst	
+currency		Refined Uul-Netol's Catalyst	
+currency		Refined Skittering Catalyst	
+currency		Lesser Essence of Command	
+currency		Lesser Essence of Battle	
+currency		Lesser Essence of the Infinite	
+currency		Lesser Essence of Sorcery	
+currency		Lesser Essence of Ruin	
+currency		Lesser Essence of Ice	
+currency		Lesser Essence of Thawing	
+currency		Lesser Essence of Seeking	
+currency		Lesser Essence of Enhancement	
+currency		Lesser Essence of Flames	
+currency		Lesser Essence of Insulation	
+currency		Lesser Essence of the Body	
+currency		Lesser Essence of Electricity	
+currency		Lesser Essence of Grounding	
+currency		Lesser Essence of the Mind	
+currency		Lesser Essence of Abrasion	
+currency		Lesser Essence of Opulence	
+currency		Lesser Essence of Haste	
+currency		Lesser Essence of Alacrity	
+currency		Arcanist's Etcher	
+currency		Divine Orb	
+currency		Perfect Essence of Command	
+currency		Perfect Essence of Battle	
+currency		Perfect Essence of the Infinite	
+currency		Perfect Essence of Sorcery	
+currency		Perfect Essence of Ruin	
+currency		Perfect Essence of Ice	
+currency		Perfect Essence of Thawing	
+currency		Perfect Essence of Seeking	
+currency		Perfect Essence of Enhancement	
+currency		Perfect Essence of Flames	
+currency		Perfect Essence of Insulation	
+currency		Perfect Essence of the Body	
+currency		Perfect Essence of Electricity	
+currency		Perfect Essence of Grounding	
+currency		Perfect Essence of the Mind	
+currency		Perfect Essence of Abrasion	
+currency		Perfect Essence of Opulence	
+currency		Perfect Essence of Haste	
+currency		Perfect Essence of Alacrity	
+currency		Exotic Coinage	
+currency		Orb of Annulment	
+currency		Chaos Orb	
+currency		Greater Chaos Orb	
+currency		Perfect Chaos Orb	
+currency		Liquid Verisium	
+currency		Albino Rhoa Feather	
+currency		Petition Splinter	
+currency		Thaumaturgic Flux (Level 10)	
+currency		Thaumaturgic Flux (Level 11)	
+currency		Thaumaturgic Flux (Level 12)	
+currency		Thaumaturgic Flux (Level 13)	
+currency		Thaumaturgic Flux (Level 14)	
+currency		Thaumaturgic Flux (Level 15)	
+currency		Thaumaturgic Flux (Level 16)	
+currency		Thaumaturgic Flux (Level 17)	
+currency		Thaumaturgic Flux (Level 18)	
+currency		Thaumaturgic Flux (Level 19)	
+currency		Thaumaturgic Flux (Level 20)	
+currency		Thaumaturgic Flux (Level 8)	
+currency		Thaumaturgic Flux (Level 9)	
+currency		Perfect Flux	
+currency		Regal Orb	
+currency		Greater Regal Orb	
+currency		Perfect Regal Orb	
+currency		Regal Shard	
+currency		Orb of Chance	
+currency		Chance Shard	
+currency		Orb of Transmutation	
+currency		Greater Orb of Transmutation	
+currency		Perfect Orb of Transmutation	
+currency		Transmutation Shard	
+currency		Orb of Alchemy	
+currency		Runic Alloy	
+currency		Celestial Alloy	
+currency		Transcendent Alloy	
+currency		The Runebinder's Alloy	
+currency		The Runefather's Alloy	
+currency		Adaptive Alloy	
+currency		Protective Alloy	
+currency		Expansive Alloy	
+currency		Swift Alloy	
+currency		Cyclonic Alloy	
+currency		Prismatic Alloy	
+currency		Mystic Alloy	
+currency		Sovereign Alloy	
+currency		Verisium	
+currency		Exceptional Verisium	
+currency		Medved's Crest of the Circle	
+currency		Vorana's Crest of the Scythe	
+currency		Uhtred's Crest of the Chalice	
+currency		Olroth's Crest of the Sun	
+currency		Veridical Starlit Ore	
+currency		Venerable Starlit Ore	
+currency		Warding Starlit Ore	
+currency		Revered Starlit Ore	
+currency		Blacksmith's Whetstone	
+currency		Diluted Liquid Ire	
+currency		Concentrated Liquid Isolation	
+currency		Diluted Liquid Guilt	
+currency		Diluted Liquid Greed	
+currency		Liquid Paranoia	
+currency		Liquid Envy	
+currency		Liquid Disgust	
+currency		Liquid Despair	
+currency		Concentrated Liquid Fear	
+currency		Concentrated Liquid Suffering	
+currency		Ancient Diluted Liquid Ire	
+currency		Ancient Concentrated Liquid Isolation	
+currency		Ancient Diluted Liquid Guilt	
+currency		Ancient Diluted Liquid Greed	
+currency		Ancient Liquid Paranoia	
+currency		Ancient Liquid Envy	
+currency		Ancient Liquid Disgust	
+currency		Ancient Liquid Despair	
+currency		Ancient Concentrated Liquid Fear	
+currency		Ancient Concentrated Liquid Suffering	
+currency		Potent Liquid Melancholy	
+currency		Potent Liquid Ferocity	
+currency		Potent Liquid Contempt	
+currency		Ancient Potent Liquid Melancholy	
+currency		Ancient Potent Liquid Ferocity	
+currency		Ancient Potent Liquid Contempt	
+currency		Shattered Triskelion	
+currency		Omen of Gambling	
+currency		Omen of Sinistral Necromancy	
+currency		Omen of Dextral Necromancy	
+currency		Omen of the Sovereign	
+currency		Omen of the Liege	
+currency		Omen of the Blackblooded	
+currency		Omen of Abyssal Echoes	
+currency		Omen of Putrefaction	
+currency		Omen of Sinistral Alchemy	
+currency		Omen of Dextral Alchemy	
+currency		Omen of Light	
+currency		Omen of Sinistral Annulment	
+currency		Omen of Dextral Annulment	
+currency		Omen of Greater Annulment	
+currency		Omen of the Ancients	
+currency		Omen of Chance	
+currency		Omen of Whittling	
+currency		Omen of Chaotic Rarity	
+currency		Omen of Chaotic Effectiveness	
+currency		Omen of Chaotic Monsters	
+currency		Omen of Chaotic Quantity	
+currency		Omen of Sinistral Erasure	
+currency		Omen of Dextral Erasure	
+currency		Omen of Amelioration	
+currency		Omen of the Blessed	
+currency		Omen of Sanctification	
+currency		Omen of Homogenising Exaltation	
+currency		Omen of Sinistral Exaltation	
+currency		Omen of Dextral Exaltation	
+currency		Omen of Greater Exaltation	
+currency		Omen of Catalysing Exaltation	
+currency		Omen of Resurgence	
+currency		Omen of Refreshment	
+currency		Omen of Sinistral Crystallisation	
+currency		Omen of Dextral Crystallisation	
+currency		Omen of Homogenising Coronation	
+currency		Omen of Sinistral Coronation	
+currency		Omen of Dextral Coronation	
+currency		Omen of Corruption	
+currency		Omen of Recombination	
+currency		Omen of Reinforcements	
+currency		Omen of Bartering	
+currency		Omen of Answered Prayers	
+currency		Omen of Secret Compartments	
+currency		Omen of the Hunt	
+currency		Cryptic Key	
+currency		Medved's Saga	
+currency		Olroth's Saga	
+currency		Aldur's Saga	
+currency		Uhtred's Saga	
+currency		Vorana's Saga	
+currency		Broken Circle Artifact	
+currency		Black Scythe Artifact	
+currency		Order Artifact	
+currency		Sun Artifact	
+currency		Rogue's Marker	
+currency		Azmeri Reliquary Key	
+currency		Xesht's Reliquary Key	
+currency		Tangmazu's Reliquary Key	
+currency		Olroth's Reliquary Key	
+currency		The Arbiter's Reliquary Key	
+currency		Ritualistic Reliquary Key	
+currency		Zarokh's Reliquary Key: Against the Darkness	
+currency		Zarokh's Reliquary Key: Temporalis	
+currency		The Trialmaster's Reliquary Key	
+currency		Twilight Reliquary Key	
+currency		Amanamu's Gaze	
+currency		Raven-Touched Shard	
+currency		Carved Cunning	
+currency		Carved Majesty	
+currency		Carved Mischief	
+currency		Carved Tenacity	
+currency		Emergent Instinct	
+currency		Emergent Possibility	
+currency		Emergent Protection	
+currency		Emergent Vigour	
+currency		Idol of the Sycophant	
+currency		Idol of the Martyr	
+currency		Idol of the Pharisee	
+currency		Hawk Idol	
+currency		Panther Idol	
+currency		Idol of Greust	
+currency		Idol of Yeena	
+currency		Idol of Eramir	
+currency		Idol of Oak	
+currency		Idol of Alira	
+currency		Idol of Kraityn	
+currency		Idol of Silk	
+currency		Stoat Idol	
+currency		Kurgal's Gaze	
+currency		Vision Rune	
+currency		Greater Vision Rune	
+currency		Lesser Vision Rune	
+currency		Perfect Vision Rune	
+currency		Glacial Rune	
+currency		Greater Glacial Rune	
+currency		Lesser Glacial Rune	
+currency		Perfect Glacial Rune	
+currency		Betrayal of Aldur	
+currency		Breath of Aldur	
+currency		Passion of Aldur	
+currency		Ire of Aldur	
+currency		Adept Rune	
+currency		Greater Adept Rune	
+currency		Lesser Adept Rune	
+currency		Perfect Adept Rune	
+currency		Iron Rune	
+currency		Greater Iron Rune	
+currency		Lesser Iron Rune	
+currency		Perfect Iron Rune	
+currency		Desert Rune	
+currency		Greater Desert Rune	
+currency		Lesser Desert Rune	
+currency		Perfect Desert Rune	
+currency		Resolve Rune	
+currency		Greater Resolve Rune	
+currency		Lesser Resolve Rune	
+currency		Perfect Resolve Rune	
+currency		Body Rune	
+currency		Greater Body Rune	
+currency		Lesser Body Rune	
+currency		Perfect Body Rune	
+currency		Rebirth Rune	
+currency		Greater Rebirth Rune	
+currency		Lesser Rebirth Rune	
+currency		Perfect Rebirth Rune	
+currency		Storm Rune	
+currency		Greater Storm Rune	
+currency		Lesser Storm Rune	
+currency		Perfect Storm Rune	
+currency		Mind Rune	
+currency		Greater Mind Rune	
+currency		Lesser Mind Rune	
+currency		Perfect Mind Rune	
+currency		Inspiration Rune	
+currency		Greater Inspiration Rune	
+currency		Lesser Inspiration Rune	
+currency		Perfect Inspiration Rune	
+currency		Ancient Rune of Splinters	
+currency		Ancient Rune of the Horde	
+currency		Ancient Rune of Animosity	
+currency		Ancient Rune of Detonation	
+currency		Ancient Rune of Retaliation	
+currency		Rune of Vitality	
+currency		Rune of the Hunt	
+currency		Rune of Acrobatics	
+currency		Rune of Culmination	
+currency		Rune of Renown	
+currency		Rune of Accumulation	
+currency		Ancient Rune of Dueling	
+currency		Rune of Foundations	
+currency		Rune of the Prism	
+currency		Rune of the Blossom	
+currency		Rune of Consistency	
+currency		Rune of Reach	
+currency		Rune of Vital Flame	
+currency		Rune of Confrontation	
+currency		Ancient Rune of the Titan	
+currency		Ancient Rune of Shattering	
+currency		Ancient Rune of Prowess	
+currency		Ancient Rune of Control	
+currency		Ancient Rune of Discovery	
+currency		Ancient Rune of Decay	
+currency		Ancient Rune of Witchcraft	
+currency		Legacy of Adonia's Ego	
+currency		Legacy of Alkem Eira	
+currency		Legacy of Amor Mandragora	
+currency		Legacy of Ashrend	
+currency		Legacy of Blackbraid	
+currency		Legacy of Brain Rattler	
+currency		Legacy of Bramblejack	
+currency		Legacy of Briarpatch	
+currency		Legacy of Briskwrap	
+currency		Legacy of Bristleboar	
+currency		Legacy of Brynhand's Mark	
+currency		Legacy of Bushwhack	
+currency		Legacy of Candlemaker	
+currency		Legacy of Chernobog's Pillar	
+currency		Legacy of Crown of Thorns	
+currency		Legacy of Cursecarver	
+currency		Legacy of Deathblow	
+currency		Legacy of Deidbell	
+currency		Legacy of Duality	
+currency		Legacy of Dusk Vigil	
+currency		Legacy of Edyrns Tusks	
+currency		Legacy of Erian's Cobble	
+currency		Legacy of A Worthy Foe	
+currency		Legacy of Ezomyte Peak	
+currency		Legacy of Facebreaker	
+currency		Legacy of Foxshade	
+currency		Legacy of Greymake	
+currency		Legacy of Hoghunt	
+currency		Legacy of Horns of Bynden	
+currency		Legacy of Hrimnor's Hymn	
+currency		Legacy of Ironbound	
+currency		Legacy of Keeper of the Arc	
+currency		Legacy of Legionstride	
+currency		Legacy of Lifesprig	
+currency		Legacy of Mjölner	
+currency		Legacy of Northpaw	
+currency		Legacy of Oaksworn	
+currency		Legacy of Obern's Bastion	
+currency		Legacy of Olrovasara	
+currency		Legacy of Quill Rain	
+currency		Legacy of Runeseeker's Call	
+currency		Legacy of Serle's Grit	
+currency		Legacy of Spiteful Floret	
+currency		Legacy of Starkonja's Head	
+currency		Legacy of Svalinn	
+currency		Legacy of The Knight-errant	
+currency		Legacy of The Sentry	
+currency		Legacy of The Unleashed	
+currency		Legacy of The Vile Knight	
+currency		Legacy of Trampletoe	
+currency		Legacy of Trenchtimbre	
+currency		Legacy of Twisted Empyrean	
+currency		Legacy of Tyranny's Grip	
+currency		Legacy of Wanderlust	
+currency		Legacy of Wings of Caelyn	
+currency		Greater Rune of Leadership	
+currency		Craiceann's Rune of Warding	
+currency		Saqawal's Rune of Memory	
+currency		Saqawal's Rune of Erosion	
+currency		Farrul's Rune of the Hunt	
+currency		Craiceann's Rune of Recovery	
+currency		Courtesan Mannan's Rune of Cruelty	
+currency		Thane Grannell's Rune of Mastery	
+currency		Fenumus' Rune of Spinning	
+currency		Countess Seske's Rune of Archery	
+currency		Thane Girt's Rune of Wildness	
+currency		Greater Rune of Tithing	
+currency		Fenumus' Rune of Draining	
+currency		Thane Myrk's Rune of Summer	
+currency		Lady Hestra's Rune of Winter	
+currency		Thane Leld's Rune of Spring	
+currency		The Greatwolf's Rune of Claws	
+currency		The Greatwolf's Rune of Willpower	
+currency		Greater Rune of Alacrity	
+currency		Greater Rune of Nobility	
+currency		Hedgewitch Assandra's Rune of Wisdom	
+currency		Saqawal's Rune of the Sky	
+currency		Fenumus' Rune of Agony	
+currency		Farrul's Rune of Grace	
+currency		Farrul's Rune of the Chase	
+currency		Robust Rune	
+currency		Greater Robust Rune	
+currency		Lesser Robust Rune	
+currency		Perfect Robust Rune	
+currency		Stone Rune	
+currency		Greater Stone Rune	
+currency		Lesser Stone Rune	
+currency		Perfect Stone Rune	
+currency		Masterwork Rune	
+currency		Greater Ward Rune	
+currency		Lesser Ward Rune	
+currency		Ward Rune	
+currency		Perfect Ward Rune	
+currency		Greater Charging Rune	
+currency		Charging Rune	
+currency		Perfect Charging Rune	
+currency		Warding Rune of Reinforcement	
+currency		Warding Rune of Stability	
+currency		Warding Rune of Glancing	
+currency		Warding Rune of Heart	
+currency		Warding Rune of Nourishment	
+currency		Warding Rune of Annihilation	
+currency		Warding Rune of Armature	
+currency		Warding Rune of Obsession	
+currency		Warding Rune of Protection	
+currency		Warding Rune of Equinox	
+currency		Warding Rune of Salvaging	
+currency		Warding Rune of Bodyguards	
+currency		Warding Rune of Hollowing	
+currency		Warding Rune of Disintegration	
+currency		Warding Rune of Desperation	
+currency		Warding Rune of Symbiosis	
+currency		Warding Rune of Courage	
+currency		Astrid's Creativity	
+currency		Serle's Triumph	
+currency		Vorana's Carnage	
+currency		Cadigan's Epiphany	
+currency		Katla's Gloom	
+currency		Thrud's Might	
+currency		Kolr's Hunt	
+currency		Aldur's Legacy	
+currency		Medved's Tending	
+currency		Uhtred's Sidereus	
+currency		Soul Core of Opiloti	
+currency		Soul Core of Tacati	
+currency		Soul Core of Ticaba	
+currency		Soul Core of Cholotl	
+currency		Soul Core of Topotante	
+currency		Soul Core of Citaqualotl	
+currency		Soul Core of Tzamoto	
+currency		Soul Core of Puhuarte	
+currency		Soul Core of Zantipi	
+currency		Soul Core of Azcapa	
+currency		Soul Core of Jiquani	
+currency		Soul Core of Zalatl	
+currency		Soul Core of Xopec	
+currency		Hayoxi's Soul Core of Heatproofing	
+currency		Xopec's Soul Core of Power	
+currency		Estazunti's Soul Core of Convalescence	
+currency		Tacati's Soul Core of Affliction	
+currency		Cholotl's Soul Core of War	
+currency		Citaqualotl's Soul Core of Foulness	
+currency		Xipocado's Soul Core of Dominion	
+currency		Zalatl's Soul Core of Insulation	
+currency		Topotante's Soul Core of Dampening	
+currency		Atmohua's Soul Core of Retreat	
+currency		Quipolatl's Soul Core of Flow	
+currency		Tzamoto's Soul Core of Ferocity	
+currency		Uromoti's Soul Core of Attenuation	
+currency		Opiloti's Soul Core of Assault	
+currency		Guatelitzi's Soul Core of Endurance	
+currency		Soul Core of Quipolatl	
+currency		Soul Core of Atmohua	
+currency		Bear Idol	
+currency		Boar Idol	
+currency		Cat Idol	
+currency		Fox Idol	
+currency		Primate Idol	
+currency		Owl Idol	
+currency		Ox Idol	
+currency		Rabbit Idol	
+currency		Snake Idol	
+currency		Idol of Sirrius	
+currency		Idol of Thruldana	
+currency		Idol of Grold	
+currency		Idol of Eeshta	
+currency		Idol of Egrin	
+currency		Idol of Maxarius	
+currency		Idol of Ralakesh	
+currency		Stag Idol	
+currency		Wolf Idol	
+currency		Tecrod's Gaze	
+currency		Guatelitzi's Thesis	
+currency		Quipolatl's Thesis	
+currency		Citaqualotl's Thesis	
+currency		Jiquani's Thesis	
+currency		Ulaman's Gaze	
+flask		Thawing Charm	
+flask		Topaz Charm	
+flask		Amethyst Charm	
+flask		Golden Charm	
+flask		Staunching Charm	
+flask		Antidote Charm	
+flask		Dousing Charm	
+flask		Grounding Charm	
+flask		Stone Charm	
+flask		Silver Charm	
+flask		Ruby Charm	
+flask		Sapphire Charm	
+flask		Lesser Life Flask	
+flask		Medium Life Flask	
+flask		Greater Life Flask	
+flask		Grand Life Flask	
+flask		Giant Life Flask	
+flask		Colossal Life Flask	
+flask		Gargantuan Life Flask	
+flask		Transcendent Life Flask	
+flask		Ultimate Life Flask	
+flask		Lesser Mana Flask	
+flask		Medium Mana Flask	
+flask		Greater Mana Flask	
+flask		Grand Mana Flask	
+flask		Giant Mana Flask	
+flask		Colossal Mana Flask	
+flask		Gargantuan Mana Flask	
+flask		Transcendent Mana Flask	
+flask		Ultimate Mana Flask	
+flask	Arakaali's Gift	Antidote Charm	FLAG:unique
+flask	Beira's Anguish	Dousing Charm	FLAG:unique
+flask	Blood of the Warrior	Gargantuan Life Flask	FLAG:unique
+flask	Breath of the Mountains	Sapphire Charm	FLAG:unique
+flask	Forsaken Bangle	Amethyst Charm	FLAG:unique
+flask	For Utopia	Stone Charm	FLAG:unique
+flask	Lavianga's Spirits	Gargantuan Mana Flask	FLAG:unique
+flask	Melting Maelstrom	Ultimate Mana Flask	FLAG:unique
+flask	Nascent Hope	Thawing Charm	FLAG:unique
+flask	Ngamahu's Chosen	Ruby Charm	FLAG:unique
+flask	Olroth's Resolve	Ultimate Life Flask	FLAG:unique
+flask	Opportunity	Ultimate Life Flask	FLAG:unique
+flask	Rite of Passage	Golden Charm	FLAG:unique
+flask	Sanguis Heroum	Staunching Charm	FLAG:unique
+flask	The Black Cat	Grounding Charm	FLAG:unique
+flask	The Fall of the Axe	Silver Charm	FLAG:unique
+flask	Uhtred's Chalice	Transcendent Mana Flask	FLAG:unique
+flask	Valako's Roar	Topaz Charm	FLAG:unique
+gem		Alchemist's Boon	
+gem		Ancestral Cry	
+gem		Archmage	
+gem		Armour Piercing Rounds	
+gem		Attrition	
+gem		Barkskin	
+gem		Fury of the Mountain	
+gem		Berserk	
+gem		Blink	
+gem		Bloodhound's Mark	
+gem		Bone Cage	
+gem		Bonestorm	
+gem		Charge Regulation	
+gem		Cluster Grenade	
+gem		Snap	
+gem		Combat Frenzy	
+gem		Convalescence	
+gem		Cull The Weak	
+gem		Dark Effigy	
+gem		Defiance Banner	
+gem		Detonating Arrow	
+gem		Dread Banner	
+gem		Electrocuting Arrow	
+gem		Elemental Conflux	
+gem		Elemental Invocation	
+gem		Elemental Sundering	
+gem		Elemental Weakness	
+gem		Emergency Reload	
+gem		Entangle	
+gem		Explosive Grenade	
+gem		Explosive Shot	
+gem		Explosive Spear	
+gem		Fangs of Frost	
+gem		Feral Invocation	
+gem		Fireball	
+gem		Flash Grenade	
+gem		Forge Hammer	
+gem		Fortifying Cry	
+gem		Fragmentation Rounds	
+gem		Freezing Mark	
+gem		Freezing Salvo	
+gem		Frost Darts	
+gem		Frozen Locus	
+gem		Galvanic Shards	
+gem		Gas Arrow	
+gem		Gas Grenade	
+gem		Gathering Storm	
+gem		Glacial Bolt	
+gem		Grim Feast	
+gem		Hailstorm Rounds	
+gem		Hammer of the Gods	
+gem		Hand of Chayula	
+gem		Herald of Blood	
+gem		Herald of Plague	
+gem		High Velocity Rounds	
+gem		Ice Shards	
+gem		Ice Shot	
+gem		Ice-Tipped Arrows	
+gem		Incendiary Shot	
+gem		Iron Ward	
+gem		Lightning Rod	
+gem		Living Bomb	
+gem		Lunar Assault	
+gem		Magma Barrier	
+gem		Magnetic Salvo	
+gem		Mana Remnants	
+gem		Mantra of Destruction	
+gem		Mirage Archer	
+gem		Molten Blast	
+gem		Mortar Cannon	
+gem		Oil Barrage	
+gem		Oil Grenade	
+gem		Overwhelming Presence	
+gem		Perfect Strike	
+gem		Permafrost Bolts	
+gem		Plasma Blast	
+gem		Poisonburst Arrow	
+gem		Primal Strikes	
+gem		Profane Ritual	
+gem		Raging Spirits	
+gem		Rake	
+gem		Rapid Shot	
+gem		Ravenous Swarm	
+gem		Reaper's Invocation	
+gem		Resonating Shield	
+gem		Sacrifice	
+gem		Scavenged Plating	
+gem		Shard Scavenger	
+gem		Shield Wall	
+gem		Shockburst Rounds	
+gem		Shockchain Arrow	
+gem		Siege Cascade	
+gem		Siphon Elements	
+gem		Siphoning Strike	
+gem		Snipe	
+gem		Solar Orb	
+gem		Soul Offering	
+gem		Spear of Solaris	
+gem		Stampede	
+gem		Stormblast Bolts	
+gem		Stormcaller Arrow	
+gem		Storm Lance	
+gem		Storm Wave	
+gem		Tame Beast	
+gem		Tempest Bell	
+gem		Thrashing Vines	
+gem		Thunderous Leap	
+gem		Time of Need	
+gem		Tornado Shot	
+gem		Toxic Domain	
+gem		Toxic Growth	
+gem		Trinity	
+gem		Twister	
+gem		Unearth	
+gem		Vaulting Impact	
+gem		Vine Arrow	
+gem		Voltaic Mark	
+gem		War Banner	
+gem		Whirlwind Lance	
+gem		Wind Dancer	
+gem		Wind Serpent's Fury	
+gem		Wing Blast	
+gem		Withering Presence	
+gem		Arctic Howl	
+gem		Cross Slash	
+gem		Lunar Blessing	
+gem		Devour	
+gem		Flame Breath	
+gem		Uncut Spirit Gem	
+gem		Uncut Spirit Gem (Level 10)	
+gem		Uncut Spirit Gem (Level 11)	
+gem		Uncut Spirit Gem (Level 12)	
+gem		Uncut Spirit Gem (Level 13)	
+gem		Uncut Spirit Gem (Level 14)	
+gem		Uncut Spirit Gem (Level 15)	
+gem		Uncut Spirit Gem (Level 16)	
+gem		Uncut Spirit Gem (Level 17)	
+gem		Uncut Spirit Gem (Level 18)	
+gem		Uncut Spirit Gem (Level 19)	
+gem		Uncut Spirit Gem (Level 20)	
+gem		Uncut Spirit Gem (Level 4)	
+gem		Uncut Spirit Gem (Level 5)	
+gem		Uncut Spirit Gem (Level 6)	
+gem		Uncut Spirit Gem (Level 7)	
+gem		Uncut Spirit Gem (Level 8)	
+gem		Uncut Spirit Gem (Level 9)	
+gem		Ancestral Warrior Totem	
+gem		Animus Exchange	
+gem		Animus Splinters	
+gem		Arc	
+gem		Arctic Armour	
+gem		Armour Breaker	
+gem		Siege Ballista	
+gem		Ball Lightning	
+gem		Barrage	
+gem		Barrier Invocation	
+gem		Rampage	
+gem		Bind Spectre	
+gem		Bitter Dead	
+gem		Blasphemy	
+gem		Blood Hunt	
+gem		Bone Offering	
+gem		Boneshatter	
+gem		Briarpatch	
+gem		Cast on Critical	
+gem		Cast on Dodge	
+gem		Cast on Elemental Ailment	
+gem		Cast on Freeze	
+gem		Cast on Ignite	
+gem		Cast on Minion Death	
+gem		Cast on Shock	
+gem		Charged Staff	
+gem		Comet	
+gem		Conductive Runes	
+gem		Conductivity	
+gem		Contagion	
+gem		Despair	
+gem		Detonate Dead	
+gem		Detonate Living	
+gem		Disengage	
+gem		Earthquake	
+gem		Earthshatter	
+gem		Ember Fusillade	
+gem		Enfeeble	
+gem		Escape Shot	
+gem		Essence Drain	
+gem		Eternal March	
+gem		Eternal Rage	
+gem		Explosive Transmutation	
+gem		Eye of Winter	
+gem		Falling Thunder	
+gem		Ferocious Roar	
+gem		Firestorm	
+gem		Flameblast	
+gem		Flame Wall	
+gem		Flammability	
+gem		Flicker Strike	
+gem		Fragments Of The Past	
+gem		Frostbolt	
+gem		Frost Bomb	
+gem		Frostflame Nova	
+gem		Frost Wall	
+gem		Furious Slam	
+gem		Ghost Dance	
+gem		Glacial Cascade	
+gem		Glacial Lance	
+gem		Grim Pillars	
+gem		Herald of Ash	
+gem		Herald of Ice	
+gem		Herald of Thunder	
+gem		Hexblast	
+gem		Hollow Shell	
+gem		Hypothermia	
+gem		Ice Nova	
+gem		Ice Strike	
+gem		Incinerate	
+gem		Infernal Cry	
+gem		Killing Palm	
+gem		Leap Slam	
+gem		Leylines	
+gem		Lightning Arrow	
+gem		Lightning Conduit	
+gem		Lightning Spear	
+gem		Lightning Warp	
+gem		Lingering Illusion	
+gem		Mana Tempest	
+gem		Orb of Storms	
+gem		Pain Offering	
+gem		Plague Bearer	
+gem		Powered by Verisium	
+gem		Rain of Arrows	
+gem		Rain of Blades	
+gem		Raise Zombie	
+gem		Rapid Assault	
+gem		Refutation	
+gem		Remnants of Kalguur	
+gem		Repulsion	
+gem		Rhoa Mount	
+gem		Artillery Ballista	
+gem		Rolling Magma	
+gem		Rolling Slam	
+gem		Runic Reprieve	
+gem		Savage Fury	
+gem		Seismic Cry	
+gem		Shattering Palm	
+gem		Shield Charge	
+gem		Shockwave Totem	
+gem		Skeletal Arsonist	
+gem		Skeletal Brute	
+gem		Skeletal Cleric	
+gem		Skeletal Frost Mage	
+gem		Skeletal Reaver	
+gem		Skeletal Sniper	
+gem		Skeletal Storm Mage	
+gem		Skyfall	
+gem		Sniper's Mark	
+gem		Spark	
+gem		Spearfield	
+gem		Spell Totem	
+gem		Spiral Volley	
+gem		Staggering Palm	
+gem		Sunder	
+gem		Supercharged Slam	
+gem		Tempest Flurry	
+gem		Temporal Chains	
+gem		Thunderstorm	
+gem		Tornado	
+gem		Trail of Caltrops	
+gem		Triskelion Cascade	
+gem		Uncut Skill Gem	
+gem		Uncut Skill Gem (Level 1)	
+gem		Uncut Skill Gem (Level 10)	
+gem		Uncut Skill Gem (Level 11)	
+gem		Uncut Skill Gem (Level 12)	
+gem		Uncut Skill Gem (Level 13)	
+gem		Uncut Skill Gem (Level 14)	
+gem		Uncut Skill Gem (Level 15)	
+gem		Uncut Skill Gem (Level 16)	
+gem		Uncut Skill Gem (Level 17)	
+gem		Uncut Skill Gem (Level 18)	
+gem		Uncut Skill Gem (Level 19)	
+gem		Uncut Skill Gem (Level 2)	
+gem		Uncut Skill Gem (Level 20)	
+gem		Uncut Skill Gem (Level 3)	
+gem		Uncut Skill Gem (Level 4)	
+gem		Uncut Skill Gem (Level 5)	
+gem		Uncut Skill Gem (Level 6)	
+gem		Uncut Skill Gem (Level 7)	
+gem		Uncut Skill Gem (Level 8)	
+gem		Uncut Skill Gem (Level 9)	
+gem		Verisium Manifestations	
+gem		Volcanic Fissure	
+gem		Volcano	
+gem		Voltaic Barrier	
+gem		Voltaic Grenade	
+gem		Vulnerability	
+gem		Walking Calamity	
+gem		Wardbound Minions	
+gem		Wave of Frost	
+gem		Whirling Assault	
+gem		Whirling Slash	
+gem		Wind Blast	
+gem		Wolf Pack	
+gem		Pounce	
+gem		Projectile Acceleration I	
+gem		Projectile Acceleration III	
+gem		Projectile Acceleration II	
+gem		Aftershock I	
+gem		Aftershock II	
+gem		Ahn's Citadel	
+gem		Ailith's Chimes	
+gem		Ambush	
+gem		Arcane Surge	
+gem		Rapid Casting I	
+gem		Rapid Casting III	
+gem		Rapid Casting II	
+gem		Atalui's Bloodletting	
+gem		Behead I	
+gem		Behead II	
+gem		Bhatair's Vengeance	
+gem		Biting Frost I	
+gem		Biting Frost II	
+gem		Blazing Critical	
+gem		Blind I	
+gem		Blind II	
+gem		Bloodlust	
+gem		Knockback	
+gem		Bounty I	
+gem		Bounty II	
+gem		Break Posture	
+gem		Brittle Armour	
+gem		Brutality I	
+gem		Brutality III	
+gem		Brutality II	
+gem		Brutus' Brain	
+gem		Heightened Accuracy I	
+gem		Heightened Accuracy II	
+gem		Burning Inscription	
+gem		Bursting Plague	
+gem		Cannibalism I	
+gem		Cannibalism II	
+gem		Catalysing Elements	
+gem		Chain I	
+gem		Chain III	
+gem		Chain II	
+gem		Chaos Attunement	
+gem		Chaos Mastery	
+gem		Charged Mark	
+gem		Clarity I	
+gem		Clarity II	
+gem		Close Combat I	
+gem		Close Combat II	
+gem		Cold Exposure	
+gem		Cold Attunement	
+gem		Cold Mastery	
+gem		Cold Penetration	
+gem		Combo Finisher I	
+gem		Combo Finisher II	
+gem		Escalating Poison	
+gem		Concentrated Area	
+gem		Concussive Runes	
+gem		Concussive Spells	
+gem		Shock	
+gem		Controlled Destruction	
+gem		Controlled Hazard	
+gem		Corrosion	
+gem		Corrupting Cry I	
+gem		Paquate's Pact	
+gem		Corrupting Cry II	
+gem		Shock Conduction	
+gem		Shock Conduction II	
+gem		Creeping Chill	
+gem		Crescendo I	
+gem		Crescendo III	
+gem		Crescendo II	
+gem		Coursing Current	
+gem		Deadly Herald	
+gem		Deadly Poison I	
+gem		Deadly Poison II	
+gem		Projectile Deceleration I	
+gem		Projectile Deceleration II	
+gem		Deep Cuts I	
+gem		Deep Cuts II	
+gem		Deep Freeze	
+gem		Armour Demolisher I	
+gem		Armour Demolisher II	
+gem		Lasting Ground	
+gem		Devastate	
+gem		Daze	
+gem		Drain Ailments	
+gem		Echoing Cry	
+gem		Einhar's Beastrite	
+gem		Electrocute	
+gem		Elemental Army	
+gem		Elemental Discharge	
+gem		Elemental Focus	
+gem		Empowered Sparks I	
+gem		Empowered Sparks II	
+gem		Slow Potency	
+gem		Energy Barrier	
+gem		Enraged Warcry I	
+gem		Enraged Warcry II	
+gem		Poison I	
+gem		Poison III	
+gem		Poison II	
+gem		Eonyr's Thunder	
+gem		Essence Harvest	
+gem		Eternal Flame I	
+gem		Eternal Flame III	
+gem		Eternal Flame II	
+gem		Eternal Mark	
+gem		Execute I	
+gem		Execute III	
+gem		Execute II	
+gem		Expand	
+gem		Exploit Weakness	
+gem		Accelerated Growth	
+gem		Accelerated Growth II	
+gem		Exposing Cry	
+gem		Fan The Flames	
+gem		Fan The Flames II	
+gem		Compressed Duration I	
+gem		Compressed Duration II	
+gem		Feeding Frenzy I	
+gem		Feeding Frenzy II	
+gem		Fiery Death	
+gem		Fire Exposure	
+gem		Fire Attunement	
+gem		Fire Mastery	
+gem		Fire Penetration I	
+gem		Fire Penetration II	
+gem		Fist Of Kalguur	
+gem		Fist of War I	
+gem		Fist of War III	
+gem		Fist of War II	
+gem		Font of Blood	
+gem		Font of Mana	
+gem		Font of Rage	
+gem		Fork	
+gem		Fortress I	
+gem		Fortress II	
+gem		Frostfire	
+gem		Frost Nexus	
+gem		Freeze	
+gem		Gorge	
+gem		Healing Runes	
+gem		Heavy Swing	
+gem		Heightened Curse	
+gem		Herbalism I	
+gem		Herbalism II	
+gem		Hex Bloom	
+gem		Hourglass	
+gem		Ice Bite I	
+gem		Ice Bite II	
+gem		Ignite I	
+gem		Ignite III	
+gem		Ignite II	
+gem		Immolate	
+gem		Impact Shockwave	
+gem		Impending Doom	
+gem		Inexorable Critical I	
+gem		Inexorable Critical II	
+gem		Infernal Legion I	
+gem		Infernal Legion III	
+gem		Infernal Legion II	
+gem		Cooldown Recovery I	
+gem		Cooldown Recovery II	
+gem		Efficiency I	
+gem		Efficiency II	
+gem		Jagged Ground I	
+gem		Jagged Ground II	
+gem		Bleed I	
+gem		Bleed IV	
+gem		Bleed III	
+gem		Bleed II	
+gem		Lasting Shock	
+gem		Life Bounty	
+gem		Life Drain	
+gem		Lifetap	
+gem		Life Leech I	
+gem		Life Leech III	
+gem		Life Leech II	
+gem		Lightning Exposure	
+gem		Lightning Attunement	
+gem		Lightning Mastery	
+gem		Lightning Penetration	
+gem		Lockdown	
+gem		Longshot I	
+gem		Longshot II	
+gem		Magnified Area I	
+gem		Magnified Area II	
+gem		Maim	
+gem		Mana Bounty	
+gem		Mana Flare	
+gem		Mark of Siphoning	
+gem		Mark of Siphoning II	
+gem		Rapid Attacks I	
+gem		Rapid Attacks III	
+gem		Rapid Attacks II	
+gem		Meat Shield I	
+gem		Meat Shield II	
+gem		Minion Mastery	
+gem		Minion Splash I	
+gem		Minion Splash II	
+gem		Mobility	
+gem		Momentum	
+gem		Murderous Intent	
+gem		Neural Overload	
+gem		Nova Projectiles I	
+gem		Nova Projectiles II	
+gem		Oisín's Oath	
+gem		Olroth's Hubris	
+gem		Opening Move	
+gem		Overabundance I	
+gem		Overabundance II	
+gem		Overcharge	
+gem		Stun I	
+gem		Stun III	
+gem		Stun II	
+gem		Perpetual Charge	
+gem		Prolonged Duration I	
+gem		Prolonged Duration II	
+gem		Physical Mastery	
+gem		Pierce I	
+gem		Pierce III	
+gem		Pierce II	
+gem		Pin I	
+gem		Pinpoint Critical	
+gem		Pin III	
+gem		Pin II	
+gem		Practical Magic I	
+gem		Practical Magic II	
+gem		Precision I	
+gem		Precision II	
+gem		Premeditation	
+gem		Elemental Armament I	
+gem		Elemental Armament III	
+gem		Elemental Armament II	
+gem		Charge Profusion I	
+gem		Charge Profusion II	
+gem		Rage I	
+gem		Rage III	
+gem		Rage II	
+gem		Rending Apex	
+gem		Rising Tempest	
+gem		Runeforged Blades	
+gem		Runic Extraction	
+gem		Runic Infusion	
+gem		Ruthless	
+gem		Multishot I	
+gem		Multishot II	
+gem		Scouring Flame	
+gem		Searing Flame I	
+gem		Searing Flame II	
+gem		Second Wind I	
+gem		Second Wind III	
+gem		Second Wind II	
+gem		Shock Siphon	
+gem		Tectonic Slams	
+gem		Soul Drain	
+gem		Mana Leech	
+gem		Spell Echo	
+gem		Armour Break I	
+gem		Armour Break III	
+gem		Armour Break II	
+gem		Stormfire	
+gem		Supercritical	
+gem		Thrill of the Kill	
+gem		Thrill of the Kill II	
+gem		Unbreakable	
+gem		Uncut Support Gem	
+gem		Uncut Support Gem (Level 1)	
+gem		Uncut Support Gem (Level 2)	
+gem		Uncut Support Gem (Level 3)	
+gem		Uncut Support Gem (Level 4)	
+gem		Uncut Support Gem (Level 5)	
+gem		Unleash	
+gem		Uruk's Smelting	
+gem		Vilenta's Propulsion	
+gem		Vitality I	
+gem		Vitality II	
+gem		Wildfire	
+gem		Window of Opportunity I	
+gem		Window of Opportunity II	
+gem		Wind Wave	
+gem		Withering Touch	
+gem		Zarokh's Revolt	
+gem		Olroth's Conviction	
+gem		Abiding Hex	
+gem		Sacrificial Offering	
+gem		Acrimony	
+gem		Adhesive Grenades I	
+gem		Adhesive Grenades II	
+gem		Admixture	
+gem		Advancing Storm	
+gem		Alignment I	
+gem		Alignment III	
+gem		Alignment II	
+gem		Amanamu's Tithe	
+gem		Ambrosia	
+gem		Ambrosia II	
+gem		Ammo Conservation I	
+gem		Arjun's Medal	
+gem		Ammo Conservation III	
+gem		Ammo Conservation II	
+gem		Ancestral Aid	
+gem		Ancestral Call I	
+gem		Ancestral Call II	
+gem		Urgent Totems I	
+gem		Urgent Totems III	
+gem		Urgent Totems II	
+gem		Arakaali's Lust	
+gem		Arbiter's Ignition	
+gem		Arbiter's Reach	
+gem		Armour Explosion	
+gem		Arms Length	
+gem		Astral Projection	
+gem		Atziri's Allure	
+gem		Atziri's Communion	
+gem		Atziri's Impatience	
+gem		Auto Reload	
+gem		Barbs I	
+gem		Barbs III	
+gem		Barbs II	
+gem		Battershout	
+gem		Bidding I	
+gem		Bidding III	
+gem		Bidding II	
+gem		Blindside	
+gem		Hobble	
+gem		Bone Shrapnel	
+gem		Brambleslam	
+gem		Branching Fissures I	
+gem		Branching Fissures II	
+gem		Breachlord's Amalgam	
+gem		Breachlord's Rift	
+gem		Break Endurance	
+gem		Brink I	
+gem		Brink II	
+gem		Burgeon I	
+gem		Burgeon II	
+gem		Cadence	
+gem		Caltrops	
+gem		Energy Capacitor	
+gem		Catharsis	
+gem		Catha's Brilliance	
+gem		Chaotic Freeze	
+gem		Charged Shots I	
+gem		Charged Shots II	
+gem		Charm Bounty	
+gem		Clash	
+gem		Ratha's Assault	
+gem		Commandment	
+gem		Commiserate	
+gem		Concoct I	
+gem		Concoct II	
+gem		Considered Casting	
+gem		Cool Headed	
+gem		Corpse Conservation	
+gem		Crackling Barrier	
+gem		Crater	
+gem		Crazed Minions	
+gem		Crystalline Shards	
+gem		Culling Strike I	
+gem		Culling Strike II	
+gem		Culmination I	
+gem		Culmination II	
+gem		Cursed Ground	
+gem		Danse Macabre	
+gem		Daresso's Passion	
+gem		Dauntless	
+gem		Dazing Cry	
+gem		Dazzle	
+gem		Deadly Resolve	
+gem		Deathmarch	
+gem		Decaying Hex	
+gem		Defy I	
+gem		Defy II	
+gem		Delayed Gratification	
+gem		Delayed Reaction	
+gem		Deliberation	
+gem		Derange	
+gem		Desperation	
+gem		Dialla's Desire	
+gem		Direstrike I	
+gem		Direstrike II	
+gem		Harmonic Remnants I	
+gem		Harmonic Remnants II	
+gem		Doedre's Undoing	
+gem		Persistent Ground I	
+gem		Persistent Ground III	
+gem		Persistent Ground II	
+gem		Double Barrel I	
+gem		Double Barrel III	
+gem		Double Barrel II	
+gem		Durability	
+gem		Embitter	
+gem		Enduring Impact I	
+gem		Enduring Impact II	
+gem		Energy Retention	
+gem		Hulking Minions	
+gem		Esh's Prowess	
+gem		Esh's Radiance	
+gem		Excise	
+gem		Excoriate	
+gem		Execrate	
+gem		Expanse	
+gem		Short Fuse I	
+gem		Short Fuse II	
+gem		Extraction	
+gem		Ferocity	
+gem		Selfless Remnants	
+gem		First Blood	
+gem		Flamepierce	
+gem		Flow	
+gem		Fluke	
+gem		Ixchel's Torment	
+gem		Focused Curse	
+gem		Freezefork	
+gem		Fresh Clip I	
+gem		Fresh Clip II	
+gem		Frozen Spite	
+gem		Gambleshot	
+gem		Garukhan's Resolve	
+gem		Glacier	
+gem		Cirel's Cultivation	
+gem		Greatwood II	
+gem		Guatelitzi's Ablation	
+gem		Haemocrystals	
+gem		Hardy Totems I	
+gem		Tawhoa's Tending	
+gem		Hardy Totems II	
+gem		Hayoxi's Fulmination	
+gem		Heft	
+gem		Helbrym's Hide	
+gem		Her Declaration	
+gem		Hinder	
+gem		Hit and Run	
+gem		Holy Descent	
+gem		Icicle	
+gem		Impale	
+gem		Boundless Energy I	
+gem		Boundless Energy II	
+gem		Incision	
+gem		Inhibitor	
+gem		Innervate	
+gem		Intense Agony	
+gem		Remnant Potency I	
+gem		Remnant Potency III	
+gem		Remnant Potency II	
+gem		Reinforced Totems I	
+gem		Reinforced Totems II	
+gem		Kalisa's Crescendo	
+gem		Kaom's Madness	
+gem		Khatal's Rejuvenation	
+gem		Kulemak's Dominion	
+gem		Kurgal's Leash	
+gem		Last Gasp	
+gem		Leverage	
+gem		Living Lightning	
+gem		Living Lightning II	
+gem		Long Fuse I	
+gem		Long Fuse II	
+gem		Loyalty	
+gem		Magnetic Remnants	
+gem		Malady	
+gem		Medved's Felling	
+gem		Minion Instability	
+gem		Minion Pact I	
+gem		Minion Pact II	
+gem		Morgana's Tempest	
+gem		Mórrigan's Insight	
+gem		Muster	
+gem		Mysticism I	
+gem		Mysticism II	
+gem		Nimble Reload	
+gem		Outmaneuver	
+gem		Overextend	
+gem		Payload	
+gem		Perfected Endurance	
+gem		Perfection	
+gem		Dominus' Grasp	
+gem		Poison Spores	
+gem		Potential	
+gem		Practiced Combo	
+gem		Profanity I	
+gem		Profanity II	
+gem		Prototype Seventeen	
+gem		Punch Through	
+gem		Pursuit I	
+gem		Pursuit III	
+gem		Pursuit II	
+gem		Quill Burst	
+gem		Rageforged I	
+gem		Rageforged II	
+gem		Raging Cry	
+gem		Rakiata's Flow	
+gem		Rally	
+gem		Overreach	
+gem		Rearm I	
+gem		Rearm II	
+gem		Refraction I	
+gem		Refraction III	
+gem		Refraction II	
+gem		Retaliate I	
+gem		Retaliate II	
+gem		Frenzied Riposte	
+gem		Retreat I	
+gem		Retreat III	
+gem		Retreat II	
+gem		Reverberate	
+gem		Ricochet I	
+gem		Ricochet III	
+gem		Ricochet II	
+gem		Rigwald's Ferocity	
+gem		Rime	
+gem		Rip	
+gem		Ritualistic Curse	
+gem		Romira's Requital	
+gem		Rupture	
+gem		Rusted Spikes	
+gem		Sacrificial Lamb I	
+gem		Sacrificial Lamb II	
+gem		Salvo	
+gem		See Red	
+gem		Seraph's Heart	
+gem		Shocking Leap	
+gem		Electromagnetism	
+gem		Mark for Death	
+gem		Mark for Death II	
+gem		Skittering Stone I	
+gem		Skittering Stone II	
+gem		Spar	
+gem		Spectral Volley	
+gem		Spell Cascade	
+gem		Splinter Totem I	
+gem		Splinter Totem II	
+gem		Static Shocks	
+gem		Steadfast I	
+gem		Steadfast II	
+gem		Stoicism I	
+gem		Stoicism II	
+gem		Stomping Ground	
+gem		Stormchain	
+gem		Streamlined Rounds	
+gem		Potent Exposure	
+gem		Strong Hearted	
+gem		Styrn's Ferocity	
+gem		Styrn's Mountain	
+gem		Encroaching Ground	
+gem		Swift Affliction I	
+gem		Swift Affliction III	
+gem		Swift Affliction II	
+gem		Syzygy	
+gem		Tacati's Ire	
+gem		Tangmazu's Thurible	
+gem		Tasalio's Rhythm	
+gem		Tear	
+gem		Tecrod's Revenge	
+gem		Thornskin I	
+gem		Thornskin II	
+gem		Tireless	
+gem		Tremors	
+gem		Trickster's Shard	
+gem		Tul's Avalanche	
+gem		Tul's Stillness	
+gem		Tumult	
+gem		Heightened Charges	
+gem		Uhtred's Augury	
+gem		Uhtred's Constellation	
+gem		Uhtred's Exodus	
+gem		Uhtred's Omen	
+gem		Uhtred's Rite	
+gem		Unabating	
+gem		Unbending	
+gem		Unerring Power	
+gem		Unsteady Tempo	
+gem		Untouchable	
+gem		Unyielding	
+gem		Upheaval I	
+gem		Upheaval II	
+gem		Upwelling I	
+gem		Upwelling II	
+gem		Uul-Netol's Embrace	
+gem		Vanguard I	
+gem		Vanguard II	
+gem		Varashta's Blessing	
+gem		Verglas	
+gem		Volatile Power	
+gem		Volatility	
+gem		Volcanic Eruption	
+gem		Volt	
+gem		Vorana's Siege	
+gem		Vruun's Aftermath	
+gem		Vruun's Inevitability	
+gem		Warm Blooded	
+gem		Wildshards I	
+gem		Sione's Temper	
+gem		Wildshards II	
+gem		Xibaqua's Rending	
+gem		Xoph's Pyre	
+gem		Zarokh's Refrain	
+gem		Zenith I	
+gem		Zenith II	
+gem		Zerphi's Infamy	
+jewel		Emerald	
+jewel		Diamond	
+jewel		Sapphire	
+jewel		Time-Lost Emerald	
+jewel		Time-Lost Diamond	
+jewel		Time-Lost Sapphire	
+jewel		Time-Lost Ruby	
+jewel		Ruby	
+jewel		Timeless Jewel	
+jewel	Against the Darkness	Time-Lost Diamond	FLAG:unique
+jewel	Controlled Metamorphosis	Diamond	FLAG:unique
+jewel	Flesh Crucible	Diamond	FLAG:unique
+jewel	From Nothing	Diamond	FLAG:unique
+jewel	Grand Spectrum	Ruby	FLAG:unique
+jewel	Grand Spectrum	Emerald	FLAG:unique
+jewel	Grand Spectrum	Sapphire	FLAG:unique
+jewel	Heart of the Well	Diamond	FLAG:unique
+jewel	Heroic Tragedy	Timeless Jewel	FLAG:unique
+jewel	Megalomaniac	Diamond	FLAG:unique
+jewel	Prism of Belief	Diamond	FLAG:unique
+jewel	Split Personality	Ruby	FLAG:unique
+jewel	The Adorned	Diamond	FLAG:unique
+jewel	Undying Hate	Timeless Jewel	FLAG:unique
+jewel	Voices	Sapphire	FLAG:unique
+map		Kulemak's Invitation	
+map		Idol of Estazunti	
+map		Breachlord Sac	
+map		Raven's Reflection	
+map		The Triskelion Reforged	
+map		Head of the King	
+map		Expedition Logbook	
+map		Simulacrum	
+map		Breachstone	
+map		An Audience with the King	
+map		Waystone (Tier 1)	
+map		Waystone (Tier 10)	
+map		Waystone (Tier 11)	
+map		Waystone (Tier 12)	
+map		Waystone (Tier 13)	
+map		Waystone (Tier 14)	
+map		Waystone (Tier 15)	
+map		Waystone (Tier 16)	
+map		Waystone (Tier 2)	
+map		Waystone (Tier 3)	
+map		Waystone (Tier 4)	
+map		Waystone (Tier 5)	
+map		Waystone (Tier 6)	
+map		Waystone (Tier 7)	
+map		Waystone (Tier 8)	
+map		Waystone (Tier 9)	
+map		Ancient Crisis Fragment	
+map		Faded Crisis Fragment	
+map		Weathered Crisis Fragment	
+map		Origin Core	
+map		Origin Cradle	
+map		Origin Spark	
+map		Primary Calamity Fragment	
+map		Secondary Calamity Fragment	
+map		Tertiary Calamity Fragment	
+map		Call of the Shadows	
+map		Test of Strength Barya	
+map		Test of Will Barya	
+map		Test of Cunning Barya	
+map		Test of Time Barya	
+map		Djinn Barya	
+map		Abyss Tablet	
+map		Breach Tablet	
+map		Delirium Tablet	
+map		Expedition Tablet	
+map		Irradiated Tablet	
+map		Temple Tablet	
+map		Overseer Tablet	
+map		Ritual Tablet	
+map		Inscribed Ultimatum	
+map		Cowardly Fate	
+map		Deadly Fate	
+map		Victorious Fate	
+map	Clear Skies	Delirium Tablet	FLAG:unique
+map	Cruel Hegemony	Overseer Tablet	FLAG:unique
+map	Forgotten By Time	Expedition Tablet	FLAG:unique
+map	Freedom of Faith	Ritual Tablet	FLAG:unique
+map	Mastered Domain	Irradiated Tablet	FLAG:unique
+map	Season of the Hunt	Overseer Tablet	FLAG:unique
+map	The Grand Project	Irradiated Tablet	FLAG:unique
+map	Unforeseen Consequences	Abyss Tablet	FLAG:unique
+map	Visions of Paradise	Irradiated Tablet	FLAG:unique
+map	Wraeclast Besieged	Breach Tablet	FLAG:unique
+weapon		Glass Shank	
+weapon		Kris Knife	
+weapon		Parrying Dagger	
+weapon		Arcane Dirk	
+weapon		Cinquedea	
+weapon		Crone Knife	
+weapon		Simple Dagger	
+weapon		Skinning Knife	
+weapon		Moon Dagger	
+weapon		Engraved Knife	
+weapon		Obsidian Dagger	
+weapon		Bloodletting Dagger	
+weapon		Mail Breaker	
+weapon		Splintered Flail	
+weapon		Icicle Flail	
+weapon		Tearing Flail	
+weapon		Great Flail	
+weapon		Abyssal Flail	
+weapon		Chain Flail	
+weapon		Holy Flail	
+weapon		Iron Flail	
+weapon		Twin Flail	
+weapon		Slender Flail	
+weapon		Stone Flail	
+weapon		Ring Flail	
+weapon		Guarded Flail	
+weapon		Dull Hatchet	
+weapon		Fury Cleaver	
+weapon		Battle Axe	
+weapon		Profane Cleaver	
+weapon		Dread Hatchet	
+weapon		Hook Axe	
+weapon		Bearded Axe	
+weapon		Extended Cleaver	
+weapon		Bandit Hatchet	
+weapon		Crescent Axe	
+weapon		Carving Hatchet	
+weapon		Sacrificial Axe	
+weapon		Boarding Hatchet	
+weapon		Wooden Club	
+weapon		Jade Club	
+weapon		Akoyan Club	
+weapon		Execratus Hammer	
+weapon		Torment Club	
+weapon		Runemastered Torment Club	
+weapon		Kalguuran Forgehammer	
+weapon		Runeforged Kalguuran Forgehammer	
+weapon		Smithing Hammer	
+weapon		Calescent Hammer	
+weapon		Molten Hammer	
+weapon		Slim Mace	
+weapon		Flared Mace	
+weapon		Flanged Mace	
+weapon		Spiked Club	
+weapon		Warpick	
+weapon		Battle Pick	
+weapon		Strife Pick	
+weapon		Plated Mace	
+weapon		Marching Mace	
+weapon		Runeforged Marching Mace	
+weapon		Crown Mace	
+weapon		Brigand Mace	
+weapon		Bandit Mace	
+weapon		Marauding Mace	
+weapon		Construct Hammer	
+weapon		Structured Hammer	
+weapon		Fortified Hammer	
+weapon		Morning Star	
+weapon		Runeforged Wooden Club	
+weapon		Runemastered Wooden Club	
+weapon		Runeforged Slim Mace	
+weapon		Runeforged Spiked Club	
+weapon		Runeforged Warpick	
+weapon		Runeforged Morning Star	
+weapon		Hardwood Spear	
+weapon		Seaglass Spear	
+weapon		Akoyan Spear	
+weapon		Sword Spear	
+weapon		Striking Spear	
+weapon		Helix Spear	
+weapon		Ironhead Spear	
+weapon		Steelhead Spear	
+weapon		Orichalcum Spear	
+weapon		Hunting Spear	
+weapon		Coursing Spear	
+weapon		Stalking Spear	
+weapon		Winged Spear	
+weapon		Soaring Spear	
+weapon		War Spear	
+weapon		Swift Spear	
+weapon		Flying Spear	
+weapon		Forked Spear	
+weapon		Branched Spear	
+weapon		Pronged Spear	
+weapon		Barbed Spear	
+weapon		Jagged Spear	
+weapon		Spiked Spear	
+weapon		Broad Spear	
+weapon		Massive Spear	
+weapon		Grand Spear	
+weapon		Crossblade Spear	
+weapon		Guardian Spear	
+weapon		Runeforged Hardwood Spear	
+weapon		Runeforged Ironhead Spear	
+weapon		Runemastered Ironhead Spear	
+weapon		Runeforged Hunting Spear	
+weapon		Runeforged Winged Spear	
+weapon		Runeforged War Spear	
+weapon		Runeforged Forked Spear	
+weapon		Runeforged Barbed Spear	
+weapon		Shortsword	
+weapon		Runic Shortsword	
+weapon		Messer	
+weapon		Commander Sword	
+weapon		Dark Blade	
+weapon		Broadsword	
+weapon		Vampiric Blade	
+weapon		Scimitar	
+weapon		Charred Shortsword	
+weapon		Sickle Sword	
+weapon		Falchion	
+weapon		Treasured Blade	
+weapon		Cutlass	
+weapon		Rattling Sceptre	
+weapon		Wrath Sceptre	
+weapon		Stoic Sceptre	
+weapon		Omen Sceptre	
+weapon		Shrine Sceptre	
+weapon		Withered Wand	
+weapon		Dueling Wand	
+weapon		Bone Wand	
+weapon		Attuned Wand	
+weapon		Siphoning Wand	
+weapon		Volatile Wand	
+weapon		Galvanic Wand	
+weapon		Acrid Wand	
+weapon		Twisted Wand	
+weapon		Runic Fork	
+weapon		Runemastered Runic Fork	
+weapon		Crude Bow	
+weapon		Tribal Bow	
+weapon		Heavy Bow	
+weapon		Shortbow	
+weapon		Snakewood Shortbow	
+weapon		Ironwood Shortbow	
+weapon		Warden Bow	
+weapon		Protector Bow	
+weapon		Guardian Bow	
+weapon		Recurve Bow	
+weapon		Composite Bow	
+weapon		Rider Bow	
+weapon		Cavalry Bow	
+weapon		Dualstring Bow	
+weapon		Twin Bow	
+weapon		Gemini Bow	
+weapon		Cultist Bow	
+weapon		Adherent Bow	
+weapon		Fanatic Bow	
+weapon		Zealot Bow	
+weapon		Militant Bow	
+weapon		Warmonger Bow	
+weapon		Artillery Bow	
+weapon		Obliterator Bow	
+weapon		Heartwood Shortbow	
+weapon		Runeforged Crude Bow	
+weapon		Runeforged Shortbow	
+weapon		Runeforged Warden Bow	
+weapon		Runeforged Recurve Bow	
+weapon		Runeforged Composite Bow	
+weapon		Runeforged Dualstring Bow	
+weapon		Runeforged Zealot Bow	
+weapon		Makeshift Crossbow	
+weapon		Piercing Crossbow	
+weapon		Elegant Crossbow	
+weapon		Trarthan Cannon	
+weapon		Tense Crossbow	
+weapon		Taut Crossbow	
+weapon		Flexed Crossbow	
+weapon		Sturdy Crossbow	
+weapon		Robust Crossbow	
+weapon		Stout Crossbow	
+weapon		Varnished Crossbow	
+weapon		Painted Crossbow	
+weapon		Engraved Crossbow	
+weapon		Dyad Crossbow	
+weapon		Twin Crossbow	
+weapon		Gemini Crossbow	
+weapon		Alloy Crossbow	
+weapon		Bombard Crossbow	
+weapon		Cannonade Crossbow	
+weapon		Siege Crossbow	
+weapon		Construct Crossbow	
+weapon		Bleak Crossbow	
+weapon		Desolate Crossbow	
+weapon		Blackfire Crossbow	
+weapon		Runeforged Makeshift Crossbow	
+weapon		Runeforged Tense Crossbow	
+weapon		Runemastered Tense Crossbow	
+weapon		Runeforged Dyad Crossbow	
+weapon		Runemastered Dyad Crossbow	
+weapon		Wrapped Quarterstaff	
+weapon		Smooth Quarterstaff	
+weapon		Dreaming Quarterstaff	
+weapon		Wyrm Quarterstaff	
+weapon		Long Quarterstaff	
+weapon		Reaching Quarterstaff	
+weapon		Striking Quarterstaff	
+weapon		Gothic Quarterstaff	
+weapon		Barbarous Quarterstaff	
+weapon		Sinister Quarterstaff	
+weapon		Crackling Quarterstaff	
+weapon		Arcing Quarterstaff	
+weapon		Bolting Quarterstaff	
+weapon		Crescent Quarterstaff	
+weapon		Waxing Quarterstaff	
+weapon		Lunar Quarterstaff	
+weapon		Steelpoint Quarterstaff	
+weapon		Slicing Quarterstaff	
+weapon		Bladed Quarterstaff	
+weapon		Razor Quarterstaff	
+weapon		Barrier Quarterstaff	
+weapon		Guardian Quarterstaff	
+weapon		Aegis Quarterstaff	
+weapon		Hefty Quarterstaff	
+weapon		Skullcrusher Quarterstaff	
+weapon		Warding Quarterstaff	
+weapon		Runemastered Warding Quarterstaff	
+weapon		Runeforged Wrapped Quarterstaff	
+weapon		Runeforged Long Quarterstaff	
+weapon		Runemastered Long Quarterstaff	
+weapon		Runeforged Gothic Quarterstaff	
+weapon		Runemastered Gothic Quarterstaff	
+weapon		Runeforged Crescent Quarterstaff	
+weapon		Runeforged Steelpoint Quarterstaff	
+weapon		Ashen Staff	
+weapon		Roaring Staff	
+weapon		Paralysing Staff	
+weapon		Sanctified Staff	
+weapon		Ravenous Staff	
+weapon		Gelid Staff	
+weapon		Voltaic Staff	
+weapon		Pyrophyte Staff	
+weapon		Chiming Staff	
+weapon		Reaping Staff	
+weapon		Permafrost Staff	
+weapon		Reflecting Staff	
+weapon		Perching Staff	
+weapon		Changeling Talisman	
+weapon		Lumbering Talisman	
+weapon		Jade Talisman	
+weapon		Nettle Talisman	
+weapon		Spiny Talisman	
+weapon		Cinderbark Talisman	
+weapon		Ashbark Talisman	
+weapon		Familial Talisman	
+weapon		Fang Talisman	
+weapon		Frenzied Talisman	
+weapon		Fungal Talisman	
+weapon		Primal Talisman	
+weapon		Howling Talisman	
+weapon		Alpha Talisman	
+weapon		Rabid Talisman	
+weapon		Fury Talisman	
+weapon		Maji Talisman	
+weapon		Vicious Talisman	
+weapon		Cruel Talisman	
+weapon		Wildwood Talisman	
+weapon		Voltfang Talisman	
+weapon		Thunder Talisman	
+weapon		Runeforged Changeling Talisman	
+weapon		Runeforged Nettle Talisman	
+weapon		Runemastered Nettle Talisman	
+weapon		Runeforged Familial Talisman	
+weapon		Runemastered Familial Talisman	
+weapon		Runeforged Vicious Talisman	
+weapon		Splitting Greataxe	
+weapon		Ember Greataxe	
+weapon		Ceremonial Halberd	
+weapon		Monument Greataxe	
+weapon		Vile Greataxe	
+weapon		Light Halberd	
+weapon		Executioner Greataxe	
+weapon		Arched Greataxe	
+weapon		Elegant Glaive	
+weapon		Savage Greataxe	
+weapon		Rending Halberd	
+weapon		Jagged Greataxe	
+weapon		Reaver Glaive	
+weapon		Felled Greatclub	
+weapon		Totemic Greatclub	
+weapon		Tawhoan Greatclub	
+weapon		Giant Maul	
+weapon		Oak Greathammer	
+weapon		Snakewood Greathammer	
+weapon		Ironwood Greathammer	
+weapon		Forge Maul	
+weapon		Blacksmith Maul	
+weapon		Anvil Maul	
+weapon		Studded Greatclub	
+weapon		Cultist Greathammer	
+weapon		Zealot Greathammer	
+weapon		Fanatic Greathammer	
+weapon		Temple Maul	
+weapon		Solemn Maul	
+weapon		Sacred Maul	
+weapon		Leaden Greathammer	
+weapon		Heavy Greathammer	
+weapon		Massive Greathammer	
+weapon		Crumbling Maul	
+weapon		Disintegrating Maul	
+weapon		Ruination Maul	
+weapon		Pointed Maul	
+weapon		Aberrant Sledge	
+weapon		Runemastered Aberrant Sledge	
+weapon		Runeforged Felled Greatclub	
+weapon		Runemastered Felled Greatclub	
+weapon		Runeforged Oak Greathammer	
+weapon		Runemastered Oak Greathammer	
+weapon		Runeforged Forge Maul	
+weapon		Runeforged Studded Greatclub	
+weapon		Runemastered Studded Greatclub	
+weapon		Runeforged Cultist Greathammer	
+weapon		Runeforged Temple Maul	
+weapon		Runeforged Leaden Greathammer	
+weapon		Runeforged Crumbling Maul	
+weapon		Runeforged Pointed Maul	
+weapon		Corroded Longsword	
+weapon		Ancient Greatblade	
+weapon		Flanged Greatblade	
+weapon		Regalia Longsword	
+weapon		Ultra Greatsword	
+weapon		Iron Greatsword	
+weapon		Blessed Claymore	
+weapon		Broad Greatsword	
+weapon		Rippled Greatsword	
+weapon		Arced Longsword	
+weapon		Stone Greatsword	
+weapon		Obsidian Greatsword	
+weapon		Keen Greatsword	
+weapon	Adonia's Ego	Siphoning Wand	FLAG:unique
+weapon	Amor Mandragora	Changeling Talisman	FLAG:unique
+weapon	Amor Mandragora	Runeforged Changeling Talisman	FLAG:unique
+weapon	Atziri's Contempt	Pronged Spear	FLAG:unique
+weapon	Atziri's Rule	Reflecting Staff	FLAG:unique
+weapon	Bluetongue	Shortsword	FLAG:unique
+weapon	Brain Rattler	Studded Greatclub	FLAG:unique
+weapon	Brain Rattler	Runemastered Studded Greatclub	FLAG:unique
+weapon	Brain Rattler	Runeforged Studded Greatclub	FLAG:unique
+weapon	Brutus' Lead Sprinkler	Morning Star	FLAG:unique
+weapon	Brutus' Lead Sprinkler	Runeforged Morning Star	FLAG:unique
+weapon	Brynhand's Mark	Wooden Club	FLAG:unique
+weapon	Brynhand's Mark	Runemastered Wooden Club	FLAG:unique
+weapon	Brynhand's Mark	Runeforged Wooden Club	FLAG:unique
+weapon	Chainsting	Hunting Spear	FLAG:unique
+weapon	Chainsting	Runeforged Hunting Spear	FLAG:unique
+weapon	Chober Chaber	Leaden Greathammer	FLAG:unique
+weapon	Chober Chaber	Runeforged Leaden Greathammer	FLAG:unique
+weapon	Collapsing Horizon	Wyrm Quarterstaff	FLAG:unique
+weapon	Cursecarver	Acrid Wand	FLAG:unique
+weapon	Daevata's Wind	War Spear	FLAG:unique
+weapon	Daevata's Wind	Runeforged War Spear	FLAG:unique
+weapon	Death's Harp	Dualstring Bow	FLAG:unique
+weapon	Death's Harp	Runeforged Dualstring Bow	FLAG:unique
+weapon	Doomfletch	Composite Bow	FLAG:unique
+weapon	Doomfletch	Runeforged Composite Bow	FLAG:unique
+weapon	Double Vision	Dyad Crossbow	FLAG:unique
+weapon	Double Vision	Runemastered Dyad Crossbow	FLAG:unique
+weapon	Double Vision	Runeforged Dyad Crossbow	FLAG:unique
+weapon	Duality	Warding Quarterstaff	FLAG:unique
+weapon	Duality	Runemastered Warding Quarterstaff	FLAG:unique
+weapon	Dusk Vigil	Ashen Staff	FLAG:unique
+weapon	Earthbound	Voltaic Staff	FLAG:unique
+weapon	Enezun's Charge	Volatile Wand	FLAG:unique
+weapon	Fairgraves' Curse	Artillery Bow	FLAG:unique
+weapon	Font of Power	Omen Sceptre	FLAG:unique
+weapon	Frostbreath	Slim Mace	FLAG:unique
+weapon	Frostbreath	Runeforged Slim Mace	FLAG:unique
+weapon	Fury of the King	Ashbark Talisman	FLAG:unique
+weapon	Guiding Palm	Shrine Sceptre	FLAG:unique
+weapon	Guiding Palm of the Eye	Shrine Sceptre	FLAG:unique
+weapon	Guiding Palm of the Heart	Shrine Sceptre	FLAG:unique
+weapon	Guiding Palm of the Mind	Shrine Sceptre	FLAG:unique
+weapon	Hoghunt	Felled Greatclub	FLAG:unique
+weapon	Hoghunt	Runemastered Felled Greatclub	FLAG:unique
+weapon	Hoghunt	Runeforged Felled Greatclub	FLAG:unique
+weapon	Hrimnor's Hymn	Oak Greathammer	FLAG:unique
+weapon	Hrimnor's Hymn	Runemastered Oak Greathammer	FLAG:unique
+weapon	Hrimnor's Hymn	Runeforged Oak Greathammer	FLAG:unique
+weapon	Hysseg's Claw	Familial Talisman	FLAG:unique
+weapon	Hysseg's Claw	Runeforged Familial Talisman	FLAG:unique
+weapon	Hysseg's Claw	Runemastered Familial Talisman	FLAG:unique
+weapon	INCOMPLETE	Dull Hatchet	FLAG:unique
+weapon	INCOMPLETE	Charred Shortsword	FLAG:unique
+weapon	INCOMPLETE	Crone Knife	FLAG:unique
+weapon	INCOMPLETE	Hook Axe	FLAG:unique
+weapon	INCOMPLETE	Corroded Longsword	FLAG:unique
+weapon	INCOMPLETE	Splintered Flail	FLAG:unique
+weapon	INCOMPLETE	Iron Greatsword	FLAG:unique
+weapon	INCOMPLETE	Splitting Greataxe	FLAG:unique
+weapon	INCOMPLETE	Bearded Axe	FLAG:unique
+weapon	INCOMPLETE	Executioner Greataxe	FLAG:unique
+weapon	INCOMPLETE	Broad Greatsword	FLAG:unique
+weapon	INCOMPLETE	Arched Greataxe	FLAG:unique
+weapon	INCOMPLETE	Broadsword	FLAG:unique
+weapon	INCOMPLETE	Chain Flail	FLAG:unique
+weapon	INCOMPLETE	Rippled Greatsword	FLAG:unique
+weapon	INCOMPLETE	Simple Dagger	FLAG:unique
+weapon	INCOMPLETE	Skinning Knife	FLAG:unique
+weapon	INCOMPLETE	Moon Dagger	FLAG:unique
+weapon	INCOMPLETE	Holy Flail	FLAG:unique
+weapon	INCOMPLETE	Hunting Spear	FLAG:unique
+weapon	INCOMPLETE	War Spear	FLAG:unique
+weapon	INCOMPLETE	Blessed Claymore	FLAG:unique
+weapon	INCOMPLETE	Twin Flail	FLAG:unique
+weapon	INCOMPLETE	Bandit Hatchet	FLAG:unique
+weapon	INCOMPLETE	Vampiric Blade	FLAG:unique
+weapon	INCOMPLETE	Elegant Glaive	FLAG:unique
+weapon	INCOMPLETE	Extended Cleaver	FLAG:unique
+weapon	INCOMPLETE	Ironhead Spear	FLAG:unique
+weapon	Ironbound	Warden Bow	FLAG:unique
+weapon	Ironbound	Runeforged Warden Bow	FLAG:unique
+weapon	Lifesprig	Attuned Wand	FLAG:unique
+weapon	Liminal Coil	Twisted Wand	FLAG:unique
+weapon	Lioneye's Glare	Heavy Bow	FLAG:unique
+weapon	Marohi Erqi	Totemic Greatclub	FLAG:unique
+weapon	Matsya	Crescent Quarterstaff	FLAG:unique
+weapon	Matsya	Runeforged Crescent Quarterstaff	FLAG:unique
+weapon	Mist Whisper	Makeshift Crossbow	FLAG:unique
+weapon	Mist Whisper	Runeforged Makeshift Crossbow	FLAG:unique
+weapon	Mjölner	Torment Club	FLAG:unique
+weapon	Mjölner	Runemastered Torment Club	FLAG:unique
+weapon	Nazir's Judgement	Steelpoint Quarterstaff	FLAG:unique
+weapon	Nazir's Judgement	Runeforged Steelpoint Quarterstaff	FLAG:unique
+weapon	Nebuloch	Execratus Hammer	FLAG:unique
+weapon	Olrovasara	Torment Club	FLAG:unique
+weapon	Olrovasara	Runemastered Torment Club	FLAG:unique
+weapon	Palm of the Dreamer	Shrine Sceptre	FLAG:unique
+weapon	Periphery	Heartwood Shortbow	FLAG:unique
+weapon	Pillar of the Caged God	Long Quarterstaff	FLAG:unique
+weapon	Pillar of the Caged God	Runeforged Long Quarterstaff	FLAG:unique
+weapon	Pillar of the Caged God	Runemastered Long Quarterstaff	FLAG:unique
+weapon	Quecholli	Crumbling Maul	FLAG:unique
+weapon	Quecholli	Runeforged Crumbling Maul	FLAG:unique
+weapon	Quill Rain	Shortbow	FLAG:unique
+weapon	Quill Rain	Runeforged Shortbow	FLAG:unique
+weapon	Rampart Raptor	Tense Crossbow	FLAG:unique
+weapon	Rampart Raptor	Runemastered Tense Crossbow	FLAG:unique
+weapon	Rampart Raptor	Runeforged Tense Crossbow	FLAG:unique
+weapon	Redbeak	Shortsword	FLAG:unique
+weapon	Redemption	Trarthan Cannon	FLAG:unique
+weapon	Runeseeker's Call	Runemastered Runic Fork	FLAG:unique
+weapon	Runeseeker's Call	Runic Fork	FLAG:unique
+weapon	Sacred Flame	Shrine Sceptre	FLAG:unique
+weapon	Sadist's Mercy	Flanged Mace	FLAG:unique
+weapon	Saitha's Spear	Barbed Spear	FLAG:unique
+weapon	Saitha's Spear	Runeforged Barbed Spear	FLAG:unique
+weapon	Sanguine Diviner	Bone Wand	FLAG:unique
+weapon	Sculpted Suffering	Warpick	FLAG:unique
+weapon	Sculpted Suffering	Runeforged Warpick	FLAG:unique
+weapon	Seeing Stars	Marching Mace	FLAG:unique
+weapon	Seeing Stars	Runeforged Marching Mace	FLAG:unique
+weapon	Seeing Stars	Plated Mace	FLAG:unique
+weapon	Serle's Grit	Kalguuran Forgehammer	FLAG:unique
+weapon	Serle's Grit	Runeforged Kalguuran Forgehammer	FLAG:unique
+weapon	Shyaba	Temple Maul	FLAG:unique
+weapon	Shyaba	Runeforged Temple Maul	FLAG:unique
+weapon	Sire of Shards	Chiming Staff	FLAG:unique
+weapon	Skysliver	Winged Spear	FLAG:unique
+weapon	Skysliver	Runeforged Winged Spear	FLAG:unique
+weapon	Slivertongue	Zealot Bow	FLAG:unique
+weapon	Slivertongue	Runeforged Zealot Bow	FLAG:unique
+weapon	Spire of Ire	Helix Spear	FLAG:unique
+weapon	Spiteful Floret	Nettle Talisman	FLAG:unique
+weapon	Spiteful Floret	Runeforged Nettle Talisman	FLAG:unique
+weapon	Spiteful Floret	Runemastered Nettle Talisman	FLAG:unique
+weapon	Splinterheart	Recurve Bow	FLAG:unique
+weapon	Splinterheart	Runeforged Recurve Bow	FLAG:unique
+weapon	Splinter of Lorrata	Hardwood Spear	FLAG:unique
+weapon	Splinter of Lorrata	Runeforged Hardwood Spear	FLAG:unique
+weapon	Surge of the Tide	Lumbering Talisman	FLAG:unique
+weapon	Sylvan's Effigy	Stoic Sceptre	FLAG:unique
+weapon	Tangletongue	Forked Spear	FLAG:unique
+weapon	Tangletongue	Runeforged Forked Spear	FLAG:unique
+weapon	Taryn's Shiver	Gelid Staff	FLAG:unique
+weapon	The Blood Thorn	Wrapped Quarterstaff	FLAG:unique
+weapon	The Blood Thorn	Runeforged Wrapped Quarterstaff	FLAG:unique
+weapon	The Burden of Shadows	Chiming Staff	FLAG:unique
+weapon	The Dancing Dervish	Scimitar	FLAG:unique
+weapon	The Dark Defiler	Rattling Sceptre	FLAG:unique
+weapon	The Empty Roar	Cultist Greathammer	FLAG:unique
+weapon	The Empty Roar	Runeforged Cultist Greathammer	FLAG:unique
+weapon	The Flesh Poppet	Vicious Talisman	FLAG:unique
+weapon	The Flesh Poppet	Runeforged Vicious Talisman	FLAG:unique
+weapon	The Hammer of Faith	Giant Maul	FLAG:unique
+weapon	The Last Lament	Desolate Crossbow	FLAG:unique
+weapon	The Ordained	Grand Spear	FLAG:unique
+weapon	The Raven's Flock	Perching Staff	FLAG:unique
+weapon	The Searing Touch	Pyrophyte Staff	FLAG:unique
+weapon	The Sentry	Gothic Quarterstaff	FLAG:unique
+weapon	The Sentry	Runeforged Gothic Quarterstaff	FLAG:unique
+weapon	The Sentry	Runemastered Gothic Quarterstaff	FLAG:unique
+weapon	The Unborn Lich	Ravenous Staff	FLAG:unique
+weapon	The Whispering Ice	Permafrost Staff	FLAG:unique
+weapon	The Wicked Quill	Withered Wand	FLAG:unique
+weapon	Tidebreaker	Pointed Maul	FLAG:unique
+weapon	Tidebreaker	Runeforged Pointed Maul	FLAG:unique
+weapon	Trenchtimbre	Spiked Club	FLAG:unique
+weapon	Trenchtimbre	Runeforged Spiked Club	FLAG:unique
+weapon	Trephina	Forge Maul	FLAG:unique
+weapon	Trephina	Runeforged Forge Maul	FLAG:unique
+weapon	Twisted Empyrean	Aberrant Sledge	FLAG:unique
+weapon	Twisted Empyrean	Runemastered Aberrant Sledge	FLAG:unique
+weapon	Tyranny's Grip	Ironhead Spear	FLAG:unique
+weapon	Tyranny's Grip	Runemastered Ironhead Spear	FLAG:unique
+weapon	Tyranny's Grip	Runeforged Ironhead Spear	FLAG:unique
+weapon	Voltaxic Rift	Fanatic Bow	FLAG:unique
+weapon	Widowhail	Crude Bow	FLAG:unique
+weapon	Widowhail	Runeforged Crude Bow	FLAG:unique
+weapon	Winter's Bite	Glass Shank	FLAG:unique
+weapon	Wylund's Stake	Smithing Hammer	FLAG:unique
+sanctum		Urn Relic	
+sanctum		Amphora Relic	
+sanctum		Vase Relic	
+sanctum		Seal Relic	
+sanctum		Coffer Relic	
+sanctum		Tapestry Relic	
+sanctum		Incense Relic	
+sanctum	The Burden of Leadership	Tapestry Relic	FLAG:unique
+sanctum	The Changing Seasons	Seal Relic	FLAG:unique
+sanctum	The Desperate Alliance	Vase Relic	FLAG:unique
+sanctum	The Last Flame	Incense Relic	FLAG:unique
+sanctum	The Peacemaker's Draught	Amphora Relic	FLAG:unique
+sanctum	The Remembered Tales	Coffer Relic	FLAG:unique
+wombgift		Ornate Wombgift	
+wombgift		Banded Wombgift	
+wombgift		Revelatory Wombgift	
+wombgift		Lavish Wombgift	
+wombgift		Signet Wombgift	

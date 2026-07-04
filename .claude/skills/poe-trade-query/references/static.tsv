@@ -1,0 +1,780 @@
+Currency	wisdom	Scroll of Wisdom
+Currency	transmute	Orb of Transmutation
+Currency	greater-orb-of-transmutation	Greater Orb of Transmutation
+Currency	perfect-orb-of-transmutation	Perfect Orb of Transmutation
+Currency	aug	Orb of Augmentation
+Currency	greater-orb-of-augmentation	Greater Orb of Augmentation
+Currency	perfect-orb-of-augmentation	Perfect Orb of Augmentation
+Currency	chance	Orb of Chance
+Currency	alch	Orb of Alchemy
+Currency	chaos	Chaos Orb
+Currency	greater-chaos-orb	Greater Chaos Orb
+Currency	perfect-chaos-orb	Perfect Chaos Orb
+Currency	vaal	Vaal Orb
+Currency	regal	Regal Orb
+Currency	greater-regal-orb	Greater Regal Orb
+Currency	perfect-regal-orb	Perfect Regal Orb
+Currency	exalted	Exalted Orb
+Currency	greater-exalted-orb	Greater Exalted Orb
+Currency	perfect-exalted-orb	Perfect Exalted Orb
+Currency	divine	Divine Orb
+Currency	annul	Orb of Annulment
+Currency	artificers	Artificer's Orb
+Currency	fracturing-orb	Fracturing Orb
+Currency	mirror	Mirror of Kalandra
+Currency	hinekoras-lock	Hinekora's Lock
+Currency	cryptic-key	Cryptic Key
+Currency	sep	
+Currency	lesser-jewellers-orb	Lesser Jeweller's Orb
+Currency	greater-jewellers-orb	Greater Jeweller's Orb
+Currency	perfect-jewellers-orb	Perfect Jeweller's Orb
+Currency	scrap	Armourer's Scrap
+Currency	whetstone	Blacksmith's Whetstone
+Currency	etcher	Arcanist's Etcher
+Currency	bauble	Glassblower's Bauble
+Currency	gcp	Gemcutter's Prism
+Currency	sep	
+Currency	transmutation-shard	Transmutation Shard
+Currency	chance-shard	Chance Shard
+Currency	regal-shard	Regal Shard
+Currency	artificers-shard	Artificer's Shard
+Fragments	idol-of-estazunti	Idol of Estazunti
+Fragments	runic-splinter	Runic Splinter
+Fragments	kulemaks-invitation	Kulemak's Invitation
+Fragments	breachlord-sac	Breachlord Sac
+Fragments	sep	Ultimatum Fragments
+Fragments	cowardly-fate	Cowardly Fate
+Fragments	deadly-fate	Deadly Fate
+Fragments	victorious-fate	Victorious Fate
+Fragments	sep	Pinnacle Fragments
+Fragments	ancient-crisis-fragment	Ancient Crisis Fragment
+Fragments	faded-crisis-fragment	Faded Crisis Fragment
+Fragments	weathered-crisis-fragment	Weathered Crisis Fragment
+Fragments	primary-calamity-fragment	Primary Calamity Fragment
+Fragments	secondary-calamity-fragment	Secondary Calamity Fragment
+Fragments	tertiary-calamity-fragment	Tertiary Calamity Fragment
+Fragments	origin-spark	Origin Spark
+Fragments	origin-cradle	Origin Cradle
+Fragments	origin-core	Origin Core
+Fragments	sep	Reliquary Keys
+Fragments	twilight-reliquary-key	Twilight Reliquary Key
+Fragments	xeshts-reliquary-key	Xesht's Reliquary Key
+Fragments	the-trialmasters-reliquary-key	The Trialmaster's Reliquary Key
+Fragments	ritualistic-reliquary-key	Ritualistic Reliquary Key
+Fragments	tangmazus-reliquary-key	Tangmazu's Reliquary Key
+Fragments	olroths-reliquary-key	Olroth's Reliquary Key
+Fragments	the-arbiters-reliquary-key	The Arbiter's Reliquary Key
+Fragments	against-the-darkness	Zarokh's Reliquary Key: Against the Darkness
+Fragments	sandstorm-visage	Zarokh's Reliquary Key: Sandstorm Visage
+Fragments	blessed-bonds	Zarokh's Reliquary Key: Blessed Bonds
+Fragments	sekhemas-resolve	Zarokh's Reliquary Key: Sekhema's Resolve
+Fragments	temporalis	Zarokh's Reliquary Key: Temporalis
+Fragments	azmeri-reliquary-key	Azmeri Reliquary Key
+Verisium	verisium	Verisium
+Verisium	exceptional-verisium	Exceptional Verisium
+Verisium	mutated-verisium	Mutated Verisium
+Verisium	corrupted-verisium	Corrupted Verisium
+Verisium	founders-verisium	Founders Verisium
+Verisium	medveds-crest-of-the-circle	Medved's Crest of the Circle
+Verisium	voranas-crest-of-the-scythe	Vorana's Crest of the Scythe
+Verisium	uhtreds-crest-of-the-chalice	Uhtred's Crest of the Chalice
+Verisium	olroths-crest-of-the-sun	Olroth's Crest of the Sun
+Verisium	runic-alloy	Runic Alloy
+Verisium	adaptive-alloy	Adaptive Alloy
+Verisium	protective-alloy	Protective Alloy
+Verisium	expansive-alloy	Expansive Alloy
+Verisium	swift-alloy	Swift Alloy
+Verisium	cyclonic-alloy	Cyclonic Alloy
+Verisium	prismatic-alloy	Prismatic Alloy
+Verisium	mystic-alloy	Mystic Alloy
+Verisium	sovereign-alloy	Sovereign Alloy
+Verisium	celestial-alloy	Celestial Alloy
+Verisium	transcendent-alloy	Transcendent Alloy
+Verisium	the-runebinders-alloy	The Runebinder's Alloy
+Verisium	the-runefathers-alloy	The Runefather's Alloy
+Verisium	venerable-starlit-ore	Venerable Starlit Ore
+Verisium	revered-starlit-ore	Revered Starlit Ore
+Verisium	veridical-starlit-ore	Veridical Starlit Ore
+Verisium	warding-starlit-ore	Warding Starlit Ore
+Verisium	starlit-ore	Starlit Ore
+Verisium	liquid-verisium	Liquid Verisium
+Runes	lesser-desert-rune	Lesser Desert Rune
+Runes	lesser-glacial-rune	Lesser Glacial Rune
+Runes	lesser-storm-rune	Lesser Storm Rune
+Runes	lesser-iron-rune	Lesser Iron Rune
+Runes	lesser-body-rune	Lesser Body Rune
+Runes	lesser-mind-rune	Lesser Mind Rune
+Runes	lesser-rebirth-rune	Lesser Rebirth Rune
+Runes	lesser-inspiration-rune	Lesser Inspiration Rune
+Runes	lesser-stone-rune	Lesser Stone Rune
+Runes	lesser-vision-rune	Lesser Vision Rune
+Runes	lesser-robust-rune	Lesser Robust Rune
+Runes	lesser-adept-rune	Lesser Adept Rune
+Runes	lesser-resolve-rune	Lesser Resolve Rune
+Runes	lesser-ward-rune	Lesser Ward Rune
+Runes	lesser-charging-rune	Lesser Charging Rune
+Runes	sep	
+Runes	desert-rune	Desert Rune
+Runes	glacial-rune	Glacial Rune
+Runes	storm-rune	Storm Rune
+Runes	iron-rune	Iron Rune
+Runes	body-rune	Body Rune
+Runes	mind-rune	Mind Rune
+Runes	rebirth-rune	Rebirth Rune
+Runes	inspiration-rune	Inspiration Rune
+Runes	stone-rune	Stone Rune
+Runes	vision-rune	Vision Rune
+Runes	robust-rune	Robust Rune
+Runes	adept-rune	Adept Rune
+Runes	resolve-rune	Resolve Rune
+Runes	ward-rune	Ward Rune
+Runes	charging-rune	Charging Rune
+Runes	sep	
+Runes	greater-desert-rune	Greater Desert Rune
+Runes	greater-glacial-rune	Greater Glacial Rune
+Runes	greater-storm-rune	Greater Storm Rune
+Runes	greater-iron-rune	Greater Iron Rune
+Runes	greater-body-rune	Greater Body Rune
+Runes	greater-mind-rune	Greater Mind Rune
+Runes	greater-rebirth-rune	Greater Rebirth Rune
+Runes	greater-inspiration-rune	Greater Inspiration Rune
+Runes	greater-stone-rune	Greater Stone Rune
+Runes	greater-vision-rune	Greater Vision Rune
+Runes	greater-robust-rune	Greater Robust Rune
+Runes	greater-adept-rune	Greater Adept Rune
+Runes	greater-resolve-rune	Greater Resolve Rune
+Runes	greater-ward-rune	Greater Ward Rune
+Runes	greater-charging-rune	Greater Charging Rune
+Runes	sep	
+Runes	perfect-desert-rune	Perfect Desert Rune
+Runes	perfect-glacial-rune	Perfect Glacial Rune
+Runes	perfect-storm-rune	Perfect Storm Rune
+Runes	perfect-iron-rune	Perfect Iron Rune
+Runes	perfect-body-rune	Perfect Body Rune
+Runes	perfect-mind-rune	Perfect Mind Rune
+Runes	perfect-rebirth-rune	Perfect Rebirth Rune
+Runes	perfect-inspiration-rune	Perfect Inspiration Rune
+Runes	perfect-stone-rune	Perfect Stone Rune
+Runes	perfect-vision-rune	Perfect Vision Rune
+Runes	perfect-robust-rune	Perfect Robust Rune
+Runes	perfect-adept-rune	Perfect Adept Rune
+Runes	perfect-resolve-rune	Perfect Resolve Rune
+Runes	perfect-ward-rune	Perfect Ward Rune
+Runes	perfect-charging-rune	Perfect Charging Rune
+Runes	sep	
+Runes	greater-rune-of-leadership	Greater Rune of Leadership
+Runes	greater-rune-of-tithing	Greater Rune of Tithing
+Runes	greater-rune-of-alacrity	Greater Rune of Alacrity
+Runes	greater-rune-of-nobility	Greater Rune of Nobility
+Runes	hedgewitch-assandras-rune-of-wisdom	Hedgewitch Assandra's Rune of Wisdom
+Runes	saqawals-rune-of-the-sky	Saqawal's Rune of the Sky
+Runes	fenumus-rune-of-agony	Fenumus' Rune of Agony
+Runes	farruls-rune-of-grace	Farrul's Rune of Grace
+Runes	farruls-rune-of-the-chase	Farrul's Rune of the Chase
+Runes	craiceanns-rune-of-warding	Craiceann's Rune of Warding
+Runes	saqawals-rune-of-memory	Saqawal's Rune of Memory
+Runes	saqawals-rune-of-erosion	Saqawal's Rune of Erosion
+Runes	farruls-rune-of-the-hunt	Farrul's Rune of the Hunt
+Runes	craiceanns-rune-of-recovery	Craiceann's Rune of Recovery
+Runes	courtesan-mannans-rune-of-cruelty	Courtesan Mannan's Rune of Cruelty
+Runes	thane-grannells-rune-of-mastery	Thane Grannell's Rune of Mastery
+Runes	fenumus-rune-of-spinning	Fenumus' Rune of Spinning
+Runes	countess-seskes-rune-of-archery	Countess Seske's Rune of Archery
+Runes	thane-girts-rune-of-wildness	Thane Girt's Rune of Wildness
+Runes	fenumus-rune-of-draining	Fenumus' Rune of Draining
+Runes	thane-myrks-rune-of-summer	Thane Myrk's Rune of Summer
+Runes	lady-hestras-rune-of-winter	Lady Hestra's Rune of Winter
+Runes	thane-lelds-rune-of-spring	Thane Leld's Rune of Spring
+Runes	the-greatwolfs-rune-of-claws	The Greatwolf's Rune of Claws
+Runes	the-greatwolfs-rune-of-willpower	The Greatwolf's Rune of Willpower
+Runes	rune-of-vitality	Rune of Vitality
+Runes	rune-of-the-hunt	Rune of the Hunt
+Runes	rune-of-acrobatics	Rune of Acrobatics
+Runes	rune-of-culmination	Rune of Culmination
+Runes	rune-of-renown	Rune of Renown
+Runes	rune-of-accumulation	Rune of Accumulation
+Runes	rune-of-foundations	Rune of Foundations
+Runes	rune-of-the-prism	Rune of the Prism
+Runes	rune-of-the-blossom	Rune of the Blossom
+Runes	rune-of-consistency	Rune of Consistency
+Runes	rune-of-reach	Rune of Reach
+Runes	rune-of-vital-flame	Rune of Vital Flame
+Runes	rune-of-confrontation	Rune of Confrontation
+Runes	masterwork-rune	Masterwork Rune
+Runes	passion-of-aldur	Passion of Aldur
+Runes	breath-of-aldur	Breath of Aldur
+Runes	ire-of-aldur	Ire of Aldur
+Runes	betrayal-of-aldur	Betrayal of Aldur
+Runes	serles-triumph	Serle's Triumph
+Runes	cadigans-epiphany	Cadigan's Epiphany
+Runes	astrids-creativity	Astrid's Creativity
+Runes	uhtreds-sidereus	Uhtred's Sidereus
+Runes	kolrs-hunt	Kolr's Hunt
+Runes	voranas-carnage	Vorana's Carnage
+Runes	thruds-might	Thrud's Might
+Runes	medveds-tending	Medved's Tending
+Runes	katlas-gloom	Katla's Gloom
+Runes	aldurs-legacy	Aldur's Legacy
+Runes	sep	
+Runes	warding-rune-of-reinforcement	Warding Rune of Reinforcement
+Runes	warding-rune-of-protection	Warding Rune of Protection
+Runes	warding-rune-of-disintegration	Warding Rune of Disintegration
+Runes	warding-rune-of-desperation	Warding Rune of Desperation
+Runes	warding-rune-of-symbiosis	Warding Rune of Symbiosis
+Runes	warding-rune-of-courage	Warding Rune of Courage
+Runes	warding-rune-of-stability	Warding Rune of Stability
+Runes	warding-rune-of-glancing	Warding Rune of Glancing
+Runes	warding-rune-of-heart	Warding Rune of Heart
+Runes	warding-rune-of-nourishment	Warding Rune of Nourishment
+Runes	warding-rune-of-annihilation	Warding Rune of Annihilation
+Runes	warding-rune-of-armature	Warding Rune of Armature
+Runes	warding-rune-of-obsession	Warding Rune of Obsession
+Runes	warding-rune-of-equinox	Warding Rune of Equinox
+Runes	warding-rune-of-salvaging	Warding Rune of Salvaging
+Runes	warding-rune-of-bodyguards	Warding Rune of Bodyguards
+Runes	warding-rune-of-hollowing	Warding Rune of Hollowing
+Runes	sep	
+Runes	ancient-rune-of-splinters	Ancient Rune of Splinters
+Runes	ancient-rune-of-dueling	Ancient Rune of Dueling
+Runes	ancient-rune-of-the-titan	Ancient Rune of the Titan
+Runes	ancient-rune-of-shattering	Ancient Rune of Shattering
+Runes	ancient-rune-of-prowess	Ancient Rune of Prowess
+Runes	ancient-rune-of-control	Ancient Rune of Control
+Runes	ancient-rune-of-discovery	Ancient Rune of Discovery
+Runes	ancient-rune-of-decay	Ancient Rune of Decay
+Runes	ancient-rune-of-witchcraft	Ancient Rune of Witchcraft
+Runes	ancient-rune-of-the-horde	Ancient Rune of the Horde
+Runes	ancient-rune-of-animosity	Ancient Rune of Animosity
+Runes	ancient-rune-of-detonation	Ancient Rune of Detonation
+Runes	ancient-rune-of-retaliation	Ancient Rune of Retaliation
+Runes	sep	
+Runes	legacy-of-bramblejack	Legacy of Bramblejack
+Runes	legacy-of-blackbraid	Legacy of Blackbraid
+Runes	legacy-of-edyrns-tusks	Legacy of Edyrns Tusks
+Runes	legacy-of-kingsguard	Legacy of Kingsguard
+Runes	legacy-of-bristleboar	Legacy of Bristleboar
+Runes	legacy-of-foxshade	Legacy of Foxshade
+Runes	legacy-of-ashrend	Legacy of Ashrend
+Runes	legacy-of-briskwrap	Legacy of Briskwrap
+Runes	legacy-of-the-unleashed	Legacy of The Unleashed
+Runes	legacy-of-horns-of-bynden	Legacy of Horns of Bynden
+Runes	legacy-of-wings-of-caelyn	Legacy of Wings of Caelyn
+Runes	legacy-of-ezomyte-peak	Legacy of Ezomyte Peak
+Runes	legacy-of-deidbell	Legacy of Deidbell
+Runes	legacy-of-elevore	Legacy of Elevore
+Runes	legacy-of-starkonjas-head	Legacy of Starkonja's Head
+Runes	legacy-of-crown-of-thorns	Legacy of Crown of Thorns
+Runes	legacy-of-greymake	Legacy of Greymake
+Runes	legacy-of-erians-cobble	Legacy of Erian's Cobble
+Runes	legacy-of-the-smiling-knight	Legacy of The Smiling Knight
+Runes	legacy-of-the-vile-knight	Legacy of The Vile Knight
+Runes	legacy-of-northpaw	Legacy of Northpaw
+Runes	legacy-of-candlemaker	Legacy of Candlemaker
+Runes	legacy-of-deathblow	Legacy of Deathblow
+Runes	legacy-of-legionstride	Legacy of Legionstride
+Runes	legacy-of-trampletoe	Legacy of Trampletoe
+Runes	legacy-of-briarpatch	Legacy of Briarpatch
+Runes	legacy-of-bushwhack	Legacy of Bushwhack
+Runes	legacy-of-wanderlust	Legacy of Wanderlust
+Runes	legacy-of-the-knight-errant	Legacy of The Knight-errant
+Runes	legacy-of-oberns-bastion	Legacy of Obern's Bastion
+Runes	legacy-of-dionadair	Legacy of Dionadair
+Runes	legacy-of-wulfsbane	Legacy of Wulfsbane
+Runes	legacy-of-chernobogs-pillar	Legacy of Chernobog's Pillar
+Runes	legacy-of-alkem-eira	Legacy of Alkem Eira
+Runes	legacy-of-oaksworn	Legacy of Oaksworn
+Runes	legacy-of-dunkelhalt	Legacy of Dunkelhalt
+Runes	legacy-of-rondel-de-ezo	Legacy of Rondel de Ezo
+Runes	legacy-of-brynhands-mark	Legacy of Brynhand's Mark
+Runes	legacy-of-trenchtimbre	Legacy of Trenchtimbre
+Runes	legacy-of-mjölner	Legacy of Mjölner
+Runes	legacy-of-twisted-empyrean	Legacy of Twisted Empyrean
+Runes	legacy-of-hoghunt	Legacy of Hoghunt
+Runes	legacy-of-hrimnors-hymn	Legacy of Hrimnor's Hymn
+Runes	legacy-of-brain-rattler	Legacy of Brain Rattler
+Runes	legacy-of-lifesprig	Legacy of Lifesprig
+Runes	legacy-of-duality	Legacy of Duality
+Runes	legacy-of-tyrannys-grip	Legacy of Tyranny's Grip
+Runes	legacy-of-the-sentry	Legacy of The Sentry
+Runes	legacy-of-adonias-ego	Legacy of Adonia's Ego
+Runes	legacy-of-cursecarver	Legacy of Cursecarver
+Runes	legacy-of-dusk-vigil	Legacy of Dusk Vigil
+Runes	legacy-of-the-blood-thorn	Legacy of The Blood Thorn
+Runes	legacy-of-quill-rain	Legacy of Quill Rain
+Runes	legacy-of-ironbound	Legacy of Ironbound
+Runes	legacy-of-amor-mandragora	Legacy of Amor Mandragora
+Runes	legacy-of-spiteful-floret	Legacy of Spiteful Floret
+Runes	legacy-of-svalinn	Legacy of Svalinn
+Runes	legacy-of-keeper-of-the-arc	Legacy of Keeper of the Arc
+Runes	legacy-of-olrovasara	Legacy of Olrovasara
+Runes	legacy-of-a-worthy-foe	Legacy of A Worthy Foe
+Runes	legacy-of-serles-grit	Legacy of Serle's Grit
+Runes	legacy-of-runeseekers-call	Legacy of Runeseeker's Call
+Runes	legacy-of-facebreaker	Legacy of Facebreaker
+Expedition	expedition-logbook	Expedition Logbook
+Expedition	aldurs-saga	Aldur's Saga
+Expedition	medveds-saga	Medved's Saga
+Expedition	voranas-saga	Vorana's Saga
+Expedition	uhtreds-saga	Uhtred's Saga
+Expedition	olroths-saga	Olroth's Saga
+Expedition	sep	Flux
+Expedition	blazing-flux	Blazing Flux
+Expedition	chilling-flux	Chilling Flux
+Expedition	crackling-flux	Crackling Flux
+Expedition	void-flux	Void Flux
+Expedition	thaumaturgic-flux-2	Thaumaturgic Flux (Level 2)
+Expedition	thaumaturgic-flux-3	Thaumaturgic Flux (Level 3)
+Expedition	thaumaturgic-flux-4	Thaumaturgic Flux (Level 4)
+Expedition	thaumaturgic-flux-5	Thaumaturgic Flux (Level 5)
+Expedition	thaumaturgic-flux-6	Thaumaturgic Flux (Level 6)
+Expedition	thaumaturgic-flux-7	Thaumaturgic Flux (Level 7)
+Expedition	thaumaturgic-flux-8	Thaumaturgic Flux (Level 8)
+Expedition	thaumaturgic-flux-9	Thaumaturgic Flux (Level 9)
+Expedition	thaumaturgic-flux-10	Thaumaturgic Flux (Level 10)
+Expedition	thaumaturgic-flux-11	Thaumaturgic Flux (Level 11)
+Expedition	thaumaturgic-flux-12	Thaumaturgic Flux (Level 12)
+Expedition	thaumaturgic-flux-13	Thaumaturgic Flux (Level 13)
+Expedition	thaumaturgic-flux-14	Thaumaturgic Flux (Level 14)
+Expedition	thaumaturgic-flux-15	Thaumaturgic Flux (Level 15)
+Expedition	thaumaturgic-flux-16	Thaumaturgic Flux (Level 16)
+Expedition	thaumaturgic-flux-17	Thaumaturgic Flux (Level 17)
+Expedition	thaumaturgic-flux-18	Thaumaturgic Flux (Level 18)
+Expedition	thaumaturgic-flux-19	Thaumaturgic Flux (Level 19)
+Expedition	thaumaturgic-flux-20	Thaumaturgic Flux (Level 20)
+Expedition	perfect-flux	Perfect Flux
+Expedition	sep	Augments
+Expedition	emergent-vigour	Emergent Vigour
+Expedition	emergent-possibility	Emergent Possibility
+Expedition	emergent-protection	Emergent Protection
+Expedition	emergent-instinct	Emergent Instinct
+Expedition	carved-cunning	Carved Cunning
+Expedition	carved-majesty	Carved Majesty
+Expedition	carved-mischief	Carved Mischief
+Expedition	carved-tenacity	Carved Tenacity
+Vaal	architects-orb	Architect's Orb
+Vaal	crystallised-corruption	Crystallised Corruption
+Vaal	core-destabiliser	Core Destabiliser
+Vaal	ancient-infuser	Ancient Infuser
+Vaal	vaal-cultivation-orb	Vaal Cultivation Orb
+Vaal	yaomacs-orb-of-sacrifice	Yaomac's Orb of Sacrifice
+Vaal	kopecs-orb-of-sacrifice	Kopec's Orb of Sacrifice
+Vaal	kamasas-orb-of-sacrifice	Kamasa's Orb of Sacrifice
+Vaal	yuguls-orb-of-sacrifice	Yugul's Orb of Sacrifice
+Vaal	vaal-armourers-infuser	Vaal Armourer's Infuser
+Vaal	vaal-blacksmiths-infuser	Vaal Blacksmith's Infuser
+Vaal	vaal-arcanists-infuser	Vaal Arcanist's Infuser
+Vaal	vaal-catalysing-infuser	Vaal Catalysing Infuser
+Vaal	orb-of-extraction	Orb of Extraction
+Vaal	vaal-siphoner	Vaal Siphoner
+Vaal	sep	Augments
+Vaal	guatelitzis-thesis	Guatelitzi's Thesis
+Vaal	citaqualotls-thesis	Citaqualotl's Thesis
+Vaal	jiquanis-thesis	Jiquani's Thesis
+Vaal	quipolatls-thesis	Quipolatl's Thesis
+Vaal	sep	Soul Cores
+Vaal	soul-core-of-tacati	Soul Core of Tacati
+Vaal	soul-core-of-opiloti	Soul Core of Opiloti
+Vaal	soul-core-of-jiquani	Soul Core of Jiquani
+Vaal	soul-core-of-zalatl	Soul Core of Zalatl
+Vaal	soul-core-of-citaqualotl	Soul Core of Citaqualotl
+Vaal	soul-core-of-puhuarte	Soul Core of Puhuarte
+Vaal	soul-core-of-tzamoto	Soul Core of Tzamoto
+Vaal	soul-core-of-xopec	Soul Core of Xopec
+Vaal	soul-core-of-azcapa	Soul Core of Azcapa
+Vaal	soul-core-of-topotante	Soul Core of Topotante
+Vaal	soul-core-of-quipolatl	Soul Core of Quipolatl
+Vaal	soul-core-of-ticaba	Soul Core of Ticaba
+Vaal	soul-core-of-atmohua	Soul Core of Atmohua
+Vaal	soul-core-of-cholotl	Soul Core of Cholotl
+Vaal	soul-core-of-zantipi	Soul Core of Zantipi
+Vaal	hayoxis-soul-core-of-heatproofing	Hayoxi's Soul Core of Heatproofing
+Vaal	zalatls-soul-core-of-insulation	Zalatl's Soul Core of Insulation
+Vaal	topotantes-soul-core-of-dampening	Topotante's Soul Core of Dampening
+Vaal	atmohuas-soul-core-of-retreat	Atmohua's Soul Core of Retreat
+Vaal	quipolatls-soul-core-of-flow	Quipolatl's Soul Core of Flow
+Vaal	tzamotos-soul-core-of-ferocity	Tzamoto's Soul Core of Ferocity
+Vaal	uromotis-soul-core-of-attenuation	Uromoti's Soul Core of Attenuation
+Vaal	opilotis-soul-core-of-assault	Opiloti's Soul Core of Assault
+Vaal	guatelitzis-soul-core-of-endurance	Guatelitzi's Soul Core of Endurance
+Vaal	xopecs-soul-core-of-power	Xopec's Soul Core of Power
+Vaal	estazuntis-soul-core-of-convalescence	Estazunti's Soul Core of Convalescence
+Vaal	tacatis-soul-core-of-affliction	Tacati's Soul Core of Affliction
+Vaal	cholotls-soul-core-of-war	Cholotl's Soul Core of War
+Vaal	citaqualotls-soul-core-of-foulness	Citaqualotl's Soul Core of Foulness
+Vaal	xipocados-soul-core-of-dominion	Xipocado's Soul Core of Dominion
+Delirium	simulacrum-splinter	Simulacrum Splinter
+Delirium	simulacrum	Simulacrum
+Delirium	sep	Liquid Emotions
+Delirium	diluted-liquid-ire	Diluted Liquid Ire
+Delirium	diluted-liquid-guilt	Diluted Liquid Guilt
+Delirium	diluted-liquid-greed	Diluted Liquid Greed
+Delirium	liquid-paranoia	Liquid Paranoia
+Delirium	liquid-envy	Liquid Envy
+Delirium	liquid-disgust	Liquid Disgust
+Delirium	liquid-despair	Liquid Despair
+Delirium	concentrated-liquid-fear	Concentrated Liquid Fear
+Delirium	concentrated-liquid-suffering	Concentrated Liquid Suffering
+Delirium	concentrated-liquid-isolation	Concentrated Liquid Isolation
+Delirium	potent-liquid-melancholy	Potent Liquid Melancholy
+Delirium	potent-liquid-ferocity	Potent Liquid Ferocity
+Delirium	potent-liquid-contempt	Potent Liquid Contempt
+Delirium	ancient-potent-liquid-melancholy	Ancient Potent Liquid Melancholy
+Delirium	ancient-potent-liquid-ferocity	Ancient Potent Liquid Ferocity
+Delirium	ancient-potent-liquid-contempt	Ancient Potent Liquid Contempt
+Delirium	ancient-diluted-liquid-ire	Ancient Diluted Liquid Ire
+Delirium	ancient-diluted-liquid-guilt	Ancient Diluted Liquid Guilt
+Delirium	ancient-diluted-liquid-greed	Ancient Diluted Liquid Greed
+Delirium	ancient-liquid-paranoia	Ancient Liquid Paranoia
+Delirium	ancient-liquid-envy	Ancient Liquid Envy
+Delirium	ancient-liquid-disgust	Ancient Liquid Disgust
+Delirium	ancient-liquid-despair	Ancient Liquid Despair
+Delirium	ancient-concentrated-liquid-fear	Ancient Concentrated Liquid Fear
+Delirium	ancient-concentrated-liquid-suffering	Ancient Concentrated Liquid Suffering
+Delirium	ancient-concentrated-liquid-isolation	Ancient Concentrated Liquid Isolation
+Breach	breach-splinter	Breach Splinter
+Breach	breachstone	Breachstone
+Breach	sep	
+Breach	lavish-wombgift	Lavish Wombgift
+Breach	ornate-wombgift	Ornate Wombgift
+Breach	banded-wombgift	Banded Wombgift
+Breach	signet-wombgift	Signet Wombgift
+Breach	revelatory-wombgift	Revelatory Wombgift
+Breach	sep	Catalysts
+Breach	flesh-catalyst	Flesh Catalyst
+Breach	neural-catalyst	Neural Catalyst
+Breach	carapace-catalyst	Carapace Catalyst
+Breach	uul-netols-catalyst	Uul-Netol's Catalyst
+Breach	xophs-catalyst	Xoph's Catalyst
+Breach	tuls-catalyst	Tul's Catalyst
+Breach	eshs-catalyst	Esh's Catalyst
+Breach	chayulas-catalyst	Chayula's Catalyst
+Breach	reaver-catalyst	Reaver Catalyst
+Breach	sibilant-catalyst	Sibilant Catalyst
+Breach	skittering-catalyst	Skittering Catalyst
+Breach	adaptive-catalyst	Adaptive Catalyst
+Breach	necrotic-catalyst	Necrotic Catalyst
+Breach	refined-flesh-catalyst	Refined Flesh Catalyst
+Breach	refined-neural-catalyst	Refined Neural Catalyst
+Breach	refined-carapace-catalyst	Refined Carapace Catalyst
+Breach	refined-uul-netols-catalyst	Refined Uul-Netol's Catalyst
+Breach	refined-xophs-catalyst	Refined Xoph's Catalyst
+Breach	refined-tuls-catalyst	Refined Tul's Catalyst
+Breach	refined-eshs-catalyst	Refined Esh's Catalyst
+Breach	refined-chayulas-catalyst	Refined Chayula's Catalyst
+Breach	refined-reaver-catalyst	Refined Reaver Catalyst
+Breach	refined-sibilant-catalyst	Refined Sibilant Catalyst
+Breach	refined-skittering-catalyst	Refined Skittering Catalyst
+Breach	refined-adaptive-catalyst	Refined Adaptive Catalyst
+Breach	refined-necrotic-catalyst	Refined Necrotic Catalyst
+Ritual	petition-splinter	Petition Splinter
+Ritual	an-audience-with-the-king	An Audience with the King
+Ritual	call-of-the-shadows	Call of the Shadows
+Ritual	head-of-the-king	Head of the King
+Ritual	sep	Omens
+Ritual	omen-of-refreshment	Omen of Refreshment
+Ritual	omen-of-resurgence	Omen of Resurgence
+Ritual	omen-of-amelioration	Omen of Amelioration
+Ritual	omen-of-whittling	Omen of Whittling
+Ritual	omen-of-sinistral-erasure	Omen of Sinistral Erasure
+Ritual	omen-of-dextral-erasure	Omen of Dextral Erasure
+Ritual	omen-of-corruption	Omen of Corruption
+Ritual	omen-of-greater-exaltation	Omen of Greater Exaltation
+Ritual	omen-of-sinistral-exaltation	Omen of Sinistral Exaltation
+Ritual	omen-of-dextral-exaltation	Omen of Dextral Exaltation
+Ritual	omen-of-sinistral-annulment	Omen of Sinistral Annulment
+Ritual	omen-of-dextral-annulment	Omen of Dextral Annulment
+Ritual	omen-of-answered-prayers	Omen of Answered Prayers
+Ritual	omen-of-the-hunt	Omen of the Hunt
+Ritual	omen-of-reinforcements	Omen of Reinforcements
+Ritual	omen-of-secret-compartments	Omen of Secret Compartments
+Ritual	omen-of-homogenising-exaltation	Omen of Homogenising Exaltation
+Ritual	omen-of-homogenising-coronation	Omen of Homogenising Coronation
+Ritual	omen-of-gambling	Omen of Gambling
+Ritual	omen-of-bartering	Omen of Bartering
+Ritual	omen-of-the-blessed	Omen of the Blessed
+Ritual	omen-of-chaotic-rarity	Omen of Chaotic Rarity
+Ritual	omen-of-chaotic-quantity	Omen of Chaotic Quantity
+Ritual	omen-of-chaotic-monsters	Omen of Chaotic Monsters
+Ritual	omen-of-chaotic-effectiveness	Omen of Chaotic Effectiveness
+Ritual	omen-of-chance	Omen of Chance
+Ritual	omen-of-the-ancients	Omen of the Ancients
+Ritual	omen-of-sanctification	Omen of Sanctification
+Ritual	omen-of-dextral-crystallisation	Omen of Dextral Crystallisation
+Ritual	omen-of-sinistral-crystallisation	Omen of Sinistral Crystallisation
+Ritual	omen-of-catalysing-exaltation	Omen of Catalysing Exaltation
+Ritual	omen-of-abyssal-echoes	Omen of Abyssal Echoes
+Ritual	omen-of-the-sovereign	Omen of the Sovereign
+Ritual	omen-of-the-liege	Omen of the Liege
+Ritual	omen-of-the-blackblooded	Omen of the Blackblooded
+Ritual	omen-of-putrefaction	Omen of Putrefaction
+Ritual	omen-of-light	Omen of Light
+Ritual	omen-of-sinistral-necromancy	Omen of Sinistral Necromancy
+Ritual	omen-of-dextral-necromancy	Omen of Dextral Necromancy
+Ritual	sep	Augments
+Ritual	raven-touched-shard	Raven-Touched Shard
+Ritual	sep	Idols
+Ritual	bear-idol	Bear Idol
+Ritual	primate-idol	Primate Idol
+Ritual	stag-idol	Stag Idol
+Ritual	boar-idol	Boar Idol
+Ritual	snake-idol	Snake Idol
+Ritual	wolf-idol	Wolf Idol
+Ritual	cat-idol	Cat Idol
+Ritual	owl-idol	Owl Idol
+Ritual	ox-idol	Ox Idol
+Ritual	fox-idol	Fox Idol
+Ritual	rabbit-idol	Rabbit Idol
+Ritual	idol-of-sirrius	Idol of Sirrius
+Ritual	idol-of-thruldana	Idol of Thruldana
+Ritual	idol-of-grold	Idol of Grold
+Ritual	idol-of-eeshta	Idol of Eeshta
+Ritual	idol-of-egrin	Idol of Egrin
+Ritual	idol-of-maxarius	Idol of Maxarius
+Ritual	idol-of-ralakesh	Idol of Ralakesh
+Ritual	idol-of-the-sycophant	Idol of the Sycophant
+Ritual	idol-of-the-martyr	Idol of the Martyr
+Ritual	idol-of-the-pharisee	Idol of the Pharisee
+Ritual	idol-of-greust	Idol of Greust
+Ritual	idol-of-yeena	Idol of Yeena
+Ritual	idol-of-eramir	Idol of Eramir
+Ritual	idol-of-oak	Idol of Oak
+Ritual	idol-of-alira	Idol of Alira
+Ritual	idol-of-kraityn	Idol of Kraityn
+Ritual	idol-of-silk	Idol of Silk
+Abyss	gnawed-jawbone	Gnawed Jawbone
+Abyss	preserved-jawbone	Preserved Jawbone
+Abyss	ancient-jawbone	Ancient Jawbone
+Abyss	gnawed-rib	Gnawed Rib
+Abyss	preserved-rib	Preserved Rib
+Abyss	ancient-rib	Ancient Rib
+Abyss	gnawed-collarbone	Gnawed Collarbone
+Abyss	preserved-collarbone	Preserved Collarbone
+Abyss	ancient-collarbone	Ancient Collarbone
+Abyss	altered-collarbone	Altered Collarbone
+Abyss	preserved-cranium	Preserved Cranium
+Abyss	preserved-vertebrae	Preserved Vertebrae
+Abyss	amanamus-gaze	Amanamu's Gaze
+Abyss	tecrods-gaze	Tecrod's Gaze
+Abyss	kurgals-gaze	Kurgal's Gaze
+Abyss	ulamans-gaze	Ulaman's Gaze
+Essences	lesser-essence-of-the-body	Lesser Essence of the Body
+Essences	lesser-essence-of-the-mind	Lesser Essence of the Mind
+Essences	lesser-essence-of-enhancement	Lesser Essence of Enhancement
+Essences	lesser-essence-of-abrasion	Lesser Essence of Abrasion
+Essences	lesser-essence-of-flames	Lesser Essence of Flames
+Essences	lesser-essence-of-insulation	Lesser Essence of Insulation
+Essences	lesser-essence-of-ice	Lesser Essence of Ice
+Essences	lesser-essence-of-thawing	Lesser Essence of Thawing
+Essences	lesser-essence-of-electricity	Lesser Essence of Electricity
+Essences	lesser-essence-of-grounding	Lesser Essence of Grounding
+Essences	lesser-essence-of-ruin	Lesser Essence of Ruin
+Essences	lesser-essence-of-command	Lesser Essence of Command
+Essences	lesser-essence-of-battle	Lesser Essence of Battle
+Essences	lesser-essence-of-sorcery	Lesser Essence of Sorcery
+Essences	lesser-essence-of-haste	Lesser Essence of Haste
+Essences	lesser-essence-of-alacrity	Lesser Essence of Alacrity
+Essences	lesser-essence-of-the-infinite	Lesser Essence of the Infinite
+Essences	lesser-essence-of-seeking	Lesser Essence of Seeking
+Essences	lesser-essence-of-opulence	Lesser Essence of Opulence
+Essences	essence-of-the-body	Essence of the Body
+Essences	essence-of-the-mind	Essence of the Mind
+Essences	essence-of-enhancement	Essence of Enhancement
+Essences	essence-of-abrasion	Essence of Abrasion
+Essences	essence-of-flames	Essence of Flames
+Essences	essence-of-insulation	Essence of Insulation
+Essences	essence-of-ice	Essence of Ice
+Essences	essence-of-thawing	Essence of Thawing
+Essences	essence-of-electricity	Essence of Electricity
+Essences	essence-of-grounding	Essence of Grounding
+Essences	essence-of-ruin	Essence of Ruin
+Essences	essence-of-command	Essence of Command
+Essences	essence-of-battle	Essence of Battle
+Essences	essence-of-sorcery	Essence of Sorcery
+Essences	essence-of-haste	Essence of Haste
+Essences	essence-of-alacrity	Essence of Alacrity
+Essences	essence-of-the-infinite	Essence of the Infinite
+Essences	essence-of-seeking	Essence of Seeking
+Essences	essence-of-opulence	Essence of Opulence
+Essences	greater-essence-of-the-body	Greater Essence of the Body
+Essences	greater-essence-of-the-mind	Greater Essence of the Mind
+Essences	greater-essence-of-enhancement	Greater Essence of Enhancement
+Essences	greater-essence-of-abrasion	Greater Essence of Abrasion
+Essences	greater-essence-of-flames	Greater Essence of Flames
+Essences	greater-essence-of-insulation	Greater Essence of Insulation
+Essences	greater-essence-of-ice	Greater Essence of Ice
+Essences	greater-essence-of-thawing	Greater Essence of Thawing
+Essences	greater-essence-of-electricity	Greater Essence of Electricity
+Essences	greater-essence-of-grounding	Greater Essence of Grounding
+Essences	greater-essence-of-ruin	Greater Essence of Ruin
+Essences	greater-essence-of-command	Greater Essence of Command
+Essences	greater-essence-of-battle	Greater Essence of Battle
+Essences	greater-essence-of-sorcery	Greater Essence of Sorcery
+Essences	greater-essence-of-haste	Greater Essence of Haste
+Essences	greater-essence-of-alacrity	Greater Essence of Alacrity
+Essences	greater-essence-of-the-infinite	Greater Essence of the Infinite
+Essences	greater-essence-of-seeking	Greater Essence of Seeking
+Essences	greater-essence-of-opulence	Greater Essence of Opulence
+Essences	sep	
+Essences	perfect-essence-of-the-body	Perfect Essence of the Body
+Essences	perfect-essence-of-the-mind	Perfect Essence of the Mind
+Essences	perfect-essence-of-enhancement	Perfect Essence of Enhancement
+Essences	perfect-essence-of-abrasion	Perfect Essence of Abrasion
+Essences	perfect-essence-of-flames	Perfect Essence of Flames
+Essences	perfect-essence-of-insulation	Perfect Essence of Insulation
+Essences	perfect-essence-of-ice	Perfect Essence of Ice
+Essences	perfect-essence-of-thawing	Perfect Essence of Thawing
+Essences	perfect-essence-of-electricity	Perfect Essence of Electricity
+Essences	perfect-essence-of-grounding	Perfect Essence of Grounding
+Essences	perfect-essence-of-ruin	Perfect Essence of Ruin
+Essences	perfect-essence-of-command	Perfect Essence of Command
+Essences	perfect-essence-of-battle	Perfect Essence of Battle
+Essences	perfect-essence-of-sorcery	Perfect Essence of Sorcery
+Essences	perfect-essence-of-haste	Perfect Essence of Haste
+Essences	perfect-essence-of-alacrity	Perfect Essence of Alacrity
+Essences	perfect-essence-of-the-infinite	Perfect Essence of the Infinite
+Essences	perfect-essence-of-seeking	Perfect Essence of Seeking
+Essences	perfect-essence-of-opulence	Perfect Essence of Opulence
+Essences	sep	
+Essences	essence-of-hysteria	Essence of Hysteria
+Essences	essence-of-delirium	Essence of Delirium
+Essences	essence-of-horror	Essence of Horror
+Essences	essence-of-insanity	Essence of Insanity
+Essences	essence-of-the-abyss	Essence of the Abyss
+Essences	essence-of-the-breach	Essence of the Breach
+UncutGems	sep	Uncut Support Gems
+UncutGems	uncut-support-gem-1	Uncut Support Gem (Level 1)
+UncutGems	uncut-support-gem-2	Uncut Support Gem (Level 2)
+UncutGems	uncut-support-gem-3	Uncut Support Gem (Level 3)
+UncutGems	uncut-support-gem-4	Uncut Support Gem (Level 4)
+UncutGems	uncut-support-gem-5	Uncut Support Gem (Level 5)
+UncutGems	sep	Uncut Reservation Gems
+UncutGems	uncut-spirit-gem-4	Uncut Spirit Gem (Level 4)
+UncutGems	uncut-spirit-gem-5	Uncut Spirit Gem (Level 5)
+UncutGems	uncut-spirit-gem-6	Uncut Spirit Gem (Level 6)
+UncutGems	uncut-spirit-gem-7	Uncut Spirit Gem (Level 7)
+UncutGems	uncut-spirit-gem-8	Uncut Spirit Gem (Level 8)
+UncutGems	uncut-spirit-gem-9	Uncut Spirit Gem (Level 9)
+UncutGems	uncut-spirit-gem-10	Uncut Spirit Gem (Level 10)
+UncutGems	uncut-spirit-gem-11	Uncut Spirit Gem (Level 11)
+UncutGems	uncut-spirit-gem-12	Uncut Spirit Gem (Level 12)
+UncutGems	uncut-spirit-gem-13	Uncut Spirit Gem (Level 13)
+UncutGems	uncut-spirit-gem-14	Uncut Spirit Gem (Level 14)
+UncutGems	uncut-spirit-gem-15	Uncut Spirit Gem (Level 15)
+UncutGems	uncut-spirit-gem-16	Uncut Spirit Gem (Level 16)
+UncutGems	uncut-spirit-gem-17	Uncut Spirit Gem (Level 17)
+UncutGems	uncut-spirit-gem-18	Uncut Spirit Gem (Level 18)
+UncutGems	uncut-spirit-gem-19	Uncut Spirit Gem (Level 19)
+UncutGems	uncut-spirit-gem-20	Uncut Spirit Gem (Level 20)
+UncutGems	sep	Uncut Skill Gems
+UncutGems	uncut-skill-gem-1	Uncut Skill Gem (Level 1)
+UncutGems	uncut-skill-gem-2	Uncut Skill Gem (Level 2)
+UncutGems	uncut-skill-gem-3	Uncut Skill Gem (Level 3)
+UncutGems	uncut-skill-gem-4	Uncut Skill Gem (Level 4)
+UncutGems	uncut-skill-gem-5	Uncut Skill Gem (Level 5)
+UncutGems	uncut-skill-gem-6	Uncut Skill Gem (Level 6)
+UncutGems	uncut-skill-gem-7	Uncut Skill Gem (Level 7)
+UncutGems	uncut-skill-gem-8	Uncut Skill Gem (Level 8)
+UncutGems	uncut-skill-gem-9	Uncut Skill Gem (Level 9)
+UncutGems	uncut-skill-gem-10	Uncut Skill Gem (Level 10)
+UncutGems	uncut-skill-gem-11	Uncut Skill Gem (Level 11)
+UncutGems	uncut-skill-gem-12	Uncut Skill Gem (Level 12)
+UncutGems	uncut-skill-gem-13	Uncut Skill Gem (Level 13)
+UncutGems	uncut-skill-gem-14	Uncut Skill Gem (Level 14)
+UncutGems	uncut-skill-gem-15	Uncut Skill Gem (Level 15)
+UncutGems	uncut-skill-gem-16	Uncut Skill Gem (Level 16)
+UncutGems	uncut-skill-gem-17	Uncut Skill Gem (Level 17)
+UncutGems	uncut-skill-gem-18	Uncut Skill Gem (Level 18)
+UncutGems	uncut-skill-gem-19	Uncut Skill Gem (Level 19)
+UncutGems	uncut-skill-gem-20	Uncut Skill Gem (Level 20)
+LineageSupportGems	ataluis-bloodletting	Atalui's Bloodletting
+LineageSupportGems	einhars-beastrite	Einhar's Beastrite
+LineageSupportGems	brutus-brain	Brutus' Brain
+LineageSupportGems	uruks-smelting	Uruk's Smelting
+LineageSupportGems	paquates-pact	Paquate's Pact
+LineageSupportGems	vilentas-propulsion	Vilenta's Propulsion
+LineageSupportGems	ailiths-chimes	Ailith's Chimes
+LineageSupportGems	tecrods-revenge	Tecrod's Revenge
+LineageSupportGems	doedres-undoing	Doedre's Undoing
+LineageSupportGems	rathas-assault	Ratha's Assault
+LineageSupportGems	arjuns-medal	Arjun's Medal
+LineageSupportGems	kaoms-madness	Kaom's Madness
+LineageSupportGems	siones-temper	Sione's Temper
+LineageSupportGems	ixchels-torment	Ixchel's Torment
+LineageSupportGems	romiras-requital	Romira's Requital
+LineageSupportGems	tawhoas-tending	Tawhoa's Tending
+LineageSupportGems	dominus-grasp	Dominus' Grasp
+LineageSupportGems	diallas-desire	Dialla's Desire
+LineageSupportGems	kalisas-crescendo	Kalisa's Crescendo
+LineageSupportGems	kulemaks-dominion	Kulemak's Dominion
+LineageSupportGems	amanamus-tithe	Amanamu's Tithe
+LineageSupportGems	xophs-pyre	Xoph's Pyre
+LineageSupportGems	eshs-radiance	Esh's Radiance
+LineageSupportGems	tuls-stillness	Tul's Stillness
+LineageSupportGems	uul-netols-embrace	Uul-Netol's Embrace
+LineageSupportGems	rakiatas-flow	Rakiata's Flow
+LineageSupportGems	garukhans-resolve	Garukhan's Resolve
+LineageSupportGems	tasalios-rhythm	Tasalio's Rhythm
+LineageSupportGems	tacatis-ire	Tacati's Ire
+LineageSupportGems	rigwalds-ferocity	Rigwald's Ferocity
+LineageSupportGems	khatals-rejuvenation	Khatal's Rejuvenation
+LineageSupportGems	bhatairs-vengeance	Bhatair's Vengeance
+LineageSupportGems	uhtreds-exodus	Uhtred's Exodus
+LineageSupportGems	uhtreds-omen	Uhtred's Omen
+LineageSupportGems	uhtreds-augury	Uhtred's Augury
+LineageSupportGems	daressos-passion	Daresso's Passion
+LineageSupportGems	ahns-citadel	Ahn's Citadel
+LineageSupportGems	atziris-allure	Atziri's Allure
+LineageSupportGems	hayoxis-fulmination	Hayoxi's Fulmination
+LineageSupportGems	zarokhs-refrain	Zarokh's Refrain
+LineageSupportGems	kurgals-leash	Kurgal's Leash
+LineageSupportGems	varashtas-blessing	Varashta's Blessing
+LineageSupportGems	arbiters-ignition	Arbiter's Ignition
+LineageSupportGems	arakaalis-lust	Arakaali's Lust
+LineageSupportGems	xibaquas-rending	Xibaqua's Rending
+LineageSupportGems	guatelitzis-ablation	Guatelitzi's Ablation
+LineageSupportGems	atziris-communion	Atziri's Communion
+LineageSupportGems	atziris-impatience	Atziri's Impatience
+LineageSupportGems	zerphis-infamy	Zerphi's Infamy
+LineageSupportGems	zarokhs-revolt	Zarokh's Revolt
+LineageSupportGems	oisins-oath	Oisín's Oath
+LineageSupportGems	cirels-cultivation	Cirel's Cultivation
+LineageSupportGems	morganas-tempest	Morgana's Tempest
+LineageSupportGems	her-declaration	Her Declaration
+LineageSupportGems	prototype-seventeen	Prototype Seventeen
+LineageSupportGems	seraphs-heart	Seraph's Heart
+LineageSupportGems	uhtreds-rite	Uhtred's Rite
+LineageSupportGems	tricksters-shard	Trickster's Shard
+LineageSupportGems	arbiters-reach	Arbiter's Reach
+LineageSupportGems	tangmazus-thurible	Tangmazu's Thurible
+LineageSupportGems	eshs-prowess	Esh's Prowess
+LineageSupportGems	breachlords-rift	Breachlord's Rift
+LineageSupportGems	breachlords-amalgam	Breachlord's Amalgam
+LineageSupportGems	vruuns-aftermath	Vruun's Aftermath
+LineageSupportGems	vruuns-inevitability	Vruun's Inevitability
+LineageSupportGems	uhtreds-constellation	Uhtred's Constellation
+LineageSupportGems	medveds-felling	Medved's Felling
+LineageSupportGems	voranas-siege	Vorana's Siege
+LineageSupportGems	styrns-mountain	Styrn's Mountain
+LineageSupportGems	styrns-ferocity	Styrn's Ferocity
+LineageSupportGems	styrns-anthem	Styrn's Anthem
+LineageSupportGems	cathas-brilliance	Catha's Brilliance
+LineageSupportGems	mórrigans-insight	Mórrigan's Insight
+LineageSupportGems	tuls-avalanche	Tul's Avalanche
+LineageSupportGems	olroths-hubris	Olroth's Hubris
+LineageSupportGems	olroths-conviction	Olroth's Conviction
+Waystones	waystone-1	Waystone (Tier 1)
+Waystones	waystone-2	Waystone (Tier 2)
+Waystones	waystone-3	Waystone (Tier 3)
+Waystones	waystone-4	Waystone (Tier 4)
+Waystones	waystone-5	Waystone (Tier 5)
+Waystones	waystone-6	Waystone (Tier 6)
+Waystones	waystone-7	Waystone (Tier 7)
+Waystones	waystone-8	Waystone (Tier 8)
+Waystones	waystone-9	Waystone (Tier 9)
+Waystones	waystone-10	Waystone (Tier 10)
+Waystones	waystone-11	Waystone (Tier 11)
+Waystones	waystone-12	Waystone (Tier 12)
+Waystones	waystone-13	Waystone (Tier 13)
+Waystones	waystone-14	Waystone (Tier 14)
+Waystones	waystone-15	Waystone (Tier 15)
+Waystones	waystone-16	Waystone (Tier 16)
