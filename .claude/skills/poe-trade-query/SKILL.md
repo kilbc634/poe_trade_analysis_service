@@ -22,9 +22,10 @@ The fastest reliable pattern — skip UI form-filling entirely:
    ```
    Returns `{id: <query_id>, result: [item hashes], total}`. On bad input you get `error.message` (e.g. unknown stat id) — fix and retry.
 
-   No browser open? Plain HTTP works just as well (no cookie needed; a browser-like User-Agent is enough):
+   No browser open? Plain HTTP works just as well — but the User-Agent must be a **full, realistic browser UA string**; a bare `Mozilla/5.0` gets a Cloudflare 403 (verified 2026-07). If `.poe_cookies.json` exists in the project root, also send its cookies (see knowledge/tricks.md — cookie cache):
    ```bash
-   curl -s -H "Content-Type: application/json" -H "User-Agent: Mozilla/5.0" \
+   curl -s -H "Content-Type: application/json" \
+     -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36" \
      -X POST --data @query.json "https://www.pathofexile.com/api/trade2/search/poe2/Runes%20of%20Aldur"
    ```
 3. To show the user: `playwright-cli goto "https://www.pathofexile.com/trade2/search/poe2/{league}/{query_id}"` — the UI loads with all filters filled in and results listed.

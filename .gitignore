@@ -1,5 +1,8 @@
 .playwright-cli
 
+# 暫存的 Cloudflare clearance / session cookie（機敏，勿入版控）
+.poe_cookies.json
+
 # 忽略 selector.ini
 script/selector.ini
 
