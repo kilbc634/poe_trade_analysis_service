@@ -43,3 +43,22 @@ Reference points 2026-07 (Runes of Aldur), for ES-stacking builds (EB: gear ES �
 | Boots | 30% MS + crafted Spirit 14 + ES ~240–290 + res/int | 2 chaos – 2 div |
 
 Notes: the chest ES ladder shows hard diminishing returns past ~ES 770 (98d buys +2 mana-eq over 58d). Helmets are the free slot — dump res/int/mana needs there. A full three-piece meeting F42/C29/L13 + Spirit 73 + MS30 was solvable at **~4 div** (budget floor) and optimal at **~58–60 div**.
+
+## MOM/EB six-piece (helm/chest/boots/2 rings/belt) anchors (六件套行情)
+
+2026-07 (Runes of Aldur), joint solve for **F82/C118/L116 + Spirit 73 + MS30**, maximizing mana_eq (ES+mana+2×attr+40×%incmana). Budget curve from properly-probed pools (see tricks.md "Probe the ceiling"): **~31d → 2476 (budget floor), ~59d → 3073 (CP sweet spot), ~119d → 3165 (top)**. An earlier cheap-end-only sampling wrongly concluded the curve was flat after 35d — that was sampling bias, not market reality.
+
+Slot anchors:
+| piece | spec | price |
+|---|---|---|
+| Chest | Spirit 59, ES ~777, int (corrupted) | ~25 div (Spirit57+ ES780+ is the ceiling: only ~14 listings under 96d) |
+| Helmet | ES ~500–520 + int (+small res) | 3–4 div |
+| Helmet | ES ~563–570 + mana + 80+ total res | 50–65 div |
+| Boots | MS30 + crafted Spirit 15 + ES ~320 + int | ~15 div |
+| Boots | MS30 + crafted Spirit 13-14 + ES ~120–220 + res | 2–3 div |
+| Ring | **triple-stat: 6%incMana + ~200+ flat mana + 2 res + int** | **8–15 div** (huge value: ~600 mana_eq each; ring ceiling is high — inc6+mana175+res80 still had 727 listings <96d) |
+| Ring | 6-7%incMana + 2 res + int (no big flat mana) | 1–5 exalted |
+| Belt | flat mana ~117–124 + res ~70 + int | 1–2 exalted |
+| Belt | mana 120+ AND 125+ total res | ~30 div (rarely worth it) |
+
+Lessons: rings are where budget scales best (the % + flat mana + res triple exists in depth); chest Spirit+ES is the mandatory anchor cost; belts stay cheap unless you force mana+high-res on one item.

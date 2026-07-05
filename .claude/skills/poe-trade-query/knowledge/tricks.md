@@ -22,11 +22,22 @@ Observed 2026-07 doing bulk multi-search work: the **search POST budget is small
 - **The penalty blocks ALL trade API endpoints** (search *and* fetch), not just the violated one. Don't try to "use the other endpoint meanwhile" — a fetch during the penalty just hangs on 429s.
 - **Never retry during the penalty.** Each blocked request risks re-extending it. Sleep the full `Retry-After` + a few seconds, then resume.
 - For bulk sessions (many searches), space searches **~30s apart** — that spacing survived 4+ consecutive searches repeatedly. Fetches at 2.5s spacing are mostly safe but still honor any 429's `Retry-After` exactly.
+- **The fetch budget is a rolling window of roughly 25–30 batches regardless of spacing** (observed 2026-07: 429+605s hit after ~14–30 batches at both 2.5s and 6s spacing, especially right after a 15-search burst). For 60+ batch jobs, budget for one 605s penalty per ~25 batches — or plan pools so the must-have data comes first. Cache every search + every fetched batch to disk keyed by (search, range) so a killed/crashed run resumes free.
 - Long waits → run the whole resume plan as one background script with 429-aware retry (read `Retry-After`, sleep, retry once), not as foreground calls that time out mid-wait.
 
 ## Deep-fetch a search's price ladder without re-searching (免重搜抓高價端)
 
 A search response stores **up to 100 result hashes**. Since results sort by price asc, hashes `[40:100]` are the *more expensive tranche* of the same query — fetch them directly with the same `query_id`, no new search POST needed. Ideal when the cheap end is exhausted and you want to see what more budget buys (price/quality frontier) without spending search-rate budget.
+
+## Probe the ceiling BEFORE building pools (先探頂再撈池, user-taught 2026-07)
+
+Don't jump straight to the pooling script with guessed thresholds — cheap-end-sorted pools make every budget tier collapse to the same cheap answer (sampling bias), which under-serves a "best within budget X" request. First run a few **interactive probe searches** per slot to learn what the top end looks like:
+
+1. Assume the extreme: one slot eating ~80% of the total budget. Add a price cap at ~80% of budget (use `{"option":"divine","max":N}` literal mode — the equivalent-mode internal rate is unreliable) and crank the stat mins up.
+2. Read the `total` count from the search response (no fetch needed). **>200 results ⇒ conditions too conservative — raise the stat mins**; near-0 ⇒ back off. Iterate to find where the mod ceiling sits for that slot & budget.
+3. Only then define the pool searches around those discovered ceilings (a high-end pool + a mid pool per slot), fetch, and optimize.
+
+The 80% / 200-count numbers are heuristics, not rules — judge from actual counts. And when reporting: the user's "best in budget" means **max score while spending up to the budget**; the CP sweet spot is supplementary info, not the answer.
 
 ## Multi-slot gear combos: pool per slot, optimize locally (多部位配裝法)
 

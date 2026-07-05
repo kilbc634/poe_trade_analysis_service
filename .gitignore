@@ -216,3 +216,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# 配裝查詢交付文件（暫存性質，格式見 skill knowledge/delivery.md）
+search_results_*.md
