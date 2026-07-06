@@ -28,6 +28,8 @@ Official docs: <https://www.pathofexile.com/developer/docs/index#ratelimits>. Ev
 
 Snapshot 2026-07-05 (IP rule): search `5:10:60, 15:60:300, 30:300:1800` — note the third window: >30 searches in 5 min = **30-minute lockout**. Fetch `12:4:10, 16:12:300`.
 
+**Counters are per-policy, lockouts are IP-wide** (verified 2026-07-05): a fetch hit does NOT increment the search policy's `-State` and vice versa — the two budgets can be consumed in parallel. But once either policy's penalty fires, the restriction is enforced on the IP across ALL trade endpoints (see the 429 section below) — "switch to the other endpoint while locked" does not work.
+
 Key facts from the docs + observation:
 - **Limits are dynamic** — "can change at any time depending on our requirements". Observed Retry-After values (605s) that match none of the published tuples, presumably stricter load-dependent rules. So parse headers at runtime; never trust hardcoded intervals alone.
 - **"Exceeding these limits frequently will result in your application access being revoked"** — proactive header-driven throttling (stay below `max-1`, honor active restrictions in `-State`) beats sleep-the-penalty as a strategy. `gear_combo_optimizer.py` `req()` implements this.
