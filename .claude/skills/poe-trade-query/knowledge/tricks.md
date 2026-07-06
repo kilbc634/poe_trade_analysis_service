@@ -16,6 +16,22 @@ Controlled test 2026-07 against `POST /api/trade2/search`: bare `User-Agent: Moz
 
 In-page `fetch` (browser already open) remains a valid alternative to 2–4. Rate-limit etiquette applies on every path: ≤10 hashes per fetch, ~1.7s between fetches, ~2.2s between searches.
 
+## Rate-limit headers: the actual rules (官方限流規則與 header 語義)
+
+Official docs: <https://www.pathofexile.com/developer/docs/index#ratelimits>. Every trade API response carries:
+
+- `X-Rate-Limit-Policy` — policy name (search: `trade-search-request-limit`, fetch: `trade-fetch-request-limit`; per-policy budgets, shared across endpoints with the same policy)
+- `X-Rate-Limit-Rules` — active rule dimensions (`Ip`, sometimes `Account`, `Client`)
+- `X-Rate-Limit-<Rule>` — comma-list of `max_hits:period_s:penalty_s` (ALL windows apply simultaneously)
+- `X-Rate-Limit-<Rule>-State` — same shape: `current_hits:period_s:active_restriction_s` (3rd number >0 = currently locked out)
+- On breach: 429 + `Retry-After` (seconds until the restriction expires)
+
+Snapshot 2026-07-05 (IP rule): search `5:10:60, 15:60:300, 30:300:1800` — note the third window: >30 searches in 5 min = **30-minute lockout**. Fetch `12:4:10, 16:12:300`.
+
+Key facts from the docs + observation:
+- **Limits are dynamic** — "can change at any time depending on our requirements". Observed Retry-After values (605s) that match none of the published tuples, presumably stricter load-dependent rules. So parse headers at runtime; never trust hardcoded intervals alone.
+- **"Exceeding these limits frequently will result in your application access being revoked"** — proactive header-driven throttling (stay below `max-1`, honor active restrictions in `-State`) beats sleep-the-penalty as a strategy. `gear_combo_optimizer.py` `req()` implements this.
+
 ## Rate-limit penalties are long and shared (429 懲罰期長且全 API 共用)
 
 Observed 2026-07 doing bulk multi-search work: the **search POST budget is small** — ~7 searches at 2.2s spacing passed, but continuing to ~11 within a minute triggered a 429 with `Retry-After: 472` (~8 min!), and a later fetch-stage 429 said 605s. Key facts:

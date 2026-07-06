@@ -15,10 +15,13 @@ Pipeline (knowledge/tricks.md "Probe the ceiling" + "Multi-slot gear combos"):
 
 Hard-won API/parsing facts baked in (don't remove casually):
   - full browser UA required (bare "Mozilla/5.0" -> Cloudflare 403)
-  - 429 handling: sleep the FULL Retry-After (penalties run 8-10 min and block
-    ALL trade endpoints); space searches ~30s apart in bulk sessions
-  - fetch budget is a rolling window of ~25-30 batches REGARDLESS of spacing
-    (2.5s and 6s both hit it); plan one 605s penalty per ~25 batches
+  - rate limiting is HEADER-DRIVEN: _throttle_wait() parses X-Rate-Limit-*
+    from every response and pauses before a window caps out (official
+    semantics: pathofexile.com/developer/docs#ratelimits; limits are dynamic
+    and frequent violations can get access revoked). Fixed sleeps are floors.
+  - 429 handling stays as backstop: sleep the FULL Retry-After (observed
+    penalties up to 605s that match NO published tuple — dynamic rules exist,
+    and a penalty blocks ALL trade endpoints)
   - every search + every fetched batch is disk-cached keyed by (name, range)
     -> a killed/crashed run resumes free; delete files to force refresh
   - mod text embeds [A|B] wiki brackets -> strip to B before regex
@@ -53,6 +56,27 @@ BUDGET_TIERS = (60, 80, 100, 120)       # div; last tier = the budget
 EXCLUDE_IDS = set()                     # item ids sold mid-session -> re-optimize without them
 # ----------------------------------------------------------
 
+def _throttle_wait(hdrs):
+    """Header-driven throttle (official semantics: developer/docs#ratelimits).
+    X-Rate-Limit-<Rule> = max:period:penalty tuples; -State = used:period:locked.
+    Returns seconds to wait so the NEXT request stays below every window's cap.
+    Limits are dynamic (GGG changes them under load) and frequent violations
+    can get access revoked — so obey headers, don't trust fixed intervals."""
+    def parse(s):
+        return [tuple(int(x) for x in t.split(":")) for t in s.split(",") if t]
+    wait = 0
+    rules = [r.strip() for r in (hdrs.get("X-Rate-Limit-Rules") or "").split(",") if r.strip()]
+    for rule in rules:
+        lim, st = hdrs.get(f"X-Rate-Limit-{rule}"), hdrs.get(f"X-Rate-Limit-{rule}-State")
+        if not lim or not st:
+            continue
+        for (mx, per, _pen), (cur, _p2, locked) in zip(parse(lim), parse(st)):
+            if locked > 0:
+                wait = max(wait, locked + 2)
+            elif cur >= mx - 1:          # near cap -> let this window roll over
+                wait = max(wait, per)
+    return wait
+
 def req(url, data=None):
     headers = {"User-Agent": UA}
     if data is not None:
@@ -61,7 +85,12 @@ def req(url, data=None):
     for _ in range(4):
         try:
             with urllib.request.urlopen(r) as resp:
-                return json.load(resp)
+                out = json.load(resp)
+                w = _throttle_wait(resp.headers)
+                if w:
+                    print(f"  rate-limit window near cap -> waiting {w}s", flush=True)
+                    time.sleep(w)
+                return out
         except urllib.error.HTTPError as e:
             if e.code == 429:
                 ra = int(e.headers.get("Retry-After", "60"))
@@ -80,7 +109,7 @@ def search(name, query_body):
             json.dumps(query_body).encode("utf-8"))
     json.dump(j, open(f, "w"))
     print(name, "id=", j.get("id"), "total=", j.get("total"), flush=True)
-    time.sleep(30)  # bulk-session spacing
+    time.sleep(5)  # floor only — _throttle_wait() in req() paces the real budget
     return j
 
 def fetch_pool(name, start=0, end=40):
@@ -94,7 +123,7 @@ def fetch_pool(name, start=0, end=40):
         batch = ",".join(hashes[i:i+10])
         j = req(f"https://www.pathofexile.com/api/trade2/fetch/{batch}?query={qid}&realm=poe2")
         items += [x for x in j["result"] if x and not x.get("gone")]
-        time.sleep(6)
+        time.sleep(2.5)  # floor only — _throttle_wait() in req() paces the real budget
     json.dump(items, open(out_f, "w"))
     print(name, f"[{start}:{end}] fetched", len(items), flush=True)
 
