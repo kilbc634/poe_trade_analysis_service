@@ -297,11 +297,18 @@ def agg_tuple(items):
             sum(c["cold"] for c in items),
             sum(c["light"] for c in items))
 
-def prune_groups(groups, cap=4000):
+def prune_groups(groups, cap=50000):
     """groups: list of (price, mana_eq, F, C, L, items).
     Hard-cap by keeping the max-mana_eq entry per (price, F, C, L) bucket,
     coarsening granularity until under cap. NEVER use windowed Pareto checks
-    or unbounded accumulation here — 6 slots OOM-killed a run that way."""
+    or unbounded accumulation here — 6 slots OOM-killed a run that way.
+
+    cap=50000 default from a measured convergence sweep (2026-07, 6-slot case,
+    ~1500 candidates): answers converged at 50k (89s) and stayed identical
+    through 100k (14min) and 200k (45min, = fully saturated finest bucketing);
+    cap 4000 lost 0.6% on one mid budget tier. If answers matter, do the
+    doubling test: rerun with 2x cap, stop when nothing changes. Runtime
+    scales with the PRODUCT of the two halves' kept counts (join stage)."""
     kept = groups
     pgran, rgran = 0.5, 6
     while len(kept) > cap:
