@@ -15,13 +15,18 @@ Pipeline (knowledge/tricks.md "Probe the ceiling" + "Multi-slot gear combos"):
 
 Hard-won API/parsing facts baked in (don't remove casually):
   - full browser UA required (bare "Mozilla/5.0" -> Cloudflare 403)
-  - rate limiting is HEADER-DRIVEN: _throttle_wait() parses X-Rate-Limit-*
-    from every response and pauses before a window caps out (official
-    semantics: pathofexile.com/developer/docs#ratelimits; limits are dynamic
-    and frequent violations can get access revoked). Fixed sleeps are floors.
-  - 429 handling stays as backstop: sleep the FULL Retry-After (observed
-    penalties up to 605s that match NO published tuple — dynamic rules exist,
-    and a penalty blocks ALL trade endpoints)
+  - USE A LOGGED-IN POESESSID (read from setting.py). Measured 2026-07-08:
+    authenticated (Rules=Account,Ip) and anonymous (Rules=Ip) are SEPARATE
+    rate-limit pools. Anonymous fetch has an UNDOCUMENTED hidden quota — the
+    visible X-Rate-Limit-Ip-State sits far below cap (~5 of 16) yet a ~600s
+    penalty fires around request ~30 with NO rate-limit headers at all; the
+    authenticated pool ran 50 back-to-back fetches with zero penalty. So the
+    header counters are a lenient decoy and _throttle_wait() CANNOT predict
+    the real limiter — logging in is the only thing that fixes bulk fetching.
+    (Full data + the debunked VPN-switch idea: knowledge/tricks.md.)
+  - _throttle_wait() still honors the visible windows/lockouts (harmless, just
+    insufficient alone). 429 backstop sleeps the FULL Retry-After (penalties
+    up to ~605s, longer than any published tuple; block ALL trade endpoints).
   - every search + every fetched batch is disk-cached keyed by (name, range)
     -> a killed/crashed run resumes free; delete files to force refresh
   - mod text embeds [A|B] wiki brackets -> strip to B before regex
@@ -40,7 +45,11 @@ Optimizer scaling lessons (learned the hard way at 6 slots / ~1500 candidates):
     script imported a sibling module and silently re-ran 13 searches).
 
 Usage: edit CONFIG + SEARCHES + constraints in main(), then run.
-  (no args)          searches + fetches (cached) + optimize
+  (no args)          searches + fetches (cached) + optimize; uses the POESESSID
+                     from setting.py (authenticated pool). If it is missing or
+                     expired the script warns and exits — refresh it, or:
+  --anon             deliberately run WITHOUT login (anonymous pool). Only for
+                     tiny jobs: hits the hidden ~30-request penalty wall.
   --optimize-only    skip network, re-optimize cached pools
 Scoring is MOM/EB (mana_eq = ES + mana + 2*attr + 40*incmana%,
 knowledge/mechanics.md); swap the mana_eq lines for other builds.
@@ -54,6 +63,34 @@ CURRENCY_RATES = {"divine": 1.0, "exalted": 1/650.7, "chaos": 1/7.21}  # -> div;
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
 BUDGET_TIERS = (60, 80, 100, 120)       # div; last tier = the budget
 EXCLUDE_IDS = set()                     # item ids sold mid-session -> re-optimize without them
+ANON = "--anon" in sys.argv             # opt in to the anonymous pool (see docstring)
+
+def _load_poesessid():
+    """Read POESESSID from setting.py (walk up from CWD & this file to find it);
+    fall back to the env var. Returns '' if none. setting.py itself just does
+    os.getenv('POESESSID',''), so the env is the same source it would use."""
+    import importlib.util
+    seen = []
+    for base in (os.getcwd(), os.path.dirname(os.path.abspath(__file__))):
+        d = base
+        for _ in range(6):
+            if d not in seen:
+                seen.append(d)
+            d = os.path.dirname(d)
+    for c in seen:
+        p = os.path.join(c, "setting.py")
+        if os.path.isfile(p):
+            try:
+                spec = importlib.util.spec_from_file_location("_poe_setting", p)
+                m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+                if getattr(m, "POESESSID", ""):
+                    return m.POESESSID
+            except Exception:
+                pass
+    return os.environ.get("POESESSID", "")
+
+POESESSID = "" if ANON else _load_poesessid()
+_auth_checked = False                   # verify the cookie actually authenticated, once
 # ----------------------------------------------------------
 
 def _throttle_wait(hdrs):
@@ -78,14 +115,25 @@ def _throttle_wait(hdrs):
     return wait
 
 def req(url, data=None):
+    global _auth_checked
     headers = {"User-Agent": UA}
     if data is not None:
         headers["Content-Type"] = "application/json"
+    if POESESSID:
+        headers["Cookie"] = f"POESESSID={POESESSID}"   # authenticated pool (Account,Ip)
     r = urllib.request.Request(url, data=data, headers=headers)
     for _ in range(4):
         try:
             with urllib.request.urlopen(r) as resp:
                 out = json.load(resp)
+                if POESESSID and not _auth_checked:      # confirm the cookie logged us in
+                    _auth_checked = True
+                    if "Account" not in (resp.headers.get("X-Rate-Limit-Rules") or ""):
+                        print("!! POESESSID from setting.py did NOT authenticate (likely "
+                              "expired). Refresh it in setting.py, or rerun with --anon to\n"
+                              "   proceed anonymously (hits the hidden ~30-request penalty).",
+                              flush=True)
+                        sys.exit(2)
                 w = _throttle_wait(resp.headers)
                 if w:
                     print(f"  rate-limit window near cap -> waiting {w}s", flush=True)
@@ -109,7 +157,7 @@ def search(name, query_body):
             json.dumps(query_body).encode("utf-8"))
     json.dump(j, open(f, "w"))
     print(name, "id=", j.get("id"), "total=", j.get("total"), flush=True)
-    time.sleep(5)  # floor only — _throttle_wait() in req() paces the real budget
+    time.sleep(5)  # burst-guard floor (anti-rapid-click is invisible to headers)
     return j
 
 def fetch_pool(name, start=0, end=40):
@@ -123,7 +171,7 @@ def fetch_pool(name, start=0, end=40):
         batch = ",".join(hashes[i:i+10])
         j = req(f"https://www.pathofexile.com/api/trade2/fetch/{batch}?query={qid}&realm=poe2")
         items += [x for x in j["result"] if x and not x.get("gone")]
-        time.sleep(2.5)  # floor only — _throttle_wait() in req() paces the real budget
+        time.sleep(2.5)  # burst-guard floor; real fetch cap is the hidden quota (login pool avoids it)
     json.dump(items, open(out_f, "w"))
     print(name, f"[{start}:{end}] fetched", len(items), flush=True)
 
@@ -327,7 +375,15 @@ def prune_groups(groups, cap=50000):
 
 def main():
     os.makedirs(WORKDIR, exist_ok=True)
-    if "--optimize-only" not in sys.argv:
+    if "--optimize-only" not in sys.argv:      # network stages need a rate-limit pool
+        if not POESESSID and not ANON:
+            print("!! No POESESSID in setting.py — anonymous trade access hits an\n"
+                  "   UNDOCUMENTED hidden quota (~30 fetches then a ~600s IP penalty;\n"
+                  "   see knowledge/tricks.md). The logged-in pool is separate and ran\n"
+                  "   50 fetches with zero penalty. Put a fresh POESESSID in setting.py,\n"
+                  "   or rerun with --anon to proceed anonymously anyway.", flush=True)
+            sys.exit(2)
+        print(f"[mode] {'AUTH (setting.py POESESSID)' if POESESSID else 'ANON (--anon)'}", flush=True)
         for name, (body, _n) in SEARCHES.items():
             search(name, body)
         for name, (_body, n) in SEARCHES.items():

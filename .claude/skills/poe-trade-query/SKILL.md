@@ -11,7 +11,7 @@ Everything here was captured live from the POE2 trade site (`/trade2`, league fr
 
 ## Recommended flow: build via API, show via UI
 
-**Pure price-check tasks need no browser and no POESESSID at all.** The search + fetch APIs work anonymously over plain HTTP (curl/httpx) — verified: responses are byte-identical with and without the cookie, same IP-based rate limits. Only open the browser (via open-poe-trade) when the user wants to *see* the results page, and only a logged-in session matters for actions: whisper/direct-buy (`POST /api/trade2/whisper`), the live-search websocket, and in-page purchase buttons.
+**Price-check tasks need no browser.** The search + fetch APIs work over plain HTTP (curl/httpx) with a full browser UA — anonymously too (response bodies are identical with/without the cookie). **But for any bulk job, send a logged-in `POESESSID` (default: read from `setting.py`).** Anonymous and authenticated traffic sit on *separate* rate-limit pools, and the anonymous pool has an undocumented hidden quota that walls you at ~30 fetches with a ~600s penalty; the authenticated pool doesn't (see knowledge/tricks.md "The header counters are a DECOY"). `gear_combo_optimizer.py` reads `setting.py`'s POESESSID by default and only runs anonymously with `--anon`. Open the browser (via open-poe-trade) only when the user wants to *see* the results page; a logged-in session also matters for actions: whisper/direct-buy (`POST /api/trade2/whisper`), the live-search websocket, and in-page purchase buttons.
 
 The fastest reliable pattern — skip UI form-filling entirely:
 

@@ -8,7 +8,7 @@ Controlled test 2026-07 against `POST /api/trade2/search`: bare `User-Agent: Moz
 
 **Escalation ladder if a plain-HTTP call still gets blocked (user-confirmed policy 2026-07):**
 1. Full realistic UA (usually enough — Cloudflare scores a normal UA high).
-2. Add cookies from `.poe_cookies.json` (project root, gitignored) — holds `POESESSID`, `cf_clearance`, and the UA they were captured under. `cf_clearance` is bound to **IP + UA**, so always send it with the stored `user_agent`. POESESSID is only needed for authed actions (whisper/direct-buy); anonymous sessions get a POESESSID too, so its presence ≠ logged in. Do NOT store POETOKEN (short-lived login-only OAuth JWT, not needed for trade APIs).
+2. Add cookies from `.poe_cookies.json` (project root, gitignored) — holds `POESESSID`, `cf_clearance`, and the UA they were captured under. `cf_clearance` is bound to **IP + UA**, so always send it with the stored `user_agent` (but it is only needed for the Cloudflare-gated `/data/*` endpoints, NOT search/fetch). Do NOT store POETOKEN (short-lived login-only OAuth JWT, not needed for trade APIs). **A logged-in POESESSID matters for far more than whisper/buy: it puts search/fetch on a SEPARATE, near-unlimited rate-limit pool** — see "The header counters are a DECOY" below. Prefer sourcing it from `setting.py` (env-backed) over the cookie cache for bulk jobs.
 3. Still blocked → add full browser-parity headers (template from a real Chrome capture): `accept: */*`, `accept-language`, `origin: https://www.pathofexile.com`, `referer: https://www.pathofexile.com/trade2/search/poe2/{league}`, `x-requested-with: XMLHttpRequest`, `sec-fetch-dest: empty`, `sec-fetch-mode: cors`, `sec-fetch-site: same-origin`, and the `sec-ch-ua*` client-hint family matching the UA (`sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"`, `sec-ch-ua-mobile: ?0`, `sec-ch-ua-platform: "Windows"`, …).
 4. Last resort → open-poe-trade headed browser, let the challenge clear, then go back to plain HTTP.
 
@@ -26,22 +26,31 @@ Official docs: <https://www.pathofexile.com/developer/docs/index#ratelimits>. Ev
 - `X-Rate-Limit-<Rule>-State` — same shape: `current_hits:period_s:active_restriction_s` (3rd number >0 = currently locked out)
 - On breach: 429 + `Retry-After` (seconds until the restriction expires)
 
-Snapshot 2026-07-05 (IP rule): search `5:10:60, 15:60:300, 30:300:1800` — note the third window: >30 searches in 5 min = **30-minute lockout**. Fetch `12:4:10, 16:12:300`.
+Snapshot 2026-07-08 (dynamic — **reread at runtime, never hardcode**): **search** IP rule `8:10:60, 15:60:120, 60:300:1800`; **fetch** anon IP `12:4:10, 16:12:300`, but authed shows IP `12:4:60, 16:12:60` **plus** `Account 6:4:10`. These numbers drift between readings (search was `5:10:60,15:60:300,30:300:1800` on 07-05) — "limits can change at any time depending on our requirements", and observed `Retry-After` values (600/605s) match no published tuple. Parse the live headers.
 
-**Counters are per-policy, lockouts are IP-wide** (verified 2026-07-05): a fetch hit does NOT increment the search policy's `-State` and vice versa — the two budgets can be consumed in parallel. But once either policy's penalty fires, the restriction is enforced on the IP across ALL trade endpoints (see the 429 section below) — "switch to the other endpoint while locked" does not work.
+**Counters are per-policy** (verified): a fetch hit does not touch the search policy's `-State` and vice versa; the two budgets run in parallel. Within one pool a fired penalty is enforced across ALL trade endpoints (a fetch during a search-triggered lockout still 429s; see the 429 section below).
 
-Key facts from the docs + observation:
-- **Limits are dynamic** — "can change at any time depending on our requirements". Observed Retry-After values (605s) that match none of the published tuples, presumably stricter load-dependent rules. So parse headers at runtime; never trust hardcoded intervals alone.
-- **"Exceeding these limits frequently will result in your application access being revoked"** — proactive header-driven throttling (stay below `max-1`, honor active restrictions in `-State`) beats sleep-the-penalty as a strategy. `gear_combo_optimizer.py` `req()` implements this.
+### The header counters are a DECOY — the real limiter is hidden and login-gated (2026-07-08, the big one)
+
+Measured directly with `ratelog.py` (2.5s spacing, per-request Ip-State logged). This overturns the old "just obey the headers" strategy:
+
+- **Anonymous fetch has an UNDOCUMENTED hidden quota.** The visible `X-Rate-Limit-Ip-State` sat steady at `2:4:0, ~5:12:0` — nowhere near the `12`/`16` caps — for **32 straight 200s, then request #33 returned 429 `Retry-After: 600` with NO `X-Rate-Limit-*` headers at all**. So `_throttle_wait()` (reacts only to visible near-cap counters) is **structurally blind** to what actually penalizes you. This is why bulk anon runs hit ~600s walls "for no reason" every ~30 requests. It is count-based over a multi-minute rolling window, not rate-based — slower spacing (6s vs 2.5s) only delays the wall. Anon fetch throughput is hard-capped ≈30 fetches / ~10 min.
+- **Authenticated (POESESSID) is a SEPARATE pool with no such wall.** Same endpoint/IP/instant: anon → 429 locked, authed → 200 clean. Authed adds an `Account` dimension (`Rules=Account,Ip`); crucially **even its `Ip` counter reads clean** while the anon `Ip` is locked — GGG keys the bucket on (IP × identity), so an anon IP penalty does NOT touch authed traffic. A 50-fetch back-to-back authed run hit **zero** penalties (anon died at 33). The hidden quota does not apply to logged-in traffic (or is far higher — untested past 50).
+- **Practical rule: always send a logged-in POESESSID for bulk work.** `gear_combo_optimizer.py` reads it from `setting.py` by default and refuses to run anonymously unless `--anon` is passed (tiny jobs only). The 32-hex `POESESSID` authenticates search/fetch; `cf_clearance` is NOT needed for these (only `/data/*` is Cloudflare-gated). Detect an expired POESESSID at runtime: a cookie'd request coming back with `Rules=Ip` (no `Account`) did not authenticate → refresh it.
+- **Anti-rapid-click is yet another separate layer.** ~4 requests in ~2s returns 429 "wait 60s" while the visible state is only `4:10:0` (far below cap) — a burst guard the headers can't predict. The fixed inter-request floors (search 5s, fetch 2.5s) are what actually prevent it, NOT the header logic. Keep them.
+
+### Debunked: VPN IP switching does NOT help (2026-07-08)
+
+Tempting idea (a former `--vpn-pause` mode, now removed): pause on a long wait, switch VPN exit, resume — betting the penalty is per-IP. **Measured false.** Across manual VPN switches the anon `Retry-After` kept counting *down* continuously (600→538→468→331→clear) instead of resetting — the "clean window" was just the penalty timer expiring, not the IP change. Commercial VPN datacenter exits are also often pre-poisoned by other users' anon traffic (a freshly-switched exit 429'd on its first request). And the hidden anon quota is enforced regardless of IP. Switching VPN is dead weight; **logging in is the actual fix.** Kept the lesson, deleted the mode.
 
 ## Rate-limit penalties are long and shared (429 懲罰期長且全 API 共用)
 
-Observed 2026-07 doing bulk multi-search work: the **search POST budget is small** — ~7 searches at 2.2s spacing passed, but continuing to ~11 within a minute triggered a 429 with `Retry-After: 472` (~8 min!), and a later fetch-stage 429 said 605s. Key facts:
-- **The penalty blocks ALL trade API endpoints** (search *and* fetch), not just the violated one. Don't try to "use the other endpoint meanwhile" — a fetch during the penalty just hangs on 429s.
+**This section describes ANONYMOUS behavior — logging in (above) sidesteps most of it.** If you're stuck anonymous:
+- **The penalty blocks ALL trade API endpoints** (search *and* fetch) within the pool, not just the violated one. A fetch during the penalty just hangs on 429s — don't "use the other endpoint meanwhile".
 - **Never retry during the penalty.** Each blocked request risks re-extending it. Sleep the full `Retry-After` + a few seconds, then resume.
-- For bulk sessions (many searches), space searches **~30s apart** — that spacing survived 4+ consecutive searches repeatedly. Fetches at 2.5s spacing are mostly safe but still honor any 429's `Retry-After` exactly.
-- **The fetch budget is a rolling window of roughly 25–30 batches regardless of spacing** (observed 2026-07: 429+605s hit after ~14–30 batches at both 2.5s and 6s spacing, especially right after a 15-search burst). For 60+ batch jobs, budget for one 605s penalty per ~25 batches — or plan pools so the must-have data comes first. Cache every search + every fetched batch to disk keyed by (search, range) so a killed/crashed run resumes free.
-- Long waits → run the whole resume plan as one background script with 429-aware retry (read `Retry-After`, sleep, retry once), not as foreground calls that time out mid-wait.
+- The fetch wall is the hidden ~30-request quota documented above (429 + ~600s, no headers), NOT the visible windows — it hits at ~14–33 batches regardless of 2.5s vs 6s spacing. For 60+ batch anon jobs, budget one ~600s penalty per ~25–30 batches, or front-load the must-have pools. The search POST budget is also small (~7–11 in a minute before a multi-minute 429).
+- **Always cache every search + every fetched batch to disk** keyed by (search, range) so a killed/crashed run resumes free — this is what makes penalty-sleeping and login-refresh restarts cost nothing.
+- Long waits → run the whole resume plan as one background script with 429-aware retry (read `Retry-After`, sleep, retry once), not foreground calls that time out mid-wait.
 
 ## Deep-fetch a search's price ladder without re-searching (免重搜抓高價端)
 
