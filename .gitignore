@@ -219,3 +219,6 @@ __marimo__/
 
 # 配裝查詢交付文件（暫存性質，格式見 skill knowledge/delivery.md）
 search_results_*.md
+
+# 配裝優化器的搜尋/抓取快取（市場快照暫存，gear_combo_optimizer.py 產生）
+gear_pools/

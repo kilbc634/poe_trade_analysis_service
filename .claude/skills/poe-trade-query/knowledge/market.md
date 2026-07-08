@@ -62,3 +62,18 @@ Slot anchors:
 | Belt | mana 120+ AND 125+ total res | ~30 div (rarely worth it) |
 
 Lessons: rings are where budget scales best (the % + flat mana + res triple exists in depth); chest Spirit+ES is the mandatory anchor cost; belts stay cheap unless you force mana+high-res on one item.
+
+### 2026-07-08 structure upgrade: move ALL res off the rings (user-directed, verified +~290 mana_eq)
+
+The table above (rings carry res) is the INFERIOR structure. Re-solve on the same market snapshot with res shifted to belt/boots and rings left res-free: **119d → 3638 mana_eq** (vs ~3348 with res-carrying rings; every budget tier gained 150-300). Query design implication: ring pools must include a **no-res pure-mana segment** (inc6% + flat mana 230/270 pseudo-total tiers — 597 listings ≤120d, deep market) or the optimizer literally cannot discover this; res-only-on-rings pool designs are self-defeating.
+
+Anchors for the winning structure (2026-07-08):
+| piece | spec | price |
+|---|---|---|
+| Ring | Mnemonic base, 240+ mana, 15-16% inc, ~55 attr, 40% qual, NO res | 29–30 div |
+| Belt | flat mana ~99–124 + **130+ total res** (the res anchor slot) | 5–15 div |
+| Boots | MS30+ + Spirit 15 + res 60–120 + flat mana ~104–108 (low ES ok) | 55 ex – 12 div |
+| Helmet | ES ~510–520 + 1 res + int/mana | 3 div |
+| Chest | Spirit 58 + ES ~680–745 + 1-2 res (corrupted) | 30 div |
+
+Boots/belt carrying both res AND flat mana is what frees the budget; the two Mnemonic rings alone ≈ 1800 mana_eq for 59d. Dual-res desecrated lines ("+#% to X and Chaos Resistances") count toward ele res — make sure the parser reads them.

@@ -33,8 +33,9 @@ Hard-won API/parsing facts baked in (don't remove casually):
   - crafted mods live inside explicitMods with flags.crafted
   - "Bonded:" runeMod lines are Shaman-only bonus effects -> excluded
   - current defences come from item.extended (es/ev/ar)
-  - ring/belt mana mods scale with "Quality (Mana Modifiers)" catalysts:
-    uncorrupted -> value/(1+curQ) * 1.2, floored; corrupted -> as displayed
+  - RING-ONLY: mana mods scale with "Quality (Mana Modifiers)" catalysts:
+    uncorrupted -> value/(1+curQ) * 1.2, floored; corrupted -> as displayed.
+    Belts CANNOT take quality (user-corrected 2026-07-08) — displayed = final.
   - CURRENCY_RATES go stale: refresh from poe2scout (knowledge/exchange-rates.md)
 
 Optimizer scaling lessons (learned the hard way at 6 slots / ~1500 candidates):
@@ -56,10 +57,15 @@ knowledge/mechanics.md); swap the mana_eq lines for other builds.
 """
 import json, re, time, urllib.request, urllib.error, itertools, os, sys, math, heapq
 
+# Windows consoles default to cp950/cp1252 -> seller names (Korean/CJK) crash
+# the final print stage AFTER all the network work is done. Force utf-8.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 # ------------------------- CONFIG -------------------------
 LEAGUE = "Runes%20of%20Aldur"          # keep URL-encoded; read from setting.py
 WORKDIR = "./gear_pools"                # s_*.json / pool_*.json cache dir
-CURRENCY_RATES = {"divine": 1.0, "exalted": 1/650.7, "chaos": 1/7.21}  # -> div; REFRESH ME
+CURRENCY_RATES = {"divine": 1.0, "exalted": 1/600.2, "chaos": 1/7.72}  # -> div; REFRESH ME (poe2scout 2026-07-08)
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
 BUDGET_TIERS = (60, 80, 100, 120)       # div; last tier = the budget
 EXCLUDE_IDS = set()                     # item ids sold mid-session -> re-optimize without them
@@ -157,7 +163,7 @@ def search(name, query_body):
             json.dumps(query_body).encode("utf-8"))
     json.dump(j, open(f, "w"))
     print(name, "id=", j.get("id"), "total=", j.get("total"), flush=True)
-    time.sleep(5)  # burst-guard floor (anti-rapid-click is invisible to headers)
+    time.sleep(2)  # burst-guard floor (anti-rapid-click is invisible to headers); 2s pace user-requested 2026-07-08
     return j
 
 def fetch_pool(name, start=0, end=40):
@@ -171,7 +177,7 @@ def fetch_pool(name, start=0, end=40):
         batch = ",".join(hashes[i:i+10])
         j = req(f"https://www.pathofexile.com/api/trade2/fetch/{batch}?query={qid}&realm=poe2")
         items += [x for x in j["result"] if x and not x.get("gone")]
-        time.sleep(2.5)  # burst-guard floor; real fetch cap is the hidden quota (login pool avoids it)
+        time.sleep(1.5)  # burst-guard floor; real fetch cap is the hidden quota (login pool avoids it); 1.5s pace user-requested 2026-07-08
     json.dump(items, open(out_f, "w"))
     print(name, f"[{start}:{end}] fetched", len(items), flush=True)
 
@@ -222,17 +228,27 @@ SEARCHES = {
     "ringD": (q("accessory.ring", [SF(TOT_MANA, 120), SF(TOT_RES, 50)]), 100),
     "ringE": (q("accessory.ring", [SF(INCMANA, 6), SF(TOT_MANA, 175), SF(TOT_RES, 80)]), 100),
     "ringF": (q("accessory.ring", [SF(INCMANA, 6), SF(TOT_MANA, 150), SF(TOT_RES, 100)]), 40),
+    # pure-mana rings, NO res requirement (user 2026-07-08: a high-res belt frees
+    # ring res budget — the old all-pools-require-res design couldn't cash that in).
+    # Probed ceilings ≤120d: inc6+mana270 -> 597, +mana230 -> 2676, +attr40 -> 486.
+    "ringG": (q("accessory.ring", [SF(INCMANA, 6), SF(TOT_MANA, 230)]), 100),
+    "ringH": (q("accessory.ring", [SF(INCMANA, 6), SF(TOT_MANA, 270)]), 100),
+    "ringI": (q("accessory.ring", [SF(INCMANA, 6), SF(TOT_MANA, 230), SF("pseudo.pseudo_total_attributes", 40)]), 40),
+    "ringJ": (q("accessory.ring", [SF(INCMANA, 6), SF(TOT_MANA, 170)]), 40),
     "beltA": (q("accessory.belt", [SF(TOT_RES, 85)]), 100),
     "beltB": (q("accessory.belt", [SF(TOT_MANA, 80), SF(TOT_RES, 60)]), 100),
     "beltC": (q("accessory.belt", [SF(TOT_MANA, 120), SF(TOT_RES, 125)]), 40),
     "beltD": (q("accessory.belt", [SF(TOT_RES, 135)]), 40),
+    # dual-high belts (probed ≤120d: mana120+res100 -> 249, mana130+res100 -> 6)
+    "beltE": (q("accessory.belt", [SF(TOT_MANA, 120), SF(TOT_RES, 100)]), 100),
+    "beltF": (q("accessory.belt", [SF(TOT_MANA, 130), SF(TOT_RES, 100)]), 20),
 }
 SLOT_POOLS = {  # slot -> pool-name prefix set (load_slot matches on these)
     "chest": {"chestA", "chestB", "chestC", "chestD", "chestE"},
     "boots": {"bootsA", "bootsB", "bootsC", "bootsD", "bootsE", "bootsF"},
     "helm":  {"helmA", "helmB", "helmC", "helmD", "helmE"},
-    "ring":  {"ringA", "ringB", "ringC", "ringD", "ringE", "ringF"},
-    "belt":  {"beltA", "beltB", "beltC", "beltD"},
+    "ring":  {"ringA", "ringB", "ringC", "ringD", "ringE", "ringF", "ringG", "ringH", "ringI", "ringJ"},
+    "belt":  {"beltA", "beltB", "beltC", "beltD", "beltE", "beltF"},
 }
 
 # ------------------------- parsing -------------------------
@@ -246,12 +262,16 @@ MOD_PATTERNS = [  # (regex, key) - extend per task
     (r'\+(\d+)% to Fire Resistance', "fire"), (r'\+(\d+)% to Cold Resistance', "cold"),
     (r'\+(\d+)% to Lightning Resistance', "light"),
     (r'\+(\d+)% to all Elemental Resistances', "allres"),
+    # dual-res desecrated lines ("+#% to X and Chaos Resistances") — chaos part ignored
+    (r'\+(\d+)% to Fire and Chaos Resistances', "fire"),
+    (r'\+(\d+)% to Cold and Chaos Resistances', "cold"),
+    (r'\+(\d+)% to Lightning and Chaos Resistances', "light"),
     (r'(\d+)% increased Movement Speed', "ms"),
     (r'(\d+)% increased maximum Mana', "incmana"),
 ]
 
 def quality_info(item):
-    """-> (quality_pct, is_mana_type) from item.properties."""
+    """-> (quality_pct, type_name) from item.properties; type_name '' = plain quality."""
     for p in item.get("properties") or []:
         name = _clean(p.get("name", "") or "")
         m = re.match(r'Quality\s*(?:\(([^)]*)\))?', name)
@@ -261,11 +281,31 @@ def quality_info(item):
             if vals and vals[0]:
                 mm = re.search(r'(\d+)', str(vals[0][0]))
                 if mm: pct = int(mm.group(1))
-            return pct, bool(m.group(1) and "Mana" in m.group(1))
-    return 0, False
+            return pct, (m.group(1) or "")
+    return 0, ""
+
+# Which parsed keys an elemental catalyst quality inflates (verified 2026-07-09
+# against tier magnitude ranges in fetched listings): the matching single-res
+# line, the matching "X and Chaos" dual line (parsed into the same key), AND
+# "+#% to all Elemental Resistances". Attribute-type quality exists (boosts all
+# attr mods) but is deliberately NOT reverted — user-confirmed it's never worth
+# applying, so listings virtually never carry it (mechanics.md).
+ELEM_QUALITY_KEYS = {"Fire": {"fire", "allres"}, "Cold": {"cold", "allres"},
+                     "Lightning": {"light", "allres"}}
 
 def parse_item(it, pool, slot):
     item, listing = it["item"], it["listing"]
+    corrupted = item.get("corrupted", False)
+    qpct, qtype = quality_info(item)
+    qmana = "Mana" in qtype
+    # user rule case "non-mana quality" (2026-07-09): re-catalysting to mana
+    # quality wipes an elemental catalyst -> its boosted res lines revert to
+    # their 0%-quality raw values. Revert per-line while parsing.
+    revert_keys = set()
+    if slot == "ring" and not corrupted and qpct and not qmana:
+        for elem, keys in ELEM_QUALITY_KEYS.items():
+            if elem in qtype:
+                revert_keys = keys
     mods = []
     for key in ("explicitMods", "implicitMods", "runeMods", "enchantMods",
                 "fracturedMods", "desecratedMods", "craftedMods"):
@@ -278,19 +318,23 @@ def parse_item(it, pool, slot):
         for pat, k in MOD_PATTERNS:
             mm = re.search(pat, s)
             if mm:
-                d[k] += int(mm.group(1))
+                v = int(mm.group(1))
+                if k in revert_keys:
+                    v = math.floor(v / (1 + qpct / 100.0))
+                d[k] += v
     p = listing.get("price") or {}
     cur, amt = p.get("currency", ""), p.get("amount", 0)
     if cur not in CURRENCY_RATES:
         return None
-    corrupted = item.get("corrupted", False)
     es = (item.get("extended") or {}).get("es", 0)
     d["fire"] += d["allres"]; d["cold"] += d["allres"]; d["light"] += d["allres"]
     attr = d["int"] + d["str"] + d["dex"] + d["allattr"]
-    if slot in ("ring", "belt"):  # mana-catalyst quality conversion (mechanics.md)
-        qpct, qmana = quality_info(item)
+    if slot == "ring":  # mana-catalyst quality conversion — RING-ONLY, belts can't take quality (mechanics.md)
         div = 1 + (qpct / 100.0 if qmana else 0)
-        if corrupted:  # quality locked -> displayed values are final
+        if corrupted or (qmana and qpct >= 20):
+            # quality locked, or already at/above the +20% we'd catalyst to
+            # (observed up to +60% mana quality on uncorrupted rings 2026-07
+            # — special crafts exceed the 20 base cap; displayed = final)
             eff_mana, eff_inc = d["mana"], d["incmana"]
         else:          # assume buyer catalysts to Quality (Mana Modifiers) +20%
             eff_mana = math.floor(d["mana"] / div * 1.2)
