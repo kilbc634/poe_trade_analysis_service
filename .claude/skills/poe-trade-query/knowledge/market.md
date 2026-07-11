@@ -77,3 +77,7 @@ Anchors for the winning structure (2026-07-08):
 | Chest | Spirit 58 + ES ~680–745 + 1-2 res (corrupted) | 30 div |
 
 Boots/belt carrying both res AND flat mana is what frees the budget; the two Mnemonic rings alone ≈ 1800 mana_eq for 59d. Dual-res desecrated lines ("+#% to X and Chaos Resistances") count toward ele res — make sure the parser reads them.
+
+### 2026-07-09 re-solve (same constraints, fresh snapshot): market improved, top now 107d → 3681
+
+Budget curve 59d→3289 / 77d→3540 / 96d→3599 / **107d→3681 (ceiling — 119d best was only 3659, so spending past 107d bought nothing)**. Converged at cap 50k (=100k identical; jewelry side saturated at 35.7k groups). What moved vs 07-08: chestD-tier supply recovered (ES780+ Spirit57+: 14 → 713 listings), and the winning belt was a **corrupted 5d Heavy Belt with C116/L64 + mana 89** — a corrupted mono-res-stacked belt beat the uncorrupted mana120+res tier on price by 6×. The 40%-mana-quality Mnemonic rings (~235-246 flat + 15-16% inc + ~55 attr) held steady at 29-30d; a 25d tier (231 flat, 31 attr, +1 res) exists. Cheap corrupted ES boots (MS30+Spirit14+2res, 1d) remain the best CP slot — check bootsB-style pools first.

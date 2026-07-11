@@ -52,8 +52,10 @@ Usage: edit CONFIG + SEARCHES + constraints in main(), then run.
   --anon             deliberately run WITHOUT login (anonymous pool). Only for
                      tiny jobs: hits the hidden ~30-request penalty wall.
   --optimize-only    skip network, re-optimize cached pools
-Scoring is MOM/EB (mana_eq = ES + mana + 2*attr + 40*incmana%,
-knowledge/mechanics.md); swap the mana_eq lines for other builds.
+Scoring is MOM/EB (mana_eq = ES + mana + 2*attr + 35*incmana%,
+knowledge/mechanics.md; 35 = mana per 1% at the ~3500 total-mana basis the
+user measured on the finished character 2026-07-11 — was 40/~4000 before);
+swap the mana_eq lines for other builds.
 """
 import json, re, time, urllib.request, urllib.error, itertools, os, sys, math, heapq
 
@@ -339,10 +341,10 @@ def parse_item(it, pool, slot):
         else:          # assume buyer catalysts to Quality (Mana Modifiers) +20%
             eff_mana = math.floor(d["mana"] / div * 1.2)
             eff_inc = math.floor(d["incmana"] / div * 1.2)
-        mana_eq = eff_mana + 40 * eff_inc + 2 * attr   # 40 = mana per 1% at ~4000 total
+        mana_eq = eff_mana + 35 * eff_inc + 2 * attr   # 35 = mana per 1% at ~3500 total (user-measured 2026-07-11)
     else:
         eff_mana, eff_inc = d["mana"], d["incmana"]
-        mana_eq = es + d["mana"] + 40 * d["incmana"] + 2 * attr
+        mana_eq = es + d["mana"] + 35 * d["incmana"] + 2 * attr
     return {"id": item["id"], "pool": pool, "slot": slot,
             "name": item.get("name") or "", "base": item.get("baseType"),
             "ilvl": item.get("ilvl"), "corrupted": corrupted, "es": es, "attr": attr,

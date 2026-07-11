@@ -21,7 +21,7 @@ Boots crafted Spirit values (observed 2026-07): the common craft is **"of the St
 
 ## Mana roll caps on jewelry (戒指/腰帶魔力詞綴上限, user-taught 2026-07)
 
-- Ring: besides `#% increased maximum Mana` (top explicit roll 6% → 7% with 20% Mana-Modifiers quality), rings also roll big **flat** `+# to maximum Mana` — observed listings around **+165, top roll ~179**. Weaker per-point than the % mod (at ~4000 total mana, 6% ≈ 240) but a real chase stat: a GG ring carries BOTH.
+- Ring: besides `#% increased maximum Mana` (top explicit roll 6% → 7% with 20% Mana-Modifiers quality), rings also roll big **flat** `+# to maximum Mana` — observed listings around **+165, top roll ~179**. Weaker per-point than the % mod (at ~3500 total mana, 6% ≈ 210; basis corrected from 4000 on 2026-07-11, see mechanics.md) but a real chase stat: a GG ring carries BOTH.
 - Belt: flat mana top tier is **+(105–124)**. Alternatively belts can go pure-resistance (130%+ total ele res) to relieve res pressure on other slots — both directions are valid; let the joint optimizer decide.
 
 ## Attributes on pure-ES base armour (純ES基底的能力值詞綴)
