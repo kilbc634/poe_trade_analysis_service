@@ -34,7 +34,7 @@ Snapshot 2026-07-08, **POE2 endpoints** (dynamic — **reread at runtime, never 
 
 **Counters are per-policy** (verified): a fetch hit does not touch the search policy's `-State` and vice versa; the two budgets run in parallel. Within one pool a fired penalty is enforced across ALL trade endpoints (a fetch during a search-triggered lockout still 429s; see the 429 section below).
 
-**Assume the budget is shared ACROSS GAMES.** The bucket is keyed on (IP × identity) and the policy names are endpoint-family names, not per-game — so hammering `/api/trade2/*` very likely eats the same budget as `/api/trade/*` and can lock you out of both. **Unverified** (nobody has run both games back-to-back yet); until someone measures it, plan bulk work as if POE1 and POE2 draw on one budget — that's the safe direction to be wrong in.
+**The budget IS shared across games — measured 2026-07-27.** Same POESESSID, searches interleaved POE1 → POE2 → POE1: all three returned `X-Rate-Limit-Policy: trade-search-request-limit`, and `X-Rate-Limit-Ip-State`'s long window counted straight through them — `11:10800` → `12:10800` → `13:10800`. The bucket is keyed on (IP × identity) and the policy is an endpoint-*family* name, not a per-game one. **So a bulk POE2 run eats POE1's budget and can lock you out of both.** Plan the two games as one pool.
 
 ### The header counters are a DECOY — the real limiter is hidden and login-gated (2026-07-08, the big one)
 
