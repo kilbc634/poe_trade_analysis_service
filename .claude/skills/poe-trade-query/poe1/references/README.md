@@ -1,14 +1,16 @@
 > ⛔ **POE1 ONLY** — 這個目錄放 POE1 的 API 快照。**不得放入任何 POE2 資料。**
 
-# POE1 reference TSVs — 尚未產生
+# POE1 reference TSVs
 
-需要三份，格式比照 `../../poe2/references/`：
+**已產出（2026-07-27，聯盟 Allflame，來源為交易頁 localStorage 快取）：**
 
-| 檔名 | 來源端點 | 欄位 |
-|---|---|---|
-| `stats.tsv` | `/api/trade/data/stats` | `group<TAB>id<TAB>text`（`#` = 數值佔位符） |
-| `items.tsv` | `/api/trade/data/items` | `category<TAB>name<TAB>type<TAB>flags` |
-| `static.tsv` | `/api/trade/data/static` | 通貨/碎片 id 表 |
+| 檔名 | 欄位 | 筆數 |
+|---|---|--:|
+| `stats.tsv` | `group<TAB>id<TAB>text`（`#` = 數值佔位符） | 17325 |
+| `items.tsv` | `category<TAB>name<TAB>type<TAB>flags`（唯一裝有 name，基底只有 type） | 5997 |
+| `static.tsv` | `群組<TAB>id<TAB>名稱` | 1433 |
+
+⚠ **一列一筆是硬性前提**（這些表是逐行 grep 的）。POE1 有 2025 筆詞綴原文含換行，產檔時一律轉義成字面 `\n`；重產時務必沿用，並在寫完後 assert「檔案行數 == 記錄筆數」，否則多行詞綴會把表格撐爛。
 
 ## 取得資料的兩條路
 
