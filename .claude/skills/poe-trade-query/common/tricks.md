@@ -1,20 +1,24 @@
-# Query tricks & API gotchas (查詢技巧與陷阱)
+# Query tricks & API gotchas — realm-agnostic (查詢技巧與陷阱，兩款遊戲共用)
 
-Hard-won facts about how the search API actually behaves. Check before trusting a filter to do what its name suggests.
+Hard-won facts about how the trade **site** behaves, and about method that doesn't depend on which game you're pricing. Check before trusting a filter to do what its name suggests.
+
+> **What belongs here:** transport (Cloudflare, auth, rate limits) and method skeletons. **What does NOT:** any stat id, filter field name, currency, item, mechanic, price, or mod-text format — those live in `<realm>/knowledge/`. See `../SKILL.md`.
+>
+> **⚠ 跨 realm 適用性：** everything below was measured against **POE2's** endpoints, because that's where the work has been done so far. The *mechanisms* are site-level and should hold on POE1 — but the *numbers* (batch caps, observed rate-limit tuples, hidden-quota thresholds) must be re-confirmed on the first real POE1 bulk run. Don't quote a measured number as POE1 fact until someone has measured it there.
 
 ## Cloudflare 403 on plain HTTP: it's the User-Agent (純 HTTP 被 CF 擋：UA 是關鍵)
 
-Controlled test 2026-07 against `POST /api/trade2/search`: bare `User-Agent: Mozilla/5.0` → **403 blocked**; full realistic UA (`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36`) → **200, even with no cookies at all**. So for anonymous price checks: send a full browser UA and skip the browser entirely.
+Controlled test 2026-07 against the search POST: bare `User-Agent: Mozilla/5.0` → **403 blocked**; full realistic UA (`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36`) → **200, even with no cookies at all**. So for anonymous price checks: send a full browser UA and skip the browser entirely.
 
 **Escalation ladder if a plain-HTTP call still gets blocked (user-confirmed policy 2026-07):**
 1. Full realistic UA (usually enough — Cloudflare scores a normal UA high).
 2. Add cookies from `.poe_cookies.json` (project root, gitignored) — holds `POESESSID`, `cf_clearance`, and the UA they were captured under. `cf_clearance` is bound to **IP + UA**, so always send it with the stored `user_agent` (but it is only needed for the Cloudflare-gated `/data/*` endpoints, NOT search/fetch). Do NOT store POETOKEN (short-lived login-only OAuth JWT, not needed for trade APIs). **A logged-in POESESSID matters for far more than whisper/buy: it puts search/fetch on a SEPARATE, near-unlimited rate-limit pool** — see "The header counters are a DECOY" below. Prefer sourcing it from `setting.py` (env-backed) over the cookie cache for bulk jobs.
-3. Still blocked → add full browser-parity headers (template from a real Chrome capture): `accept: */*`, `accept-language`, `origin: https://www.pathofexile.com`, `referer: https://www.pathofexile.com/trade2/search/poe2/{league}`, `x-requested-with: XMLHttpRequest`, `sec-fetch-dest: empty`, `sec-fetch-mode: cors`, `sec-fetch-site: same-origin`, and the `sec-ch-ua*` client-hint family matching the UA (`sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"`, `sec-ch-ua-mobile: ?0`, `sec-ch-ua-platform: "Windows"`, …).
+3. Still blocked → add full browser-parity headers (template from a real Chrome capture): `accept: */*`, `accept-language`, `origin: https://www.pathofexile.com`, `referer: <this realm's trade search page URL — see the realm's QUERY.md>`, `x-requested-with: XMLHttpRequest`, `sec-fetch-dest: empty`, `sec-fetch-mode: cors`, `sec-fetch-site: same-origin`, and the `sec-ch-ua*` client-hint family matching the UA (`sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"`, `sec-ch-ua-mobile: ?0`, `sec-ch-ua-platform: "Windows"`, …).
 4. Last resort → open-poe-trade headed browser, let the challenge clear, then go back to plain HTTP.
 
 **Refresh-on-trigger rule:** every time step 4 fires (a headed browser had to clear a challenge), immediately re-export cookies + UA and overwrite `.poe_cookies.json` (playwright: `page.context().cookies('https://www.pathofexile.com')` filtered to POESESSID/cf_clearance, plus `navigator.userAgent`), so the cache always holds the latest known-good clearance.
 
-In-page `fetch` (browser already open) remains a valid alternative to 2–4. Rate-limit etiquette applies on every path: ≤10 hashes per fetch, ~1.7s between fetches, ~2.2s between searches.
+In-page `fetch` (browser already open) remains a valid alternative to 2–4. Rate-limit etiquette applies on every path: batch fetches at the endpoint's documented cap (POE2: ≤10 hashes — confirm the realm's own cap from its QUERY.md), ~1.7s between fetches, ~2.2s between searches.
 
 ## Rate-limit headers: the actual rules (官方限流規則與 header 語義)
 
@@ -26,9 +30,11 @@ Official docs: <https://www.pathofexile.com/developer/docs/index#ratelimits>. Ev
 - `X-Rate-Limit-<Rule>-State` — same shape: `current_hits:period_s:active_restriction_s` (3rd number >0 = currently locked out)
 - On breach: 429 + `Retry-After` (seconds until the restriction expires)
 
-Snapshot 2026-07-08 (dynamic — **reread at runtime, never hardcode**): **search** IP rule `8:10:60, 15:60:120, 60:300:1800`; **fetch** anon IP `12:4:10, 16:12:300`, but authed shows IP `12:4:60, 16:12:60` **plus** `Account 6:4:10`. These numbers drift between readings (search was `5:10:60,15:60:300,30:300:1800` on 07-05) — "limits can change at any time depending on our requirements", and observed `Retry-After` values (600/605s) match no published tuple. Parse the live headers.
+Snapshot 2026-07-08, **POE2 endpoints** (dynamic — **reread at runtime, never hardcode**): **search** IP rule `8:10:60, 15:60:120, 60:300:1800`; **fetch** anon IP `12:4:10, 16:12:300`, but authed shows IP `12:4:60, 16:12:60` **plus** `Account 6:4:10`. These numbers drift between readings (search was `5:10:60,15:60:300,30:300:1800` on 07-05) — "limits can change at any time depending on our requirements", and observed `Retry-After` values (600/605s) match no published tuple. Parse the live headers.
 
 **Counters are per-policy** (verified): a fetch hit does not touch the search policy's `-State` and vice versa; the two budgets run in parallel. Within one pool a fired penalty is enforced across ALL trade endpoints (a fetch during a search-triggered lockout still 429s; see the 429 section below).
+
+**Assume the budget is shared ACROSS GAMES.** The bucket is keyed on (IP × identity) and the policy names are endpoint-family names, not per-game — so hammering `/api/trade2/*` very likely eats the same budget as `/api/trade/*` and can lock you out of both. **Unverified** (nobody has run both games back-to-back yet); until someone measures it, plan bulk work as if POE1 and POE2 draw on one budget — that's the safe direction to be wrong in.
 
 ### The header counters are a DECOY — the real limiter is hidden and login-gated (2026-07-08, the big one)
 
@@ -55,13 +61,13 @@ Tempting idea (a former `--vpn-pause` mode, now removed): pause on a long wait, 
 
 ## Deep-fetch a search's price ladder without re-searching (免重搜抓高價端)
 
-A search response stores **up to 100 result hashes**. Since results sort by price asc, hashes `[40:100]` are the *more expensive tranche* of the same query — fetch them directly with the same `query_id`, no new search POST needed. Ideal when the cheap end is exhausted and you want to see what more budget buys (price/quality frontier) without spending search-rate budget.
+A search response stores a **result-hash window** (POE2: up to 100 — confirm the realm's own cap). Since results sort by price asc, the later hashes (POE2: `[40:100]`) are the *more expensive tranche* of the same query — fetch them directly with the same `query_id`, no new search POST needed. Ideal when the cheap end is exhausted and you want to see what more budget buys (the price/quality frontier) without spending search-rate budget.
 
 ## Probe the ceiling BEFORE building pools (先探頂再撈池, user-taught 2026-07)
 
 Don't jump straight to the pooling script with guessed thresholds — cheap-end-sorted pools make every budget tier collapse to the same cheap answer (sampling bias), which under-serves a "best within budget X" request. First run a few **interactive probe searches** per slot to learn what the top end looks like:
 
-1. Assume the extreme: one slot eating ~80% of the total budget. Add a price cap at ~80% of budget (use `{"option":"divine","max":N}` literal mode — the equivalent-mode internal rate is unreliable) and crank the stat mins up.
+1. Assume the extreme: one slot eating ~80% of the total budget. Add a price cap at ~80% of budget — use the **literal-currency mode** (`trade_filters.price` with an explicit `option` naming the realm's high-value trade currency), because the equivalent-mode internal rate is unreliable — and crank the stat mins up.
 2. Read the `total` count from the search response (no fetch needed). **>200 results ⇒ conditions too conservative — raise the stat mins**; near-0 ⇒ back off. Iterate to find where the mod ceiling sits for that slot & budget.
 3. Only then define the pool searches around those discovered ceilings (a high-end pool + a mid pool per slot), fetch, and optimize.
 
@@ -69,35 +75,26 @@ The 80% / 200-count numbers are heuristics, not rules — judge from actual coun
 
 ## Multi-slot gear combos: pool per slot, optimize locally (多部位配裝法)
 
-For "buy N pieces within budget X satisfying joint constraints (total res / total Spirit / …)": don't encode the joint constraints into any single search. Per slot run 2–3 searches (a cheap broad pool + a high-spec pool), fetch ~40 each, parse into normalized candidates (price→div, ES from `extended.es`, res/attr/mana/Spirit via regex on cleaned mod text — strip `[A|B]`→`B`), then brute-force the slot cross-product locally (100³ combos is instant). Report the best combo per budget tier — the marginal-value curve (e.g. 60d→1633, 100d→1646) tells the user where spending stops paying.
+> **Method skeleton only.** The scoring function, which stats you parse out, the currency, the mod-text format, and every measured number are **game-specific** — get them from `<realm>/knowledge/`.
 
-**Bucket-cap accuracy: convergence-test it, don't trust one cap.** The staged combine's bucket pruning (`prune_groups`) is the only lossy step vs full brute force (which is ~6.6e12 pairs for 6 slots = months — not an option). Measured sweep on the 2026-07 six-slot case (pure Python, desktop): cap 4000 ≈ 1 min but lost 0.6% on one mid tier; cap 20000 ≈ 2 min, small residual loss; **cap 50000 = 89 s and converged** (identical answers at 100k/14 min and 200k/45 min, the latter being fully-saturated finest-granularity bucketing — an effective no-loss backstop). The headline tiers (sweet spot / max budget) were already exact at cap 4000. Practice: default 50000; for a final deliverable rerun with cap doubled — if nothing changes, call it converged. Kept-counts saturate at the finest bucket pass (here armour 84k, jewelry 157k), so caps beyond that change nothing.
+For "buy N pieces within budget X satisfying joint constraints (some total across the whole set)": **don't try to encode the joint constraints into any single search** — the site can't express them. Instead:
 
-**Reusable implementation: [`scripts/gear_combo_optimizer.py`](../scripts/gear_combo_optimizer.py)** (self-contained stdlib script, 6-slot proven: disk-cached 429-aware search/fetch, mod parser with all known gotchas incl. ring/belt mana-quality conversion, staged combine with bounded bucket pruning + bounded-heap join). Don't rewrite from scratch — copy it to the scratchpad, refresh `CURRENCY_RATES` from [exchange-rates.md](exchange-rates.md), edit CONFIG/SEARCHES/constraints for the task (pool thresholds from ceiling probes first!). Scaling warning baked into the script: windowed Pareto checks and unbounded combo accumulation OOM at 6 slots — keep `prune_groups()` and the heap join as-is.
+1. **Per slot**, run 2–3 searches: a cheap broad pool + a mid pool + a high-spec pool at the probed ceiling (thresholds from the ceiling probes above, never guessed). Price asc.
+2. **Fetch ~40 per search**, plus the deep-fetch tranche when you want the expensive end.
+3. **Parse into normalized candidates** — price converted to one currency, plus whatever stats the build's scoring function needs. Mod-text parsing rules are realm-specific; see the realm's KB.
+4. **Brute-force the slot cross-product locally.** Small cases (100³) are instant; more slots need the staged combine below.
+5. **Report the best combo per budget tier.** The marginal-value curve is the real deliverable — it shows the user where spending stops paying.
 
-**Default output rule (user-confirmed 2026-07):** for price checks, do NOT navigate the browser to the results page — just give the user the `https://www.pathofexile.com/trade2/search/poe2/{league}/{query_id}` URL(s) to copy. This holds even when a browser happens to be open. Only `goto` the results page when the user explicitly asks to see it.
+**Bucket-cap accuracy: convergence-test it, don't trust one cap.** In the staged combine, bucket pruning (`prune_groups`) is the only lossy step versus full brute force (astronomically large at 6 slots — not an option). Practice: **default cap 50000; for a final deliverable rerun with the cap doubled — if the answers don't change, call it converged.** Kept-counts saturate once bucketing reaches its finest granularity, and caps beyond that point change nothing; that saturation point is case-specific, so measure it rather than assuming. Headline tiers (sweet spot / max budget) converge much earlier than mid tiers.
 
-## Price cap in exalted-equivalent mode diverges from market rate (等值價格上限的匯率偏差)
+**Reusable implementation: [`../scripts/gear_combo_optimizer.py`](../scripts/gear_combo_optimizer.py)** (self-contained stdlib script, 6-slot proven: disk-cached 429-aware search/fetch, mod parser, staged combine with bounded bucket pruning + bounded-heap join). **Its endpoint paths, filter field names, mod regexes and scoring are a POE2 profile** — see the script header before using it on POE1. Don't rewrite from scratch — copy it to the scratchpad, refresh the currency rates from the realm's exchange-rate notes, edit CONFIG/SEARCHES/constraints for the task (pool thresholds from ceiling probes first!). Scaling warning baked into the script: windowed Pareto checks and unbounded combo accumulation OOM at 6 slots — keep `prune_groups()` and the heap join as-is.
 
-`trade_filters.price` with **option omitted** converts every listing to exalted-equivalent using GGG's **internal** exchange rate — which can differ a lot from the real market rate. The internal rate has **no public endpoint**; you can only infer bounds from search behavior (which literally-priced listings pass a given equivalent cap). Observed 2026-07 (Runes of Aldur): a `max: 17000` cap let through items priced up to 52 div → internal rate ≤ ~327 ex/div (upper bound only; bisect the cap if a precise value ever matters), while the true traded rate was ~710 ex/div. So the equivalent-mode cap can be off by >2×.
+**Default output rule (user-confirmed 2026-07):** for price checks, do NOT navigate the browser to the results page — just give the user the search-result URL(s) to copy (build them per the realm's QUERY.md). This holds even when a browser happens to be open. Only `goto` the results page when the user explicitly asks to see it.
 
-For actual market rates (div/ex/chaos conversions), see **[exchange-rates.md](exchange-rates.md)** — poe2scout SnapshotPairs is the reliable source; the trade-site exchange listing board is not.
+## The price cap's "equivalent" mode uses a hidden internal rate (等值價格上限用內部匯率)
 
-**Rule:** use the equivalent-mode cap only as a coarse pre-filter (pad it generously), then filter by the **actual listed price** from the fetch API. Alternatively run a `{"option":"divine","max":N}` control query — it matches only divine-priced listings but compares by literal divine amount, no conversion involved.
+`trade_filters.price` with the currency **option omitted** doesn't compare literal prices — the server converts every listing into the realm's base currency using GGG's **internal** exchange rate, which can differ a lot from the real market rate. That rate has **no public endpoint**; you can only infer bounds from search behavior (which literally-priced listings pass a given equivalent cap). Measured divergence figures are realm- and league-specific — see the realm's KB.
 
-## `equipment_filters.es` (and ar/ev) is the max-quality value (防禦數值按滿品質計)
+**Rule:** use the equivalent-mode cap only as a coarse pre-filter (pad it generously), then filter by the **actual listed price** from the fetch API. Alternatively run a literal-currency control query (`{"option": "<currency>", "max": N}`) — it matches only listings priced in that currency, but compares by literal amount, no conversion involved.
 
-Defence min/max filters compare against base + local mods **+ 20% quality**, not the item's current sheet value. A search for `es >= 600` can return items currently showing ES ~500 (needs quality currency to reach 600). When reporting results, flag items whose current value is below the user's threshold.
-
-## Fetch API mod entries are mixed string/object (詞綴回傳格式不一)
-
-`item.explicitMods` etc. can contain plain strings **or** objects `{description, hash, mods:[{name, tier, level, magnitudes}]}`. Normalize with `typeof m === 'string' ? m : m.description`. Bonus: the object form's `tier`/`magnitudes` tells you the mod's tier and roll range — useful for judging whether a roll is near its cap without leaving the result set.
-
-More fetch-parsing facts (2026-07):
-- Mod text embeds wiki-link brackets: `+12 to [Spirit|Spirit]`, `[EnergyShield|Energy Shield]` — strip with regex `\[([^\[\]|]*\|)?([^\[\]]*)\]` → `\2` before matching.
-- Crafted mods appear **inside `explicitMods`** with `flags: {crafted: true}` (hash `stat.crafted.…`), not in a separate `craftedMods` array.
-- The item's current defence numbers live in `item.extended` (`es`, `ev`, `ar`) — no need to parse `properties`.
-- `runeMods` starting with `Bonded:` (raw tag `[ShamanOnlyMods|Bonded]`): **Bonded is not a rune type** — the Shaman ascendancy gains extra effects from every socketed rune, and the `Bonded:` line is that extra effect. The same rune's *normal* effect appears as its own separate line (and defence-type effects are already baked into `extended.es`). Scoring rule: for non-Shaman buyers exclude only the `Bonded:` lines and count everything else as usual; the sockets are NOT wasted — they hold normally-working runes.
-- **Corrupted items CAN swap runes** (user-confirmed 2026-07): corruption locks the *number* of rune sockets, not their contents. So when valuing a corrupted item, treat every rune socket as "replaceable with the best rune for the build" — a bad rune (e.g. a useless Bonded) is not dead weight, but a *missing* socket can never be added. What corruption does forbid: further crafting/modification and adding quality.
-
-*(learned 2026-07 during a Spirit+ES chest price hunt)*
+For real market rates: never guess, and never use the trade-site exchange **listing board** (a thin manual board with bait listings and wide spreads, not the in-game matching market). Each realm's KB documents its own rate source.

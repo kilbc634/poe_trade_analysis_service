@@ -1,3 +1,6 @@
+> ⛔ **POE2 ONLY** ｜ 遊戲版本：**POE2 0.5 "Runes of Aldur"** ｜ 最後整理：**2026-07-27**（各條事實的日期見檔內逐條標註）
+> 以下詞綴部位分佈、stat id 與 roll 上限**只適用 POE2**。若 `REALM=poe1`，停止並改讀 `../../poe1/`。
+
 # Mod slot availability (詞綴部位分佈)
 
 Which slots a mod can actually roll on. Check before building a query — if the user asks for a mod on a slot that can't have it, explain the real sources instead of running a search that returns nothing.
@@ -28,4 +31,4 @@ Boots crafted Spirit values (observed 2026-07): the common craft is **"of the St
 
 The natural affix pool of **pure ES bases has only `+# to Intelligence`** — no Strength, no Dexterity, no all-attributes rolls (taught by user 2026-07, from the affix tables). Sole exception: **desecrated mods (深淵詞綴)**, when revealed, can give dual-attribute lines like `+15 to Strength and Intelligence` / `+15 to Strength and Dexterity` — but these are considered junk reveals, usually a byproduct of someone's own crafting, and such items barely circulate (bad listing appeal). Practical query rule: on ES armour, filter/score attributes via Int only; don't bother adding str/dex/all-attr stat ids for those slots. (Attribute-flexible valuation ×2 still applies where attributes DO roll — amulets, rings, belts; see mechanics.md.)
 
-*(taught by user 2026-07, ids verified against references/stats.tsv)*
+*(taught by user 2026-07, ids verified against `../references/stats.tsv`)*

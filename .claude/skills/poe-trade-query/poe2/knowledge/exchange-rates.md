@@ -1,3 +1,7 @@
+> ⛔ **POE2 ONLY** ｜ 遊戲版本：**POE2 0.5 "Runes of Aldur"** ｜ 最後整理：**2026-07-27**（各條事實的日期見檔內逐條標註）
+> poe2scout 是 POE2 專屬資料源，幣別體系（exalted 為基準）也是 POE2 的。
+> POE1 的匯率來源另尋，寫進 `../../poe1/knowledge/`。若 `REALM=poe1`，停止並改讀那裡。
+
 # Currency exchange rates — how to get real market rates (通貨匯率查詢)
 
 Whenever a task needs a currency conversion (budget in divine, prices in exalted, "what's X worth"), get the rate from here — do NOT guess and do NOT use the trade-site listing board.
@@ -41,6 +45,6 @@ Reference reading 2026-07 (Runes of Aldur), verified against the user's in-game 
 - **Official `GET api.pathofexile.com/currency-exchange/poe2`** — the upstream (hourly `volume_traded`, `lowest/highest_ratio` per market). Requires OAuth scope `service:cxapi` (approved apps only; apply via oauth@grindinggear.com). POESESSID and POETOKEN are both rejected (401/403) — don't retry them. Worth applying for if this project wants first-party data.
 - **Trade-site `POST /api/trade2/exchange/...` listing board — UNRELIABLE for rates.** A thin manual-listing board, not the in-game matching market: observed asks 550–600 ex/div vs true 710 (-15~20%), huge bid/ask spreads, bait listings (great ratio, stock 1) at the top. Only use it to see what's listed for direct website trade.
 
-Related: the trade search's exalted-equivalent price cap uses yet another (hidden, lagging) internal rate — see [tricks.md](tricks.md).
+Related: the trade search's exalted-equivalent price cap uses yet another (hidden, lagging) internal rate — see [api-quirks.md](api-quirks.md) and [`../../common/tricks.md`](../../common/tricks.md).
 
 *(established 2026-07: user cross-checked poe2scout against the in-game Currency Exchange — matched)*

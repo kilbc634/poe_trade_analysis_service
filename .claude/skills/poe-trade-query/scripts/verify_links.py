@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """Post-optimizer delivery helper: verify winning listings are still live and
-build seller-account-filtered search links (knowledge/delivery.md).
+build seller-account-filtered search links (../common/delivery.md).
+
+!! REALM: POE2 ONLY as written (CAT[] category options and the stat ids it pulls
+!! from gear_combo_optimizer are POE2's). The delivery format itself is shared.
 
 Usage: python verify_links.py [tier ...]   (default: the two largest tiers)
 Reads gear_pools/result.json + the s_<pool>.json search caches (for query ids),

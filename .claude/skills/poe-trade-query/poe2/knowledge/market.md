@@ -1,3 +1,7 @@
+> ⛔ **POE2 ONLY** ｜ 遊戲版本：**POE2 0.5 "Runes of Aldur"** ｜ 最後整理：**2026-07-27**（各條事實的日期見檔內逐條標註）
+> 以下組合、價格與基底名稱**只適用 POE2**。若 `REALM=poe1`，停止並改讀 `../../poe1/`。
+> 行情會隨聯盟漂移——引用前先看逐條日期，過期的當參考值不當事實。
+
 # Market knowledge (行情 / 極品組合)
 
 Which mod combos are market-premium. Use to set price expectations and to warn the user before an expensive search; offer relaxed fallbacks alongside.
@@ -46,7 +50,7 @@ Notes: the chest ES ladder shows hard diminishing returns past ~ES 770 (98d buys
 
 ## MOM/EB six-piece (helm/chest/boots/2 rings/belt) anchors (六件套行情)
 
-2026-07 (Runes of Aldur), joint solve for **F82/C118/L116 + Spirit 73 + MS30**, maximizing mana_eq (ES+mana+2×attr+40×%incmana). Budget curve from properly-probed pools (see tricks.md "Probe the ceiling"): **~31d → 2476 (budget floor), ~59d → 3073 (CP sweet spot), ~119d → 3165 (top)**. An earlier cheap-end-only sampling wrongly concluded the curve was flat after 35d — that was sampling bias, not market reality.
+2026-07 (Runes of Aldur), joint solve for **F82/C118/L116 + Spirit 73 + MS30**, maximizing mana_eq (ES+mana+2×attr+40×%incmana). Budget curve from properly-probed pools (see [`../../common/tricks.md`](../../common/tricks.md) "Probe the ceiling"): **~31d → 2476 (budget floor), ~59d → 3073 (CP sweet spot), ~119d → 3165 (top)**. An earlier cheap-end-only sampling wrongly concluded the curve was flat after 35d — that was sampling bias, not market reality.
 
 Slot anchors:
 | piece | spec | price |
@@ -81,3 +85,17 @@ Boots/belt carrying both res AND flat mana is what frees the budget; the two Mne
 ### 2026-07-09 re-solve (same constraints, fresh snapshot): market improved, top now 107d → 3681
 
 Budget curve 59d→3289 / 77d→3540 / 96d→3599 / **107d→3681 (ceiling — 119d best was only 3659, so spending past 107d bought nothing)**. Converged at cap 50k (=100k identical; jewelry side saturated at 35.7k groups). What moved vs 07-08: chestD-tier supply recovered (ES780+ Spirit57+: 14 → 713 listings), and the winning belt was a **corrupted 5d Heavy Belt with C116/L64 + mana 89** — a corrupted mono-res-stacked belt beat the uncorrupted mana120+res tier on price by 6×. The 40%-mana-quality Mnemonic rings (~235-246 flat + 15-16% inc + ~55 attr) held steady at 29-30d; a 25d tier (231 flat, 31 attr, +1 res) exists. Cheap corrupted ES boots (MS30+Spirit14+2res, 1d) remain the best CP slot — check bootsB-style pools first.
+
+### Bucket-cap convergence sweep for this six-slot case (2026-07 實測，pure Python, desktop)
+
+Measured on the six-slot solve above — these are **this case's** numbers, not a universal setting (the method is in [`../../common/tricks.md`](../../common/tricks.md) "Multi-slot gear combos"):
+
+| `prune_groups` cap | runtime | result |
+|---|---|---|
+| 4000 | ≈1 min | lost 0.6% on one mid tier; headline tiers (sweet spot / max budget) already exact |
+| 20000 | ≈2 min | small residual loss |
+| **50000** | **89 s** | **converged** — identical to 100k |
+| 100000 | 14 min | identical to 50k |
+| 200000 | 45 min | fully-saturated finest-granularity bucketing (effective no-loss backstop) |
+
+Kept-counts saturate at the finest bucket pass (here **armour 84k, jewelry 157k** groups), so caps beyond that change nothing. The 07-09 re-solve saturated its jewelry side at 35.7k groups.

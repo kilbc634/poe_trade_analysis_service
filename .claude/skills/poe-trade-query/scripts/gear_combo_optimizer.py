@@ -1,7 +1,15 @@
 # -*- coding: utf-8 -*-
 """Multi-slot gear combo optimizer for POE2 trade (多部位配裝聯合求解), 6-slot proven.
 
-Pipeline (knowledge/tricks.md "Probe the ceiling" + "Multi-slot gear combos"):
+!! REALM: POE2 ONLY as written. The ALGORITHM (pool per slot -> parse -> staged
+!! combine -> budget tiers) is realm-agnostic, but the endpoint paths, the filter
+!! group/field names, the mod-text regexes, the currency and the scoring function
+!! are all a POE2 profile. To run this on POE1 you must re-derive every one of
+!! those from poe1/QUERY.md + poe1/knowledge/ -- do NOT assume a POE2 field name
+!! or stat id carries over. A wrong-game stat id may be silently valid and return
+!! the wrong items rather than erroring.
+
+Pipeline (../common/tricks.md "Probe the ceiling" + "Multi-slot gear combos"):
   0. PROBE FIRST (interactively, before touching this script): price-capped
      high-spec searches per slot, read `total` only — >200 hits = raise the
      stat mins. Cheap-end-only pools make every budget tier collapse to the
@@ -23,7 +31,7 @@ Hard-won API/parsing facts baked in (don't remove casually):
     authenticated pool ran 50 back-to-back fetches with zero penalty. So the
     header counters are a lenient decoy and _throttle_wait() CANNOT predict
     the real limiter — logging in is the only thing that fixes bulk fetching.
-    (Full data + the debunked VPN-switch idea: knowledge/tricks.md.)
+    (Full data + the debunked VPN-switch idea: ../common/tricks.md.)
   - _throttle_wait() still honors the visible windows/lockouts (harmless, just
     insufficient alone). 429 backstop sleeps the FULL Retry-After (penalties
     up to ~605s, longer than any published tuple; block ALL trade endpoints).
@@ -36,7 +44,8 @@ Hard-won API/parsing facts baked in (don't remove casually):
   - RING-ONLY: mana mods scale with "Quality (Mana Modifiers)" catalysts:
     uncorrupted -> value/(1+curQ) * 1.2, floored; corrupted -> as displayed.
     Belts CANNOT take quality (user-corrected 2026-07-08) — displayed = final.
-  - CURRENCY_RATES go stale: refresh from poe2scout (knowledge/exchange-rates.md)
+  - CURRENCY_RATES go stale: refresh from poe2scout
+    (../poe2/knowledge/exchange-rates.md -- POE2-only source)
 
 Optimizer scaling lessons (learned the hard way at 6 slots / ~1500 candidates):
   - windowed Pareto checks don't scale past ~10k groups, and accumulating
@@ -53,7 +62,7 @@ Usage: edit CONFIG + SEARCHES + constraints in main(), then run.
                      tiny jobs: hits the hidden ~30-request penalty wall.
   --optimize-only    skip network, re-optimize cached pools
 Scoring is MOM/EB (mana_eq = ES + mana + 2*attr + 35*incmana%,
-knowledge/mechanics.md; 35 = mana per 1% at the ~3500 total-mana basis the
+../poe2/knowledge/mechanics.md; 35 = mana per 1% at the ~3500 total-mana basis the
 user measured on the finished character 2026-07-11 — was 40/~4000 before);
 swap the mana_eq lines for other builds.
 """
@@ -425,7 +434,7 @@ def main():
         if not POESESSID and not ANON:
             print("!! No POESESSID in setting.py — anonymous trade access hits an\n"
                   "   UNDOCUMENTED hidden quota (~30 fetches then a ~600s IP penalty;\n"
-                  "   see knowledge/tricks.md). The logged-in pool is separate and ran\n"
+                  "   see ../common/tricks.md). The logged-in pool is separate and ran\n"
                   "   50 fetches with zero penalty. Put a fresh POESESSID in setting.py,\n"
                   "   or rerun with --anon to proceed anonymously anyway.", flush=True)
             sys.exit(2)
@@ -543,7 +552,7 @@ def main():
     print("query ids:", {n: json.load(open(f"{WORKDIR}/s_{n}.json")).get("id") for n in SEARCHES}, flush=True)
     # After picking a winner: verify each listing is still live (single-hash
     # fetch with its pool's query id), build seller-filtered links
-    # (trade_filters.account.input), and deliver per knowledge/delivery.md.
+    # (trade_filters.account.input), and deliver per ../common/delivery.md.
 
 if __name__ == "__main__":  # NEVER put searches at module level (import re-runs them)
     main()

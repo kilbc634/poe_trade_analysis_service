@@ -1,3 +1,7 @@
+> ⛔ **POE2 ONLY** ｜ 遊戲版本：**POE2 0.5 "Runes of Aldur"** ｜ 最後整理：**2026-07-27**（各條事實的日期見檔內逐條標註）
+> ES/EB/MOM 計算式、符文、觸媒品質、屬性換算**只適用 POE2**。POE1 有同名但不同效果的機制，
+> 一律不得沿用。若 `REALM=poe1`，停止並改讀 `../../poe1/`。
+
 # Item & build mechanics that drive valuation (裝備數值機制與估值)
 
 Game-mechanic facts (user-taught) that change how listings should be scored. Consult when ranking/comparing items, not just querying.
@@ -11,8 +15,8 @@ ES總值 = (基底ES × 品質倍率(Q20=1.2) + "+# to maximum Energy Shield" �
 
 Implications:
 - `%increased ES` runes multiply in the **final zone** → a "20% increased ES" rune usually beats a "+50 maximum Mana" rune on any decent-ES piece.
-- Sellers of high-ES gear usually **pre-socket 20% ES runes** to make the listing look good — so `extended.es` on listings is typically already rune-optimized; only an item with genuinely *empty* sockets has hidden upside via rune insertion. (A `Bonded:` line does NOT mean a wasted socket — it's the Shaman-ascendancy bonus effect of a normally-working rune; see tricks.md.)
-- **Corrupted = quality locked.** A currency exists that re-rolls quality on corrupted gear but it randomly raises/lowers and can destroy the item — treat listed ES on corrupted items as final. (Rune contents remain swappable; socket *count* is locked — see tricks.md.)
+- Sellers of high-ES gear usually **pre-socket 20% ES runes** to make the listing look good — so `extended.es` on listings is typically already rune-optimized; only an item with genuinely *empty* sockets has hidden upside via rune insertion. (A `Bonded:` line does NOT mean a wasted socket — it's the Shaman-ascendancy bonus effect of a normally-working rune; see [api-quirks.md](api-quirks.md).)
+- **Corrupted = quality locked.** A currency exists that re-rolls quality on corrupted gear but it randomly raises/lowers and can destroy the item — treat listed ES on corrupted items as final. (Rune contents remain swappable; socket *count* is locked — see [api-quirks.md](api-quirks.md).)
 
 ## MOM/EB mana valuation (user-confirmed 2026-07)
 
