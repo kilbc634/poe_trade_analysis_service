@@ -18,7 +18,7 @@ Write `search_results_<YYYYMMDDHHmm>.md` in the **project root** (timestamp = ge
 3. **通用注意事項** footer: near-limit stats, quality/catalyst assumptions, what to do if an item sells out.
 
 Table rules:
-- 購買連結 = markdown hyperlink (`[打開](url)`) to a **seller-account-filtered** search (build with `trade_filters.account.input`), so no seller column is needed.
+- 購買連結 = markdown hyperlink (`[打開](url)`) to a **seller-account-filtered** search (build with `trade_filters.account`), so no seller column is needed. **The account name must carry its `#1234` discriminator** — dropping it returns 0 results silently, not an error. Copy `listing.account.name` from the fetch response verbatim; the exact value shape and the results-page URL format are per-realm — see the realm's QUERY.md.
 - If the seller-filtered search matches >1 item, say so in 備註 with how to identify the right one (price + base name).
 - 備註 also carries: corrupted status, "shared with combo X" for overlapping items, buy-priority hints (high-CP items sell fast — buy first), catalyst/quality to apply after purchase.
 

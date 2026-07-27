@@ -1,4 +1,4 @@
-> ⛔ **POE2 ONLY** ｜ 遊戲版本：**POE2 0.5 "Runes of Aldur"** ｜ 最後整理：**2026-07-27**（各條事實的日期見檔內逐條標註）
+> ⛔ **POE2 ONLY** ｜ 遊戲版本：**POE2 0.5 "Runes of Aldur"** ｜ 最後整理：**2026-07-28**（各條事實的日期見檔內逐條標註）
 > 本檔（及整個 `poe2/` 目錄）的 stat id、category、欄位名、機制與行情**只適用 POE2**。
 > 若 `setting.py` 的 `REALM=poe1`，立刻停止並改讀 `../poe1/`。不准跨 realm 類比或沿用任何 id。
 
@@ -81,7 +81,19 @@ Each stat filter: `{"id": "<stat id>", "value": {"min", "max", "weight"?}, "disa
 
 ## Stat ids — how to find the right one
 
-Format: `<group>.stat_<hash>` (e.g. `explicit.stat_3299347043`). Groups: `pseudo`, `explicit` (3097 entries — the normal roll pool), `implicit`, `fractured`, `crafted`, `enchant`, `rune`, `desecrated`, `sanctum`, `skill`. The same mod text exists once per group with a **different id** — searching `rune.…` only matches rune-socket mods, etc. For "this mod from any source", prefer **pseudo** when one exists.
+Format: `<group>.stat_<hash>` (e.g. `explicit.stat_3299347043`). **10 groups, 8234 entries total** (2026-07-28 重產後實數)：
+
+| group | 條目數 | | group | 條目數 |
+|---|--:|---|---|--:|
+| `explicit` | 3097 | | `fractured` | 1223 |
+| `crafted` | 1081 | | `enchant` | 1001 |
+| `desecrated` | 755 | | `rune` | 564 |
+| `implicit` | 182 | | `sanctum` | 164 |
+| `skill` | 131 | | `pseudo` | 36 |
+
+The same mod text exists once per group with a **different id** — searching `rune.…` only matches rune-socket mods, etc. For "this mod from any source", prefer **pseudo** when one exists.
+
+「+# to Level of all X Skills」這類逐技能的詞綴走**共用 hash + `|技能編號` 後綴**：`explicit.stat_448592698|42`（Shockchain Arrow）等，共 244 條——grep 技能名找編號，別直接送不帶後綴的裸 id（那個不存在）。
 
 **Lookup:** grep `references/stats.tsv` in this skill dir (columns: `group<TAB>id<TAB>text`, `#` = the number placeholder):
 
@@ -89,16 +101,28 @@ Format: `<group>.stat_<hash>` (e.g. `explicit.stat_3299347043`). Groups: `pseudo
 grep -i "maximum life" references/stats.tsv | grep -P "^(pseudo|explicit)"
 ```
 
-If the TSV seems stale (new league content missing), regenerate it from the live API — the `/api/trade2/data/*` endpoints ARE Cloudflare-protected (plain curl gets an HTML challenge page), so fetch in-page:
+⚠ **多行詞綴在 TSV 裡是字面 `\n`**（7159 筆）。POE2 有些詞綴原文含換行，例如 `explicit.stat_1013492127` = `Spells fire # additional Projectiles\nSpells fire Projectiles in a circle`。**比對整段文字時記得處理**；只比對其中一行的話直接用該行片段 grep 即可。
+
+> 2026-07-28 重產過一次。舊版有 115 行斷行殘骸（一筆被拆成多行、尾巴變成無 id 的孤行），整段文字 grep 會漏抓——現在已修正，`awk -F'\t' 'NF!=3'` 回 0。重產規範見 [`references/README.md`](references/README.md)。
+
+TSV 過期（新聯盟內容沒進來）時就重產——作法見 [`references/README.md`](references/README.md)。**建議走 localStorage**（`lscache-trade2stats`，不耗限流也不碰 Cloudflare）；備援才打 `/api/trade2/data/*`，那條走 Cloudflare，plain curl 只會拿到挑戰頁：
 
 ```bash
-playwright-cli --raw eval "(async()=>{const r=await fetch('/api/trade2/data/stats');return JSON.stringify(await r.json())})()" > stats_raw.json
-# note: output is a double-encoded JSON string → json.loads() twice
+playwright-cli --raw eval "localStorage.getItem('lscache-trade2stats')" > stats_raw.json
+# 注意：POE2 的 key 是 lscache-trade2*，不是 POE1 的 lscache-trade*；兩套同時存在同一個 origin
+# 注意：in-page eval 的輸出是雙層編碼的 JSON 字串 → json.loads() 兩次
 ```
 
 ### Pseudo stats (use these for totals across mod sources)
 
-`pseudo.pseudo_total_life`, `pseudo_total_mana`, `pseudo_total_energy_shield`, `pseudo_increased_energy_shield`, `pseudo_total_fire_resistance` / `_cold_` / `_lightning_` / `_chaos_resistance`, `pseudo_total_elemental_resistance` (sum of ele res), `pseudo_total_resistance` (sum incl. chaos), `pseudo_total_all_elemental_resistances` (only "+#% to all"), `pseudo_total_strength` / `_dexterity` / `_intelligence` / `_all_attributes` / `_attributes`, `pseudo_increased_movement_speed`, and mod-count metas: `pseudo_number_of_prefix_mods` / `_suffix_mods` / `_affix_mods` / `_empty_prefix_mods` / `_empty_suffix_mods` / `_fractured_mods` / `_crafted_mods` / `_desecrated_mods` / `_unrevealed_mods` / `_uses_remaining` (tablets).
+POE2 的 pseudo 群組**總共只有 36 條**，全列在這裡（2026-07-28 對 `references/stats.tsv` 逐條核對過）：
+
+- 抗性：`pseudo.pseudo_total_fire_resistance` / `_cold_` / `_lightning_` / `_chaos_resistance`、`pseudo_total_elemental_resistance`（三抗合計）、`pseudo_total_resistance`（含混抗合計）、`pseudo_total_all_elemental_resistances`（只算 "+#% to all"）、`pseudo_count_resistances`、`pseudo_count_elemental_resistances`（數「有幾種抗性」，不是加總）
+- 屬性：`pseudo_total_strength` / `_dexterity` / `_intelligence` / `_all_attributes` / `_attributes`
+- 資源與速度：`pseudo_total_life`、`pseudo_total_mana`、`pseudo_total_energy_shield`、`pseudo_increased_energy_shield`、`pseudo_increased_movement_speed`
+- 詞綴計數 meta：`pseudo_number_of_prefix_mods` / `_suffix_mods` / `_affix_mods`、`_empty_prefix_mods` / `_empty_suffix_mods` / `_empty_affix_mods`、`_implicit_mods`、`_enchant_mods`、`_fractured_mods`、`_crafted_mods`、`_desecrated_mods` / `_desecrated_prefix_mods` / `_desecrated_suffix_mods`、`_unrevealed_mods` / `_unrevealed_prefix_mods` / `_unrevealed_suffix_mods`、`_uses_remaining`（Tablets）
+
+⚠ 最後那條的完整 id 是 **`pseudo.pseudo_number_of_uses_remaining`**，不是 `pseudo.pseudo_uses_remaining`（本檔 2026-07-28 前記錯，會直接讓查詢報 unknown stat id）。所有計數類都帶 `number_of_` 中綴。
 
 ### Most-used explicit ids (POE2)
 
@@ -152,6 +176,10 @@ Gems: `gem`, `gem.activegem`, `.supportgem`, `.metagem`. Jewels: `jewel`. Flasks
 Endgame: `map` (any), `map.waystone`, `.fragment`, `.logbook`, `.breachstone`, `.barya`, `.bosskey` (Pinnacle Key), `.ultimatum`, `.tablet`.
 Other: `card` (Divination Card), `sanctum.relic`, `currency`, `currency.omen`, `.socketable`, `.rune`, `.soulcore`, `.idol`.
 
+**⚠ `wombgift` 是有效分類，但 UI 下拉裡沒有**（2026-07-28 實測）。`lscache-trade2filters` 的 category 下拉只有 63 個可選值（上面全列了），不含 `wombgift`；**但 API 收**：送 `{"category":{"option":"wombgift"}}` 回 `200`，fetch 回來確認撈到的真的是 Wombgift（Signet / Ornate 等），亂填的 `zzznotacategory` 則回 `400 "Unknown category"`。item 資料那邊也確實有這個群組（`lscache-trade2items` 的 `wombgift`，label "Wombgift"，5 個基底）。
+
+教訓：**category option 的權威來源是 API 的接受度，不是下拉清單**——下拉會漏。要找可能的漏網分類，比對 `items.tsv` 的 category 欄與下拉清單的差集，再一個個送去 API 試。
+
 ### Item names / base types
 
 Exact `name` (uniques) and `type` (bases) values: grep `references/items.tsv` (columns: `category<TAB>name<TAB>type<TAB>flags`; uniques have both name+type, bases only type). Bulk-exchange currency ids: `references/static.tsv`.
@@ -188,5 +216,5 @@ When the user teaches a new fact, decide the home first: **游戏知识 (mod/slo
 - Filter group key is `map_filters` in JSON even though the UI calls it "Endgame Filters".
 - Search totals cap at 10000; narrow the query if you need everything.
 - League name in the URL path must be URL-encoded (`Runes%20of%20Aldur`); read the current league from `setting.py`.
-- `references/*.tsv` are an API snapshot of **POE2 0.5 "Runes of Aldur", captured 2026-07**. Regenerate in-page after a patch/new league, and bump the version banner at the top of this file when you do.
+- `references/*.tsv` are a snapshot of **POE2 0.5 "Runes of Aldur"**, 由交易頁 localStorage 產出、**2026-07-28 重產**（stats 8234／items 3880 含 771 唯一裝／static 780）。重產作法與硬性格式規範見 [`references/README.md`](references/README.md)；產完記得 bump 本檔檔頭的版本與日期。
 - More POE2-specific API/parsing quirks (defence-at-max-quality, fetch mod formats, exalted-equivalent price cap divergence): `knowledge/api-quirks.md`.

@@ -4,7 +4,9 @@ Hard-won facts about how the trade **site** behaves, and about method that doesn
 
 > **What belongs here:** transport (Cloudflare, auth, rate limits) and method skeletons. **What does NOT:** any stat id, filter field name, currency, item, mechanic, price, or mod-text format — those live in `<realm>/knowledge/`. See `../SKILL.md`.
 >
-> **⚠ 跨 realm 適用性：** everything below was measured against **POE2's** endpoints, because that's where the work has been done so far. The *mechanisms* are site-level and should hold on POE1 — but the *numbers* (batch caps, observed rate-limit tuples, hidden-quota thresholds) must be re-confirmed on the first real POE1 bulk run. Don't quote a measured number as POE1 fact until someone has measured it there.
+> **⚠ 跨 realm 適用性：** most of what follows was measured against **POE2's** endpoints, because that's where the bulk work has been done. The *mechanisms* are site-level and hold on POE1; the *numbers* need per-realm confirmation. Status as of **2026-07-28**:
+> - **Confirmed on POE1 too:** fetch batch cap = **10** hashes, search result window = **100** hashes (`poe1/QUERY.md`), and the rate-limit budget being **one shared pool across both games** (see below).
+> - **Still POE2-only measurements:** the rate-limit tuples snapshot, the anonymous hidden-quota threshold (~30 fetches), and the safe inter-request floors. Don't quote those as POE1 fact until someone has measured them there — but do expect the same shapes.
 
 ## Cloudflare 403 on plain HTTP: it's the User-Agent (純 HTTP 被 CF 擋：UA 是關鍵)
 
@@ -18,7 +20,7 @@ Controlled test 2026-07 against the search POST: bare `User-Agent: Mozilla/5.0` 
 
 **Refresh-on-trigger rule:** every time step 4 fires (a headed browser had to clear a challenge), immediately re-export cookies + UA and overwrite `.poe_cookies.json` (playwright: `page.context().cookies('https://www.pathofexile.com')` filtered to POESESSID/cf_clearance, plus `navigator.userAgent`), so the cache always holds the latest known-good clearance.
 
-In-page `fetch` (browser already open) remains a valid alternative to 2–4. Rate-limit etiquette applies on every path: batch fetches at the endpoint's documented cap (POE2: ≤10 hashes — confirm the realm's own cap from its QUERY.md), ~1.7s between fetches, ~2.2s between searches.
+In-page `fetch` (browser already open) remains a valid alternative to 2–4. Rate-limit etiquette applies on every path: batch fetches at the endpoint's cap (**≤10 hashes — confirmed on both POE1 and POE2**), and hold the inter-request floors below (**search 2s / fetch 1.5s**, measured safe on the authed pool).
 
 ## Rate-limit headers: the actual rules (官方限流規則與 header 語義)
 
@@ -44,7 +46,7 @@ Measured directly with `ratelog.py` (2.5s spacing, per-request Ip-State logged).
 - **Authenticated (POESESSID) is a SEPARATE pool with no such wall.** Same endpoint/IP/instant: anon → 429 locked, authed → 200 clean. Authed adds an `Account` dimension (`Rules=Account,Ip`); crucially **even its `Ip` counter reads clean** while the anon `Ip` is locked — GGG keys the bucket on (IP × identity), so an anon IP penalty does NOT touch authed traffic. A 50-fetch back-to-back authed run hit **zero** penalties (anon died at 33). The hidden quota does not apply to logged-in traffic (or is far higher — untested past 50).
 - **Practical rule: always send a logged-in POESESSID for bulk work.** `gear_combo_optimizer.py` reads it from `setting.py` by default and refuses to run anonymously unless `--anon` is passed (tiny jobs only). The 32-hex `POESESSID` authenticates search/fetch; `cf_clearance` is NOT needed for these (only `/data/*` is Cloudflare-gated). Detect an expired POESESSID at runtime: a cookie'd request coming back with `Rules=Ip` (no `Account`) did not authenticate → refresh it.
 - **Anti-rapid-click is yet another separate layer.** ~4 requests in ~2s returns 429 "wait 60s" while the visible state is only `4:10:0` (far below cap) — a burst guard the headers can't predict. Fixed inter-request floors are what prevent it, NOT the header logic.
-- **Measured floor (authed pool, 2026-07-08, user-requested speed test): search 2s + fetch 1.5s is SAFE** when combined with the header-adaptive `_throttle_wait()`. A full 33-search / ~190-fetch-batch authed run at that pace hit **zero 429s**. Mechanics: at 2s the search window nears cap every ~2 POSTs and the throttle inserts a 5s wait (so effective search pace self-caps ~3.5s — faster fixed pacing than 2s buys nothing); fetch at 1.5s ran clean throughout, so the old 2.5s fetch floor was conservative. The floors only guard bursts; the adaptive throttle does the real work. (Anon pool untested at this pace — its hidden quota walls you anyway.)
+- **Measured floor (authed pool, 2026-07-08, user-requested speed test) — this bullet is the authoritative pacing number, everything else in this file defers to it: search 2s + fetch 1.5s is SAFE** when combined with the header-adaptive `_throttle_wait()`. A full 33-search / ~190-fetch-batch authed run at that pace hit **zero 429s**. Mechanics: at 2s the search window nears cap every ~2 POSTs and the throttle inserts a 5s wait (so effective search pace self-caps ~3.5s — faster fixed pacing than 2s buys nothing); fetch at 1.5s ran clean throughout, so the old 2.5s fetch floor was conservative. The floors only guard bursts; the adaptive throttle does the real work. (Anon pool untested at this pace — its hidden quota walls you anyway.)
 
 ### Debunked: VPN IP switching does NOT help (2026-07-08)
 
@@ -61,7 +63,7 @@ Tempting idea (a former `--vpn-pause` mode, now removed): pause on a long wait, 
 
 ## Deep-fetch a search's price ladder without re-searching (免重搜抓高價端)
 
-A search response stores a **result-hash window** (POE2: up to 100 — confirm the realm's own cap). Since results sort by price asc, the later hashes (POE2: `[40:100]`) are the *more expensive tranche* of the same query — fetch them directly with the same `query_id`, no new search POST needed. Ideal when the cheap end is exhausted and you want to see what more budget buys (the price/quality frontier) without spending search-rate budget.
+A search response stores a **result-hash window** of up to **100** (confirmed on both POE1 and POE2). Since results sort by price asc, the later hashes (`[40:100]`) are the *more expensive tranche* of the same query — fetch them directly with the same `query_id`, no new search POST needed. Ideal when the cheap end is exhausted and you want to see what more budget buys (the price/quality frontier) without spending search-rate budget.
 
 ## Probe the ceiling BEFORE building pools (先探頂再撈池, user-taught 2026-07)
 

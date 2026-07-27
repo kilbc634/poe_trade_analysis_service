@@ -2137,6 +2137,7 @@ currency		Legacy of Deidbell
 currency		Legacy of Duality	
 currency		Legacy of Dusk Vigil	
 currency		Legacy of Edyrns Tusks	
+currency		Legacy of Elevore	
 currency		Legacy of Erian's Cobble	
 currency		Legacy of A Worthy Foe	
 currency		Legacy of Ezomyte Peak	
@@ -2148,6 +2149,7 @@ currency		Legacy of Horns of Bynden
 currency		Legacy of Hrimnor's Hymn	
 currency		Legacy of Ironbound	
 currency		Legacy of Keeper of the Arc	
+currency		Legacy of Kingsguard	
 currency		Legacy of Legionstride	
 currency		Legacy of Lifesprig	
 currency		Legacy of Mjölner	
@@ -2156,13 +2158,16 @@ currency		Legacy of Oaksworn
 currency		Legacy of Obern's Bastion	
 currency		Legacy of Olrovasara	
 currency		Legacy of Quill Rain	
+currency		Legacy of Rondel de Ezo	
 currency		Legacy of Runeseeker's Call	
 currency		Legacy of Serle's Grit	
 currency		Legacy of Spiteful Floret	
 currency		Legacy of Starkonja's Head	
 currency		Legacy of Svalinn	
+currency		Legacy of The Blood Thorn	
 currency		Legacy of The Knight-errant	
 currency		Legacy of The Sentry	
+currency		Legacy of The Smiling Knight	
 currency		Legacy of The Unleashed	
 currency		Legacy of The Vile Knight	
 currency		Legacy of Trampletoe	
@@ -2171,6 +2176,7 @@ currency		Legacy of Twisted Empyrean
 currency		Legacy of Tyranny's Grip	
 currency		Legacy of Wanderlust	
 currency		Legacy of Wings of Caelyn	
+currency		Legacy of Wulfsbane	
 currency		Greater Rune of Leadership	
 currency		Craiceann's Rune of Warding	
 currency		Saqawal's Rune of Memory	
@@ -3728,16 +3734,17 @@ weapon	INCOMPLETE	Dull Hatchet	FLAG:unique
 weapon	INCOMPLETE	Charred Shortsword	FLAG:unique
 weapon	INCOMPLETE	Crone Knife	FLAG:unique
 weapon	INCOMPLETE	Hook Axe	FLAG:unique
+weapon	INCOMPLETE	Splitting Greataxe	FLAG:unique
 weapon	INCOMPLETE	Corroded Longsword	FLAG:unique
 weapon	INCOMPLETE	Splintered Flail	FLAG:unique
 weapon	INCOMPLETE	Iron Greatsword	FLAG:unique
-weapon	INCOMPLETE	Splitting Greataxe	FLAG:unique
 weapon	INCOMPLETE	Bearded Axe	FLAG:unique
-weapon	INCOMPLETE	Executioner Greataxe	FLAG:unique
-weapon	INCOMPLETE	Broad Greatsword	FLAG:unique
-weapon	INCOMPLETE	Arched Greataxe	FLAG:unique
+weapon	INCOMPLETE	Light Halberd	FLAG:unique
 weapon	INCOMPLETE	Broadsword	FLAG:unique
 weapon	INCOMPLETE	Chain Flail	FLAG:unique
+weapon	INCOMPLETE	Broad Greatsword	FLAG:unique
+weapon	INCOMPLETE	Executioner Greataxe	FLAG:unique
+weapon	INCOMPLETE	Arched Greataxe	FLAG:unique
 weapon	INCOMPLETE	Rippled Greatsword	FLAG:unique
 weapon	INCOMPLETE	Simple Dagger	FLAG:unique
 weapon	INCOMPLETE	Skinning Knife	FLAG:unique

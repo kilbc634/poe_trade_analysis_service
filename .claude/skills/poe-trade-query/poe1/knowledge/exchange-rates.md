@@ -1,5 +1,6 @@
-> ⛔ **POE1 ONLY** ｜ 聯盟：**Allflame** ｜ 最後整理：**2026-07-27**
+> ⛔ **POE1 ONLY** ｜ 聯盟：**Allflame** ｜ 最後整理：**2026-07-28**
 > 以下路徑、基準幣別與行情**只適用 POE1**。若 `REALM=poe2`，停止並改讀 `../../poe2/knowledge/exchange-rates.md`。
+> ⚠ 下面「2026-07-27 讀數」那張表**已經過期**——07-28 實測 1 div = 120.70c，一天漂了 +19%。**表裡的數字只能當形狀看，任何換算都要照下面的方法重抓。**
 
 # 通貨匯率 — POE1 怎麼拿真實市場價
 
@@ -57,7 +58,7 @@ for x in json.load(open("pairs.json")):
 
 ⚠ **`RelativePrice` 的計價單位是該聯盟的 `BaseCurrencyApiId`。POE1 是 chaos**（跟交易站 `price` 省略 option 時的 "Chaos Orb Equivalent" 一致）。取交叉匯率時在同一組配對內相除，別跨組混用。挑 `VolumeTraded` 高的組，冷門組雜訊大。
 
-## 2026-07-27 Allflame 讀數
+## 2026-07-27 Allflame 讀數（⚠ 已過期，見檔頭；最新讀數在 [market.md](market.md)）
 
 | 配對 | 讀數 | 成交量 |
 |---|---|--:|
@@ -67,4 +68,4 @@ for x in json.load(open("pairs.json")):
 
 `/Leagues` 給 Allflame 的 `DivinePrice = 101.747`，與 SnapshotPairs 一致。Allflame 的 `IsCurrent = true`。
 
-行情會漂——**引用前重抓，別直接用上面的數字**。
+行情會漂——**引用前重抓，別直接用上面的數字**。實測漂移速度：1 div 從 07-27 的 101.75c 到 07-28 的 120.70c，**一天 +19%**（見 [market.md](market.md)）。跨日沿用等於直接算錯兩成。

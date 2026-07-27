@@ -541,22 +541,22 @@ Ritual	idol-of-oak	Idol of Oak
 Ritual	idol-of-alira	Idol of Alira
 Ritual	idol-of-kraityn	Idol of Kraityn
 Ritual	idol-of-silk	Idol of Silk
-Abyss	gnawed-jawbone	Gnawed Jawbone
-Abyss	preserved-jawbone	Preserved Jawbone
-Abyss	ancient-jawbone	Ancient Jawbone
-Abyss	gnawed-rib	Gnawed Rib
-Abyss	preserved-rib	Preserved Rib
-Abyss	ancient-rib	Ancient Rib
-Abyss	gnawed-collarbone	Gnawed Collarbone
-Abyss	preserved-collarbone	Preserved Collarbone
-Abyss	ancient-collarbone	Ancient Collarbone
-Abyss	altered-collarbone	Altered Collarbone
-Abyss	preserved-cranium	Preserved Cranium
-Abyss	preserved-vertebrae	Preserved Vertebrae
-Abyss	amanamus-gaze	Amanamu's Gaze
-Abyss	tecrods-gaze	Tecrod's Gaze
-Abyss	kurgals-gaze	Kurgal's Gaze
-Abyss	ulamans-gaze	Ulaman's Gaze
+Abyssal Bones	gnawed-jawbone	Gnawed Jawbone
+Abyssal Bones	preserved-jawbone	Preserved Jawbone
+Abyssal Bones	ancient-jawbone	Ancient Jawbone
+Abyssal Bones	gnawed-rib	Gnawed Rib
+Abyssal Bones	preserved-rib	Preserved Rib
+Abyssal Bones	ancient-rib	Ancient Rib
+Abyssal Bones	gnawed-collarbone	Gnawed Collarbone
+Abyssal Bones	preserved-collarbone	Preserved Collarbone
+Abyssal Bones	ancient-collarbone	Ancient Collarbone
+Abyssal Bones	altered-collarbone	Altered Collarbone
+Abyssal Bones	preserved-cranium	Preserved Cranium
+Abyssal Bones	preserved-vertebrae	Preserved Vertebrae
+Abyssal Bones	amanamus-gaze	Amanamu's Gaze
+Abyssal Bones	tecrods-gaze	Tecrod's Gaze
+Abyssal Bones	kurgals-gaze	Kurgal's Gaze
+Abyssal Bones	ulamans-gaze	Ulaman's Gaze
 Essences	lesser-essence-of-the-body	Lesser Essence of the Body
 Essences	lesser-essence-of-the-mind	Lesser Essence of the Mind
 Essences	lesser-essence-of-enhancement	Lesser Essence of Enhancement
@@ -641,127 +641,127 @@ Essences	essence-of-horror	Essence of Horror
 Essences	essence-of-insanity	Essence of Insanity
 Essences	essence-of-the-abyss	Essence of the Abyss
 Essences	essence-of-the-breach	Essence of the Breach
-UncutGems	sep	Uncut Support Gems
-UncutGems	uncut-support-gem-1	Uncut Support Gem (Level 1)
-UncutGems	uncut-support-gem-2	Uncut Support Gem (Level 2)
-UncutGems	uncut-support-gem-3	Uncut Support Gem (Level 3)
-UncutGems	uncut-support-gem-4	Uncut Support Gem (Level 4)
-UncutGems	uncut-support-gem-5	Uncut Support Gem (Level 5)
-UncutGems	sep	Uncut Reservation Gems
-UncutGems	uncut-spirit-gem-4	Uncut Spirit Gem (Level 4)
-UncutGems	uncut-spirit-gem-5	Uncut Spirit Gem (Level 5)
-UncutGems	uncut-spirit-gem-6	Uncut Spirit Gem (Level 6)
-UncutGems	uncut-spirit-gem-7	Uncut Spirit Gem (Level 7)
-UncutGems	uncut-spirit-gem-8	Uncut Spirit Gem (Level 8)
-UncutGems	uncut-spirit-gem-9	Uncut Spirit Gem (Level 9)
-UncutGems	uncut-spirit-gem-10	Uncut Spirit Gem (Level 10)
-UncutGems	uncut-spirit-gem-11	Uncut Spirit Gem (Level 11)
-UncutGems	uncut-spirit-gem-12	Uncut Spirit Gem (Level 12)
-UncutGems	uncut-spirit-gem-13	Uncut Spirit Gem (Level 13)
-UncutGems	uncut-spirit-gem-14	Uncut Spirit Gem (Level 14)
-UncutGems	uncut-spirit-gem-15	Uncut Spirit Gem (Level 15)
-UncutGems	uncut-spirit-gem-16	Uncut Spirit Gem (Level 16)
-UncutGems	uncut-spirit-gem-17	Uncut Spirit Gem (Level 17)
-UncutGems	uncut-spirit-gem-18	Uncut Spirit Gem (Level 18)
-UncutGems	uncut-spirit-gem-19	Uncut Spirit Gem (Level 19)
-UncutGems	uncut-spirit-gem-20	Uncut Spirit Gem (Level 20)
-UncutGems	sep	Uncut Skill Gems
-UncutGems	uncut-skill-gem-1	Uncut Skill Gem (Level 1)
-UncutGems	uncut-skill-gem-2	Uncut Skill Gem (Level 2)
-UncutGems	uncut-skill-gem-3	Uncut Skill Gem (Level 3)
-UncutGems	uncut-skill-gem-4	Uncut Skill Gem (Level 4)
-UncutGems	uncut-skill-gem-5	Uncut Skill Gem (Level 5)
-UncutGems	uncut-skill-gem-6	Uncut Skill Gem (Level 6)
-UncutGems	uncut-skill-gem-7	Uncut Skill Gem (Level 7)
-UncutGems	uncut-skill-gem-8	Uncut Skill Gem (Level 8)
-UncutGems	uncut-skill-gem-9	Uncut Skill Gem (Level 9)
-UncutGems	uncut-skill-gem-10	Uncut Skill Gem (Level 10)
-UncutGems	uncut-skill-gem-11	Uncut Skill Gem (Level 11)
-UncutGems	uncut-skill-gem-12	Uncut Skill Gem (Level 12)
-UncutGems	uncut-skill-gem-13	Uncut Skill Gem (Level 13)
-UncutGems	uncut-skill-gem-14	Uncut Skill Gem (Level 14)
-UncutGems	uncut-skill-gem-15	Uncut Skill Gem (Level 15)
-UncutGems	uncut-skill-gem-16	Uncut Skill Gem (Level 16)
-UncutGems	uncut-skill-gem-17	Uncut Skill Gem (Level 17)
-UncutGems	uncut-skill-gem-18	Uncut Skill Gem (Level 18)
-UncutGems	uncut-skill-gem-19	Uncut Skill Gem (Level 19)
-UncutGems	uncut-skill-gem-20	Uncut Skill Gem (Level 20)
-LineageSupportGems	ataluis-bloodletting	Atalui's Bloodletting
-LineageSupportGems	einhars-beastrite	Einhar's Beastrite
-LineageSupportGems	brutus-brain	Brutus' Brain
-LineageSupportGems	uruks-smelting	Uruk's Smelting
-LineageSupportGems	paquates-pact	Paquate's Pact
-LineageSupportGems	vilentas-propulsion	Vilenta's Propulsion
-LineageSupportGems	ailiths-chimes	Ailith's Chimes
-LineageSupportGems	tecrods-revenge	Tecrod's Revenge
-LineageSupportGems	doedres-undoing	Doedre's Undoing
-LineageSupportGems	rathas-assault	Ratha's Assault
-LineageSupportGems	arjuns-medal	Arjun's Medal
-LineageSupportGems	kaoms-madness	Kaom's Madness
-LineageSupportGems	siones-temper	Sione's Temper
-LineageSupportGems	ixchels-torment	Ixchel's Torment
-LineageSupportGems	romiras-requital	Romira's Requital
-LineageSupportGems	tawhoas-tending	Tawhoa's Tending
-LineageSupportGems	dominus-grasp	Dominus' Grasp
-LineageSupportGems	diallas-desire	Dialla's Desire
-LineageSupportGems	kalisas-crescendo	Kalisa's Crescendo
-LineageSupportGems	kulemaks-dominion	Kulemak's Dominion
-LineageSupportGems	amanamus-tithe	Amanamu's Tithe
-LineageSupportGems	xophs-pyre	Xoph's Pyre
-LineageSupportGems	eshs-radiance	Esh's Radiance
-LineageSupportGems	tuls-stillness	Tul's Stillness
-LineageSupportGems	uul-netols-embrace	Uul-Netol's Embrace
-LineageSupportGems	rakiatas-flow	Rakiata's Flow
-LineageSupportGems	garukhans-resolve	Garukhan's Resolve
-LineageSupportGems	tasalios-rhythm	Tasalio's Rhythm
-LineageSupportGems	tacatis-ire	Tacati's Ire
-LineageSupportGems	rigwalds-ferocity	Rigwald's Ferocity
-LineageSupportGems	khatals-rejuvenation	Khatal's Rejuvenation
-LineageSupportGems	bhatairs-vengeance	Bhatair's Vengeance
-LineageSupportGems	uhtreds-exodus	Uhtred's Exodus
-LineageSupportGems	uhtreds-omen	Uhtred's Omen
-LineageSupportGems	uhtreds-augury	Uhtred's Augury
-LineageSupportGems	daressos-passion	Daresso's Passion
-LineageSupportGems	ahns-citadel	Ahn's Citadel
-LineageSupportGems	atziris-allure	Atziri's Allure
-LineageSupportGems	hayoxis-fulmination	Hayoxi's Fulmination
-LineageSupportGems	zarokhs-refrain	Zarokh's Refrain
-LineageSupportGems	kurgals-leash	Kurgal's Leash
-LineageSupportGems	varashtas-blessing	Varashta's Blessing
-LineageSupportGems	arbiters-ignition	Arbiter's Ignition
-LineageSupportGems	arakaalis-lust	Arakaali's Lust
-LineageSupportGems	xibaquas-rending	Xibaqua's Rending
-LineageSupportGems	guatelitzis-ablation	Guatelitzi's Ablation
-LineageSupportGems	atziris-communion	Atziri's Communion
-LineageSupportGems	atziris-impatience	Atziri's Impatience
-LineageSupportGems	zerphis-infamy	Zerphi's Infamy
-LineageSupportGems	zarokhs-revolt	Zarokh's Revolt
-LineageSupportGems	oisins-oath	Oisín's Oath
-LineageSupportGems	cirels-cultivation	Cirel's Cultivation
-LineageSupportGems	morganas-tempest	Morgana's Tempest
-LineageSupportGems	her-declaration	Her Declaration
-LineageSupportGems	prototype-seventeen	Prototype Seventeen
-LineageSupportGems	seraphs-heart	Seraph's Heart
-LineageSupportGems	uhtreds-rite	Uhtred's Rite
-LineageSupportGems	tricksters-shard	Trickster's Shard
-LineageSupportGems	arbiters-reach	Arbiter's Reach
-LineageSupportGems	tangmazus-thurible	Tangmazu's Thurible
-LineageSupportGems	eshs-prowess	Esh's Prowess
-LineageSupportGems	breachlords-rift	Breachlord's Rift
-LineageSupportGems	breachlords-amalgam	Breachlord's Amalgam
-LineageSupportGems	vruuns-aftermath	Vruun's Aftermath
-LineageSupportGems	vruuns-inevitability	Vruun's Inevitability
-LineageSupportGems	uhtreds-constellation	Uhtred's Constellation
-LineageSupportGems	medveds-felling	Medved's Felling
-LineageSupportGems	voranas-siege	Vorana's Siege
-LineageSupportGems	styrns-mountain	Styrn's Mountain
-LineageSupportGems	styrns-ferocity	Styrn's Ferocity
-LineageSupportGems	styrns-anthem	Styrn's Anthem
-LineageSupportGems	cathas-brilliance	Catha's Brilliance
-LineageSupportGems	mórrigans-insight	Mórrigan's Insight
-LineageSupportGems	tuls-avalanche	Tul's Avalanche
-LineageSupportGems	olroths-hubris	Olroth's Hubris
-LineageSupportGems	olroths-conviction	Olroth's Conviction
+Uncut Gems	sep	Uncut Support Gems
+Uncut Gems	uncut-support-gem-1	Uncut Support Gem (Level 1)
+Uncut Gems	uncut-support-gem-2	Uncut Support Gem (Level 2)
+Uncut Gems	uncut-support-gem-3	Uncut Support Gem (Level 3)
+Uncut Gems	uncut-support-gem-4	Uncut Support Gem (Level 4)
+Uncut Gems	uncut-support-gem-5	Uncut Support Gem (Level 5)
+Uncut Gems	sep	Uncut Reservation Gems
+Uncut Gems	uncut-spirit-gem-4	Uncut Spirit Gem (Level 4)
+Uncut Gems	uncut-spirit-gem-5	Uncut Spirit Gem (Level 5)
+Uncut Gems	uncut-spirit-gem-6	Uncut Spirit Gem (Level 6)
+Uncut Gems	uncut-spirit-gem-7	Uncut Spirit Gem (Level 7)
+Uncut Gems	uncut-spirit-gem-8	Uncut Spirit Gem (Level 8)
+Uncut Gems	uncut-spirit-gem-9	Uncut Spirit Gem (Level 9)
+Uncut Gems	uncut-spirit-gem-10	Uncut Spirit Gem (Level 10)
+Uncut Gems	uncut-spirit-gem-11	Uncut Spirit Gem (Level 11)
+Uncut Gems	uncut-spirit-gem-12	Uncut Spirit Gem (Level 12)
+Uncut Gems	uncut-spirit-gem-13	Uncut Spirit Gem (Level 13)
+Uncut Gems	uncut-spirit-gem-14	Uncut Spirit Gem (Level 14)
+Uncut Gems	uncut-spirit-gem-15	Uncut Spirit Gem (Level 15)
+Uncut Gems	uncut-spirit-gem-16	Uncut Spirit Gem (Level 16)
+Uncut Gems	uncut-spirit-gem-17	Uncut Spirit Gem (Level 17)
+Uncut Gems	uncut-spirit-gem-18	Uncut Spirit Gem (Level 18)
+Uncut Gems	uncut-spirit-gem-19	Uncut Spirit Gem (Level 19)
+Uncut Gems	uncut-spirit-gem-20	Uncut Spirit Gem (Level 20)
+Uncut Gems	sep	Uncut Skill Gems
+Uncut Gems	uncut-skill-gem-1	Uncut Skill Gem (Level 1)
+Uncut Gems	uncut-skill-gem-2	Uncut Skill Gem (Level 2)
+Uncut Gems	uncut-skill-gem-3	Uncut Skill Gem (Level 3)
+Uncut Gems	uncut-skill-gem-4	Uncut Skill Gem (Level 4)
+Uncut Gems	uncut-skill-gem-5	Uncut Skill Gem (Level 5)
+Uncut Gems	uncut-skill-gem-6	Uncut Skill Gem (Level 6)
+Uncut Gems	uncut-skill-gem-7	Uncut Skill Gem (Level 7)
+Uncut Gems	uncut-skill-gem-8	Uncut Skill Gem (Level 8)
+Uncut Gems	uncut-skill-gem-9	Uncut Skill Gem (Level 9)
+Uncut Gems	uncut-skill-gem-10	Uncut Skill Gem (Level 10)
+Uncut Gems	uncut-skill-gem-11	Uncut Skill Gem (Level 11)
+Uncut Gems	uncut-skill-gem-12	Uncut Skill Gem (Level 12)
+Uncut Gems	uncut-skill-gem-13	Uncut Skill Gem (Level 13)
+Uncut Gems	uncut-skill-gem-14	Uncut Skill Gem (Level 14)
+Uncut Gems	uncut-skill-gem-15	Uncut Skill Gem (Level 15)
+Uncut Gems	uncut-skill-gem-16	Uncut Skill Gem (Level 16)
+Uncut Gems	uncut-skill-gem-17	Uncut Skill Gem (Level 17)
+Uncut Gems	uncut-skill-gem-18	Uncut Skill Gem (Level 18)
+Uncut Gems	uncut-skill-gem-19	Uncut Skill Gem (Level 19)
+Uncut Gems	uncut-skill-gem-20	Uncut Skill Gem (Level 20)
+Lineage Support Gems	ataluis-bloodletting	Atalui's Bloodletting
+Lineage Support Gems	einhars-beastrite	Einhar's Beastrite
+Lineage Support Gems	brutus-brain	Brutus' Brain
+Lineage Support Gems	uruks-smelting	Uruk's Smelting
+Lineage Support Gems	paquates-pact	Paquate's Pact
+Lineage Support Gems	vilentas-propulsion	Vilenta's Propulsion
+Lineage Support Gems	ailiths-chimes	Ailith's Chimes
+Lineage Support Gems	tecrods-revenge	Tecrod's Revenge
+Lineage Support Gems	doedres-undoing	Doedre's Undoing
+Lineage Support Gems	rathas-assault	Ratha's Assault
+Lineage Support Gems	arjuns-medal	Arjun's Medal
+Lineage Support Gems	kaoms-madness	Kaom's Madness
+Lineage Support Gems	siones-temper	Sione's Temper
+Lineage Support Gems	ixchels-torment	Ixchel's Torment
+Lineage Support Gems	romiras-requital	Romira's Requital
+Lineage Support Gems	tawhoas-tending	Tawhoa's Tending
+Lineage Support Gems	dominus-grasp	Dominus' Grasp
+Lineage Support Gems	diallas-desire	Dialla's Desire
+Lineage Support Gems	kalisas-crescendo	Kalisa's Crescendo
+Lineage Support Gems	kulemaks-dominion	Kulemak's Dominion
+Lineage Support Gems	amanamus-tithe	Amanamu's Tithe
+Lineage Support Gems	xophs-pyre	Xoph's Pyre
+Lineage Support Gems	eshs-radiance	Esh's Radiance
+Lineage Support Gems	tuls-stillness	Tul's Stillness
+Lineage Support Gems	uul-netols-embrace	Uul-Netol's Embrace
+Lineage Support Gems	rakiatas-flow	Rakiata's Flow
+Lineage Support Gems	garukhans-resolve	Garukhan's Resolve
+Lineage Support Gems	tasalios-rhythm	Tasalio's Rhythm
+Lineage Support Gems	tacatis-ire	Tacati's Ire
+Lineage Support Gems	rigwalds-ferocity	Rigwald's Ferocity
+Lineage Support Gems	khatals-rejuvenation	Khatal's Rejuvenation
+Lineage Support Gems	bhatairs-vengeance	Bhatair's Vengeance
+Lineage Support Gems	uhtreds-exodus	Uhtred's Exodus
+Lineage Support Gems	uhtreds-omen	Uhtred's Omen
+Lineage Support Gems	uhtreds-augury	Uhtred's Augury
+Lineage Support Gems	daressos-passion	Daresso's Passion
+Lineage Support Gems	ahns-citadel	Ahn's Citadel
+Lineage Support Gems	atziris-allure	Atziri's Allure
+Lineage Support Gems	hayoxis-fulmination	Hayoxi's Fulmination
+Lineage Support Gems	zarokhs-refrain	Zarokh's Refrain
+Lineage Support Gems	kurgals-leash	Kurgal's Leash
+Lineage Support Gems	varashtas-blessing	Varashta's Blessing
+Lineage Support Gems	arbiters-ignition	Arbiter's Ignition
+Lineage Support Gems	arakaalis-lust	Arakaali's Lust
+Lineage Support Gems	xibaquas-rending	Xibaqua's Rending
+Lineage Support Gems	guatelitzis-ablation	Guatelitzi's Ablation
+Lineage Support Gems	atziris-communion	Atziri's Communion
+Lineage Support Gems	atziris-impatience	Atziri's Impatience
+Lineage Support Gems	zerphis-infamy	Zerphi's Infamy
+Lineage Support Gems	zarokhs-revolt	Zarokh's Revolt
+Lineage Support Gems	oisins-oath	Oisín's Oath
+Lineage Support Gems	cirels-cultivation	Cirel's Cultivation
+Lineage Support Gems	morganas-tempest	Morgana's Tempest
+Lineage Support Gems	her-declaration	Her Declaration
+Lineage Support Gems	prototype-seventeen	Prototype Seventeen
+Lineage Support Gems	seraphs-heart	Seraph's Heart
+Lineage Support Gems	uhtreds-rite	Uhtred's Rite
+Lineage Support Gems	tricksters-shard	Trickster's Shard
+Lineage Support Gems	arbiters-reach	Arbiter's Reach
+Lineage Support Gems	tangmazus-thurible	Tangmazu's Thurible
+Lineage Support Gems	eshs-prowess	Esh's Prowess
+Lineage Support Gems	breachlords-rift	Breachlord's Rift
+Lineage Support Gems	breachlords-amalgam	Breachlord's Amalgam
+Lineage Support Gems	vruuns-aftermath	Vruun's Aftermath
+Lineage Support Gems	vruuns-inevitability	Vruun's Inevitability
+Lineage Support Gems	uhtreds-constellation	Uhtred's Constellation
+Lineage Support Gems	medveds-felling	Medved's Felling
+Lineage Support Gems	voranas-siege	Vorana's Siege
+Lineage Support Gems	styrns-mountain	Styrn's Mountain
+Lineage Support Gems	styrns-ferocity	Styrn's Ferocity
+Lineage Support Gems	styrns-anthem	Styrn's Anthem
+Lineage Support Gems	cathas-brilliance	Catha's Brilliance
+Lineage Support Gems	mórrigans-insight	Mórrigan's Insight
+Lineage Support Gems	tuls-avalanche	Tul's Avalanche
+Lineage Support Gems	olroths-hubris	Olroth's Hubris
+Lineage Support Gems	olroths-conviction	Olroth's Conviction
 Waystones	waystone-1	Waystone (Tier 1)
 Waystones	waystone-2	Waystone (Tier 2)
 Waystones	waystone-3	Waystone (Tier 3)

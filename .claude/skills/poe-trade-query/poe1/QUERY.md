@@ -1,4 +1,4 @@
-> ⛔ **POE1 ONLY** ｜ 聯盟：**Allflame**（遊戲版本未記錄）｜ 最後整理：**2026-07-27**
+> ⛔ **POE1 ONLY** ｜ 聯盟：**Allflame**（遊戲版本未記錄）｜ 最後整理：**2026-07-28**
 > 若 `setting.py` 的 `REALM=poe2`，立刻停止並改讀 `../poe2/`。
 > **狀態：傳輸層與 query schema 已實測可用；`knowledge/` 已有匯率、腰帶部位分佈與腰帶行情，其餘部位與機制估值待累積。**
 > 下面標 ❓ 的每一項都還沒實測過——不准把 `../poe2/` 的任何 id、欄位名、幣別、機制或行情搬過來填，
@@ -10,7 +10,7 @@ POE1 lives under `/trade/` on the same site as POE2's `/trade2/`. The transport 
 
 ## 建立這份文件的步驟（第一次跑 POE1 時照做）
 
-1. 用 `open-poe-trade` 開站並登入，`setting.py` 設 `REALM=poe1` + 對應的 POE1 聯盟名（例：`Keepers`）。
+1. 用 `open-poe-trade` 開站並登入，`setting.py` 設 `REALM=poe1` + 對應的 POE1 聯盟名（目前是 `Allflame`，以 `setting.py` 的 `LEAGUE` 為準）。
 2. 在頁面內 `fetch` 抓 `/api/trade/data/stats`、`/items`、`/static`、`/filters`，轉成 TSV 放進 `references/`（格式比照 `../poe2/references/`，見 [`references/README.md`](references/README.md)）。`/data/*` 走 Cloudflare，必須 in-page fetch。
 3. 在交易頁手動建一個含各類篩選的查詢，按 Search 拿 `query_id`，再 `GET` 回來讀它的完整 `query` JSON——這是取得真實 schema 最快的方法，不要用猜的。
 4. 把量到的東西寫進下面各節，把 ❓ 拿掉，並更新檔頭橫幅的版本與日期。
@@ -26,6 +26,7 @@ POE1 lives under `/trade/` on the same site as POE2's `/trade2/`. The transport 
 | fetch | `/api/trade/fetch/{ids}?query={query_id}` | **一次上限 10 個 hash**；11 個回 `400 {"error":{"code":2,"message":"Invalid query"}}` |
 | live websocket | `wss://www.pathofexile.com/api/trade/live/{league}/{query_id}` | 實測 OPEN；加 `/pc/` 的變體 ERROR |
 
+- **給使用者點的結果頁 URL：`https://www.pathofexile.com/trade/search/{league}/{query_id}`**（實測所見，見下方 UI 攔截那節的 `/trade/search/Allflame/EBO2DX8YS5`）。聯盟名要 URL-encode。`../common/tricks.md` 的預設交付規則是「只給連結、不要 `goto` 過去」，連結就照這個格式組。
 - **搜尋回應存 100 個 result hash**（與 POE2 相同）——深抓價格階梯可用後段。
 - **`status.option` 五個值，與 POE2 完全相同**：`securable`（Instant Buyout）/ `available`（Instant Buyout and In Person）/ `onlineleague`（In Person, Online in League）/ `online`（In Person, Online）/ `any`。
 - **限流與 POE2 共用同一個池**（實測交錯打兩款遊戲，`trade-search-request-limit` 的 IP 計數連續累加）——詳見 [`../common/tricks.md`](../common/tricks.md)。
@@ -153,13 +154,19 @@ GET      /api/trade/fetch/{h1},{h2},{h3}?query=EBO2DX8YS5&pseudos[]=pseudo.pseud
 - **`req_filters.class`**：`scion` `marauder` `ranger` `witch` `duelist` `templar` `shadow`
 - **`indexed`**：`1hour` `3hours` `12hours` `1day` `3days` `1week` `2weeks` `1month` `2months`
 - **`sale_type`**：`any` `priced_with_info` `unpriced`
-- **`price.option`（18 種幣別）**：`chaos_divine`（＝「Chaos or Divine Orbs」，兩種都算）`chaos` `exalted` `divine` `mirror` `blessed` `chrome` `gcp` `jewellers` `scour` `regret` `fusing` `chance` `alt` `alch` `regal` `vaal`
+- **`price.option`（下拉共 18 項，其中 1 項是未選 → **可送出的幣別是 17 種**；2026-07-28 重 dump 核對無誤）**：`chaos_divine`（＝「Chaos or Divine Orbs」，兩種都算）`chaos` `exalted` `divine` `mirror` `blessed` `chrome` `gcp` `jewellers` `scour` `regret` `fusing` `chance` `alt` `alch` `regal` `vaal`
   - **省略 `option` 時的等值基準幣別是 chaos。** UI 該下拉的未選狀態直接標示 **"Chaos Orb Equivalent"**；poe2scout 的 POE1 聯盟資料也回 `BaseCurrencyApiId: "chaos"`，兩邊一致。換算用的是 GGG 內部匯率、會偏離市場行情——用法與陷阱見 [`../common/tricks.md`](../common/tricks.md)。
+- **`trade_filters.account`（賣家過濾，2026-07-28 實測）**：值形狀 **`{"input": "帳號名#1234"}`**。
+  - **帳號名必須帶 `#1234` 尾碼**——實測 `{"input":"Murrstaar#4661"}` 回 `total=4`，同一組條件只寫 `{"input":"Murrstaar"}` 回 **`total=0`**（不報錯，靜靜地什麼都撈不到）。`listing.account.name` 回來就已經含尾碼，直接原樣塞回去即可。
+  - 送純字串（`"account": "Murrstaar#4661"`）伺服器也吃，而且**正規化成同一筆查詢**（兩者回同一個 `query_id`；GET 回來看到的是 `{"input": …}`）。以 `{"input": …}` 為準寫。
+  - 這正是 [`../common/delivery.md`](../common/delivery.md) 交付標準要的「賣家過濾連結」；連結格式見上面端點那節。
 - **`heist_objective_value`**：`moderate` `high` `precious` `priceless`
 - **`ultimatum_challenge`**：`Exterminate` `Survival` `Defense` `Conquer`｜**`ultimatum_reward`**：`DoubleCurrency` `DoubleDivCards` `MirrorRare` `ExchangeUnique`
 - **`corpse_type`**：`eldritch` `demon` `construct` `undead` `beast` `humanoid`
 
-### `type_filters.category.option`（83 項）
+### `type_filters.category.option`（下拉共 83 項，含 1 項未選 → **可送出的分類 82 個**，全列於下；2026-07-28 重 dump 逐項核對無誤）
+
+> ⚠ 本檔所有 option 計數都沿用站台下拉的長度，**含開頭那個 `None`（未選＝Any）**。要「不限」就整個欄位省略，不要送 `"None"`。
 
 武器：`weapon` `weapon.one` `.onemelee` `.twomelee` `.bow` `.claw` `.dagger` `.basedagger` `.runedagger` `.oneaxe` `.onesword` `.basesword` `.rapier` `.onemace` `.basemace` `.sceptre` `.staff` `.basestaff` `.warstaff` `.twoaxe` `.twomace` `.twosword` `.wand` `.rod`
 防具：`armour` `armour.chest` `.boots` `.gloves` `.helmet` `.shield` `.quiver`
@@ -232,6 +239,8 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 - ❓ **`crucible` / `mercenary` 兩種群組的條目結構**——型別名確定了，但群組內 filters 長什麼樣沒看過。這兩種在 `references/stats.tsv` 各有 2492 / 534 條專屬詞綴。
 - ❓ **fractured / synthesised / scourge / veiled 等其他旗標的回傳長相**。crafted 已確認（見上），其餘照同樣方法抓一件比對即可。
 
+*（2026-07-28 已結案：`trade_filters.account` 的值形狀、`price.option` 與 `category.option` 的完整清單、結果頁 URL 格式，全部實測完畢並寫進上面各節。）*
+
 ## Knowledge base
 
-`poe1/knowledge/` 目前只有 [INDEX.md](knowledge/INDEX.md) 的空殼。使用者教的每一條 POE1 事實都寫進這裡，並在 INDEX 加一行中英雙語關鍵字。分類原則見 [`../SKILL.md`](../SKILL.md)：**換一款遊戲還成立的才放 `../common/`，其餘全部留在這裡。**
+`poe1/knowledge/` 目前有 [exchange-rates.md](knowledge/exchange-rates.md)（匯率來源）、[slots.md](knowledge/slots.md)、[market.md](knowledge/market.md)（兩者目前**只有腰帶**，不要往其他部位推論）。使用者教的每一條 POE1 事實都寫進這裡，並在 [INDEX.md](knowledge/INDEX.md) 加一行中英雙語關鍵字。分類原則見 [`../SKILL.md`](../SKILL.md)：**換一款遊戲還成立的才放 `../common/`，其餘全部留在這裡。**

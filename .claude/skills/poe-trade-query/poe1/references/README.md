@@ -16,6 +16,8 @@
 
 **建議：直接讀 localStorage（2026-07-27 發現）。** POE1 交易頁載入後會把全部參考資料快取在 localStorage，**不必打任何 API、不會消耗限流配額、也繞過 Cloudflare**：
 
+> **⚠ POE1 的 key 前綴是 `lscache-trade*`，POE2 是 `lscache-trade2*`。** 同一個 origin 底下**兩套並存**（開過 POE2 交易頁就會有 `lscache-trade2stats`），拿錯前綴會安靜地產出另一款遊戲的表。
+
 | localStorage key | 內容 | 觀測大小 |
 |---|---|---|
 | `lscache-tradestats` | 完整 stat 清單（`[{id, label, entries:[{id, text, type}]}]`，與 `/data/stats` 同結構） | ~1.98M chars |

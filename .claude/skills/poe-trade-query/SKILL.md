@@ -10,7 +10,7 @@ POE1 and POE2 are **two different games sharing one website**. The transport lay
 ## Step 0 — Determine the realm. Do this FIRST, before reading anything else.
 
 1. Read `REALM` from `setting.py` (`poe1` or `poe2`) — this is the default answer.
-2. If the user explicitly names a game, the user wins. But if that contradicts `REALM`, **say so and ask whether to switch `setting.py`** before doing bulk work — `LEAGUE` in `setting.py` is a single shared field, so a realm the user names by hand is very likely paired with the *other* game's league name (POE1 例：`Keepers`；POE2 例：`Runes of Aldur`). A wrong league usually returns **empty results, not an error.**
+2. If the user explicitly names a game, the user wins. But if that contradicts `REALM`, **say so and ask whether to switch `setting.py`** before doing bulk work — `LEAGUE` in `setting.py` is a single shared field, so a realm the user names by hand is very likely paired with the *other* game's league name (POE1 例：`Allflame`；POE2 例：`Runes of Aldur`). A wrong league usually returns **empty results, not an error.** Read the league name from `setting.py` too; the examples here go stale every league.
 3. Never infer the realm from vocabulary in the request. "他提到 Spirit 所以應該是 POE2" is exactly the reasoning that produces silently-wrong answers.
 
 ## The isolation rule (no exceptions)
@@ -20,6 +20,7 @@ POE1 and POE2 are **two different games sharing one website**. The transport lay
 - The other realm's directory **does not exist** for this task. Don't read it, don't grep it, don't cite it, don't diff against it.
 - **No cross-game analogy, ever.** Not for a stat id, not for a currency, not for a mechanic, not even as a guess prefaced with "probably". If the current realm's tree doesn't say it, the answer is "我不知道，需要實測" — then go measure it and write it down.
 - **Never reuse a stat id from memory.** Both games use the format `<group>.stat_<hash>`. A hash from the wrong game may be *silently valid* in this one and mean something else — the API won't error, it will just return the wrong items. Every id must be freshly grepped from **this realm's** `references/stats.tsv`.
+  - Measured 2026-07-28 by diffing the two `references/stats.tsv`: in the `explicit` group alone **528 hashes exist in both games — 274 of them mean something different**, 254 are identical. Examples: `explicit.stat_587431675` = POE1「增加全域暴擊率」／POE2「增加暴擊率」；`stat_3556824919` = POE1 暴擊傷害加成(multiplier)／POE2 Critical Damage Bonus；`stat_1135194732` = POE1 Enchantment Modifiers／POE2 Instilled Modifiers. So carrying an id across games is roughly a coin flip between "silently wrong results" and "happens to work" — which is exactly why it can't be spot-checked by eye.
 - Same-named things are assumed different until this realm's tree proves otherwise. There is deliberately no "collision list" to consult — the list would be nearly every noun in both games, and having one would imply that unlisted terms are safe to carry over. None are.
 
 ## Directory map
