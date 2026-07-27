@@ -1,6 +1,6 @@
 > ⛔ **POE1 ONLY** ｜ 聯盟：**Allflame**（遊戲版本未記錄）｜ 最後整理：**2026-07-27**
 > 若 `setting.py` 的 `REALM=poe2`，立刻停止並改讀 `../poe2/`。
-> **狀態：傳輸層與 query schema 已實測可用；`knowledge/`（部位分佈、行情、估值）仍是空的。**
+> **狀態：傳輸層與 query schema 已實測可用；`knowledge/` 已有匯率、腰帶部位分佈與腰帶行情，其餘部位與機制估值待累積。**
 > 下面標 ❓ 的每一項都還沒實測過——不准把 `../poe2/` 的任何 id、欄位名、幣別、機制或行情搬過來填，
 > 也不准寫「POE2 是這樣所以 POE1 應該也是」。要嘛實測後寫進來，要嘛照實說不知道。
 
@@ -69,17 +69,6 @@ GET      /api/trade/fetch/{h1},{h2},{h3}?query=EBO2DX8YS5&pseudos[]=pseudo.pseud
 ```
 
 **確認 UI 打的就是文件記的路徑**，沒有隱藏的 realm 區段或額外參數。條件不變時重按 Search 會沿用同一個 `query_id`，網址不變。
-
-### `pseudos[]` —— fetch 的隱藏參數（UI 會帶，手刻請求容易漏）
-
-fetch 可以重複帶 `&pseudos[]=<pseudo stat id>`，**伺服器就會在回傳裡多給一個 `item.pseudoMods` 陣列，直接算好該 pseudo 的合計值**：
-
-```jsonc
-// 帶 pseudos[]=pseudo.pseudo_total_life
-"pseudoMods": [ { "description": "+124 total maximum Life", "domain": "pseudo", "hash": "stat.pseudo.pseudo_total_life" } ]
-```
-
-不帶就完全沒有這個欄位，得自己從 `explicitMods`/`implicitMods` 逐條加總（還要自己處理混合抗性之類的合併規則）。**凡是用 pseudo 條件搜尋的，fetch 一律把同一組 pseudo id 帶上**，省掉整個加總 parser。（POE2 是否有同樣參數未測，別假設。）
 
 ### Live search 不歸這個 skill 管
 
