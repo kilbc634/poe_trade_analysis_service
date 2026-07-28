@@ -54,7 +54,12 @@ MEASURED LESSONS, don't relearn them the hard way:
   * At this price band the binding constraint is SUPPLY, not budget: raising the
     price cap 5c -> 10c barely moves the achievable spec (L200 helmets and L205
     belts are 0 listings at either). Per-slot life ceilings and the full probe
-    grid are recorded in ../poe1/knowledge/slots.md -- READ IT AND SKIP PROBING.
+    grid are recorded in ../poe1/knowledge/slots.md -- read that FIRST, but treat
+    it as league-scoped: check its 最後驗證 banner against setting.py's LEAGUE.
+    Same league -> reuse the grid and skip probing. Different league (or the
+    numbers just look off) -> re-probe; supply and prices reset every league.
+    Cheap spot-check either way: fetch one loose pool and eyeball whether the
+    recorded ceiling still matches real listings before trusting the whole grid.
   * Cheap gear sells in MINUTES. 5 items sold mid-session on the reference run.
     Always finish with `converge`, and deliver fast.
   * Do NOT put a literal-currency price cap on pool searches: it silently drops
@@ -308,7 +313,8 @@ async page => await page.evaluate(async () => {
       }
       const p = lst.price || {};
       if (!(p.currency in RATES)) continue;
-      rows.push({id:item.id, qid, name:((item.name||'') + ' ' + (item.baseType||'')).trim(),
+      rows.push({id:item.id, hash:it.id, qid,
+                 name:((item.name||'') + ' ' + (item.baseType||'')).trim(),
                  ilvl:item.ilvl, corrupt:!!item.corrupted,
                  life:d.life + Math.floor(d.str/2), flat:d.life, str:d.str,
                  fire:d.fire, cold:d.cold, light:d.light,
@@ -475,6 +481,11 @@ def parse_item(it, qid):
     if p.get("currency") not in RATES:
         return None
     return {"id": item["id"], "qid": qid,
+            # it["id"] is the LISTING hash -- keep it: fetching by hash is a
+            # DIRECT liveness answer and batches 10-at-a-time, whereas inferring
+            # "sold" from a narrowed seller search can false-negative when our
+            # computed life differs from the site's pseudo by a point.
+            "hash": it["id"],
             "name": f"{item.get('name') or ''} {item.get('baseType') or ''}".strip(),
             "ilvl": item.get("ilvl"), "corrupt": bool(item.get("corrupted")),
             # pseudo_total_life convention: flat life + Strength/2
@@ -919,41 +930,127 @@ def seller_query(it):
             "sort": {"price": "asc"}}
 
 
-def verify_one(it):
+_HASH_FETCH_JS = r"""
+async page => await page.evaluate(async () => {
+  const QID = __QID__, HASHES = __HASHES__;
+  const r = await fetch('/api/trade/fetch/' + HASHES.join(',') + '?query=' + QID);
+  if (!r.ok) return JSON.stringify({error: 'fetch ' + r.status});
+  return JSON.stringify(await r.json());
+})
+"""
+
+
+def _fetch_hashes(qid, hashes):
+    """Raw fetch results for listing hashes belonging to query `qid`.
+
+    An empty hash list must short-circuit: the endpoint requires at least one id
+    and `/fetch/?query=...` returns 404 "Resource not found". That is the COMMON
+    case on the fallback path (the item sold, so the seller search returns 0).
+
+    A dead hash inside an otherwise-valid batch is safe -- measured 2026-07-28:
+    3 valid + 1 bogus returned 4 entries, the bogus one null, no error. So
+    "absent from the results" is a reliable sold signal.
+    """
+    hashes = [h for h in (hashes or []) if h]
+    if not hashes:
+        return []
+    if transport() == "http":
+        j = req(FETCH_URL.format(ids=",".join(hashes), qid=qid))
+        time.sleep(1.5)
+    else:
+        js = (_HASH_FETCH_JS.replace("__QID__", json.dumps(qid))
+                            .replace("__HASHES__", json.dumps(hashes)))
+        j = _playwright(js, "hashfetch")
+    return [] if j.get("error") else (j.get("result") or [])
+
+
+def live_by_hash(items):
+    """{item_id: {"price", "gone"}} for items still listed, via HASH FETCH.
+
+    This is a DIRECT liveness answer and batches up to FETCH_CAP per call, so a
+    6-item combo costs ~1-2 fetches instead of one search+fetch per item. The
+    older seller-search inference could not tell "sold" apart from "my life
+    threshold was a point off and filtered it out" -- that ambiguity cost two
+    manual disambiguation queries on the reference run. Matches what the POE2
+    sibling (verify_links_poe2.py) already did.
+
+    Hashes are scoped to the query they came from, so batch per pool qid. Items
+    from a cache predating the `hash` field are skipped -> caller falls back.
+    """
+    by_qid = {}
+    for it in items:
+        if it.get("hash") and it.get("qid"):
+            by_qid.setdefault(it["qid"], []).append(it)
+    found, resolved = {}, set()
+    for qid, group in by_qid.items():
+        for i in range(0, len(group), FETCH_CAP):
+            batch = group[i:i + FETCH_CAP]
+            try:
+                results = _fetch_hashes(qid, [g["hash"] for g in batch])
+            except Exception as e:
+                # unresolved != sold. Leave these out of `resolved` so the caller
+                # falls back instead of silently reporting the whole batch sold.
+                print(f"  hash fetch failed for {qid} ({e}); falling back", flush=True)
+                continue
+            got = {x["item"]["id"]: x for x in results
+                   if x and x.get("item") and not x.get("gone")}
+            for g in batch:
+                resolved.add(g["id"])          # batch answered: absent == sold
+                if g["id"] in got:
+                    p = (got[g["id"]].get("listing") or {}).get("price") or {}
+                    found[g["id"]] = {"price": f"{p.get('amount')} {p.get('currency')}",
+                                      "gone": False}
+    return found, resolved
+
+
+def verify_one(it, live=None, resolved=False):
+    """Seller-filtered search -> the buy link (+ how many of the seller's items
+    match).
+
+    `live` is the hash-fetch verdict and `resolved` says whether the hash fetch
+    actually answered for this item. resolved=True + live=None means DEFINITELY
+    SOLD (no fallback needed). resolved=False means unknown -- only then do we
+    fall back to inferring liveness from this search's own hits.
+    """
     body = seller_query(it)
+    need_fallback = live is None and not resolved
     mode = transport()
     if mode == "http":
         s = req(SEARCH_URL.format(league=LEAGUE), json.dumps(body).encode("utf-8"))
         time.sleep(1.5)
-        found, qid = None, s["id"]
-        hashes = (s.get("result") or [])[:FETCH_CAP]
-        if hashes:
-            j = req(FETCH_URL.format(ids=",".join(hashes), qid=qid))
-            for x in (j.get("result") or []):
+        qid, total = s["id"], s.get("total")
+        if need_fallback:
+            for x in _fetch_hashes(qid, (s.get("result") or [])[:FETCH_CAP]) or []:
                 if x and x.get("item", {}).get("id") == it["id"]:
                     p = (x.get("listing") or {}).get("price") or {}
-                    found = {"price": f"{p.get('amount')} {p.get('currency')}",
-                             "gone": bool(x.get("gone"))}
-            time.sleep(1.5)
-        d = {"qid": qid, "total": s.get("total"), "found": found}
+                    live = {"price": f"{p.get('amount')} {p.get('currency')}",
+                            "gone": bool(x.get("gone"))}
+        d = {"qid": qid, "total": total}
     else:
         js = (_VERIFY_JS.replace("__BODY__", json.dumps(body))
                         .replace("__WANT__", json.dumps(it["id"]))
                         .replace("__LEAGUE_ENC__", LEAGUE.replace(" ", "%20")))
         d = _playwright(js, "verify")
+        if need_fallback:
+            live = d.get("found")
     return {**it, "url": RESULT_URL.format(league=LEAGUE.replace(" ", "%20"),
                                            qid=d.get("qid", "")),
-            "seller_total": d.get("total"), "live": bool(d.get("found")),
-            "live_price": (d.get("found") or {}).get("price")}
+            "seller_total": d.get("total"), "live": bool(live),
+            "live_price": (live or {}).get("price"),
+            "live_via": "hash" if resolved else "seller-search"}
 
 
 def cmd_verify(tier=None):
     res = json.load(open(os.path.join(WORKDIR, "result.json")))
     tier = tkey(tier) if tier is not None else max(res, key=lambda k: float(k))
-    out = [verify_one(it) for it in res[tier]["items"]]
+    items = res[tier]["items"]
+    # one batched pass for liveness, then one search per item purely for the link
+    hashed, resolved = live_by_hash(items)
+    out = [verify_one(it, hashed.get(it["id"]), it["id"] in resolved) for it in items]
     for i in out:
         print(f"{i['slot']:6s} {i['name'][:32]:32s} @{i['seller']:20s} "
-              f"total={i['seller_total']} live={i['live']} {i['live_price'] or ''}")
+              f"total={i['seller_total']} live={i['live']} "
+              f"[{i['live_via']}] {i['live_price'] or ''}")
     payload = {"verified_at": time.strftime("%Y-%m-%d %H:%M"), "tier": tier,
                "life": res[tier]["life"], "price": res[tier]["price"],
                "res": res[tier]["res"], "items": out}
@@ -992,6 +1089,12 @@ def cmd_report(tiers=None, out_dir=None):
     """Markdown deliverable per ../common/delivery.md, written to the project
     root (chat output scrolls away; a timestamped file survives)."""
     tiers = [tkey(t) for t in (tiers or [TIERS[-1]])]
+    # Be explicit about which solver produced these numbers: FAST is a LOSSY
+    # thinning mode, so its output must not be presented as "the exact optimum".
+    solver_note = ("精確解（每部位候選全數納入，與暴力解對拍相符）" if not FAST else
+                   f"瘦身模式 `POE_FAST={FAST}`（每部位保留約 {FAST} 個候選）。"
+                   "吃滿預算那一檔實測與精確解相同，**中間級距可能低估數點**——"
+                   "要引用為「理論上限」請改用 `POE_FAST=0` 重跑")
     vs = []
     for t in tiers:
         p = os.path.join(WORKDIR, f"verified_{t}.json")
@@ -1013,7 +1116,8 @@ def cmd_report(tiers=None, out_dir=None):
          f"- **限制**：{RARITY} 裝；裝備需求等級 ≤ {REQ_LVL_MAX}；Instant Buyout（`securable`）",
          f"- **匯率**：1 divine = {RATES['divine']:.2f} chaos（會漂，跨日務必重抓）",
          "- **Life 口徑**：`+# to maximum Life` + 力量÷2"
-         "（力量含 `+# to Strength`／`Strength and X`／`all Attributes`，各只計一次）", ""]
+         "（力量含 `+# to Strength`／`Strength and X`／`all Attributes`，各只計一次）",
+         f"- **求解模式**：{solver_note}", ""]
 
     for v in vs:
         L += [f"## 方案：{v['price']:.2f}c，Life {v['life']}", "",
