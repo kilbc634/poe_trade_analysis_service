@@ -53,6 +53,11 @@ Optimizer scaling lessons (learned the hard way at 6 slots / ~1500 candidates):
     prune_groups() bucket-coarsening hard cap + the bounded heap in the join.
   - keep ALL module-level side effects behind __main__ (an earlier probe
     script imported a sibling module and silently re-ran 13 searches).
+  - prune_groups() is the ONE LOSSY layer here (cap=50000 by default, chosen by
+    a measured convergence sweep -- see its docstring). The POE1 sibling
+    replaces it with an exact clamp+Pareto+suffix-max join instead.
+    Layer-by-layer comparison of both, plus a template for recording the next
+    optimizer's lossy point and runtime: ../common/optimizer-algorithms.md
 
 Usage: edit CONFIG + SEARCHES + constraints in main(), then run.
   (no args)          searches + fetches (cached) + optimize; uses the POESESSID

@@ -241,6 +241,17 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 
 *（2026-07-28 已結案：`trade_filters.account` 的值形狀、`price.option` 與 `category.option` 的完整清單、結果頁 URL 格式，全部實測完畢並寫進上面各節。）*
 
+## 配裝工具（多部位聯合求解）
+
+**[`../scripts/gear_combo_optimizer_poe1.py`](../scripts/gear_combo_optimizer_poe1.py)** —— POE1 專用，
+2026-07-28 以「30c 配齊六部位補血補抗」實戰驗證過。子命令：
+`selftest`（對拍驗算，改求解器後必跑）／`probe`／`pools`／`solve`／`verify`／`converge`／`report`。
+
+要點：**端點、欄位名、stat id、詞綴正則都是 POE1 profile**（別跟 `gear_combo_optimizer_poe2.py` 混用）；
+求解器是精確解（抗性截頂＋Pareto＋3-D 後綴最大值），`POE_FAST=75` 可在 6 秒內重算；
+POESESSID 過期時會自動改走已登入瀏覽器的 in-page fetch。方法論與實測數據見
+[`../common/tricks.md`](../common/tricks.md) 與 [knowledge/slots.md](knowledge/slots.md)。
+
 ## Knowledge base
 
-`poe1/knowledge/` 目前有 [exchange-rates.md](knowledge/exchange-rates.md)（匯率來源）、[slots.md](knowledge/slots.md)、[market.md](knowledge/market.md)（兩者目前**只有腰帶**，不要往其他部位推論）。使用者教的每一條 POE1 事實都寫進這裡，並在 [INDEX.md](knowledge/INDEX.md) 加一行中英雙語關鍵字。分類原則見 [`../SKILL.md`](../SKILL.md)：**換一款遊戲還成立的才放 `../common/`，其餘全部留在這裡。**
+`poe1/knowledge/` 目前有 [exchange-rates.md](knowledge/exchange-rates.md)（匯率來源）、[slots.md](knowledge/slots.md)（腰帶詞綴位拆解 + **頭盔／手套／項鍊／戒指／腰帶六部位的生命×三抗天花板**）、[market.md](knowledge/market.md)（腰帶高端階梯 + **1–10c 低價帶市場形狀與通貨換算表**）。使用者教的每一條 POE1 事實都寫進這裡，並在 [INDEX.md](knowledge/INDEX.md) 加一行中英雙語關鍵字。分類原則見 [`../SKILL.md`](../SKILL.md)：**換一款遊戲還成立的才放 `../common/`，其餘全部留在這裡。**

@@ -3,18 +3,20 @@
 build seller-account-filtered search links (../common/delivery.md).
 
 !! REALM: POE2 ONLY as written (CAT[] category options and the stat ids it pulls
-!! from gear_combo_optimizer are POE2's). The delivery format itself is shared.
+!! from gear_combo_optimizer_poe2 are POE2's). The delivery format itself is shared.
 
 Usage: python verify_links.py [tier ...]   (default: the two largest tiers)
 Reads gear_pools/result.json + the s_<pool>.json search caches (for query ids),
 single-hash fetches each unique item (live check + current price), then POSTs a
 narrowed seller-filtered search per item. Writes gear_pools/verify_links.json.
-Rate pace: reuses gear_combo_optimizer.req (header-adaptive + 429 backstop).
+Rate pace: reuses gear_combo_optimizer_poe2.req (header-adaptive + 429 backstop).
+NOTE: the POE1 side does NOT need this file -- gear_combo_optimizer_poe1.py has
+verification and report generation built in as subcommands.
 """
 import json, os, sys, time, glob
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import gear_combo_optimizer as g
+import gear_combo_optimizer_poe2 as g
 
 CAT = {"chest": "armour.chest", "boots": "armour.boots", "helm": "armour.helmet",
        "ring": "accessory.ring", "belt": "accessory.belt"}
