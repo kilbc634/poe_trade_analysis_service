@@ -65,6 +65,14 @@ MEASURED LESSONS, don't relearn them the hard way:
   * Do NOT put a literal-currency price cap on pool searches: it silently drops
     listings priced in exalted/chromatic/alch (POE1 exalted is only ~0.93c!).
     Use sort=price asc and filter on the real price locally.
+  * KNOWN GAP -- scoring ignores CRAFTABLE resistance. An uncorrupted item with a
+    free suffix can take a bench craft worth up to +35 res (armour/belt) almost
+    free, and those items are CHEAP because they look bad. This script only
+    counts resistance already on the item, so it systematically undervalues the
+    cheapest useful gear. Suffix slots ARE detectable (mods[].tier starts with
+    'P' or 'S'; count DISTINCT (name, tier) -- one displayed line can come from
+    two mods). Fix = expand each craftable candidate into its craft options.
+    Mechanics, per-slot caps and the detection rule: ../poe1/knowledge/crafting.md
 """
 import glob
 import itertools
