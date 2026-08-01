@@ -36,7 +36,59 @@
 兩個原因：**能上的抗性數值較差**（28/16 vs 35/20），而且**這兩個部位的工藝欄位通常留給更值錢的
 特殊工藝**。所以實務上這招主要用在 **頭盔／手套／鞋子／胸甲／腰帶**。
 
-## API 上怎麼判斷「還有沒有後綴空位」（2026-07-28 實測）
+## ✅ 正解：在**搜尋階段**就用 pseudo 過濾掉（使用者教，2026-07-28 實測）
+
+**這是首選做法**，比抓回來再逐件解析好得多——池子回來就只剩可工藝的貨，不浪費 fetch 配額，
+而且「空幾條後綴」是**站台自己算的**，不是我們從詞綴反推。
+
+用一個 **`count` 群組**把「空後綴」與「已有工藝後綴」當成 OR 條件（滿足其一即可）：
+
+```jsonc
+"stats": [
+  { "type": "and", "filters": [
+      { "id": "pseudo.pseudo_total_life", "value": {"min": 150}, "disabled": false } ] },
+  // 「至少滿足下列 1 條」= 有空後綴位，或有一條可抹掉重上的工藝後綴
+  { "type": "count", "value": {"min": 1}, "filters": [
+      { "id": "pseudo.pseudo_number_of_empty_suffix_mods",   "value": {"min": 1}, "disabled": false },
+      { "id": "pseudo.pseudo_number_of_crafted_suffix_mods", "value": {"min": 1}, "disabled": false } ] }
+],
+"filters": {
+  "misc_filters": { "filters": { "corrupted": {"option": "false"} } }   // ← 必加，腐化裝不能工藝
+}
+```
+
+相關的 pseudo id（`../references/stats.tsv` 實查）：
+
+| id | 顯示文字 |
+|---|---|
+| `pseudo.pseudo_number_of_empty_suffix_mods` | `# Empty Suffix Modifiers` |
+| `pseudo.pseudo_number_of_crafted_suffix_mods` | `# Crafted Suffix Modifiers` |
+| `pseudo.pseudo_number_of_empty_prefix_mods` | `# Empty Prefix Modifiers` |
+| `pseudo.pseudo_number_of_empty_affix_mods` | `# Empty Modifiers` |
+| `pseudo.pseudo_number_of_crafted_mods` | `# Crafted Modifiers` |
+| `pseudo.pseudo_number_of_prefix_mods` / `..._suffix_mods` | `# Prefix / Suffix Modifiers` |
+
+**實測（2026-07-28）**：上面這個查詢**回 200，`count` 群組沒有撞複雜度上限**
+（與 `weight`/`weight2` 不同，那兩個即使只放一條也會被拒——見 [../QUERY.md](../QUERY.md)）。
+`L150 + 未腐化 + count(空後綴|工藝後綴)` 的頭盔在架 **5042 件**，供給非常充足。
+撈回前 5 件用下面的 tier 數法交叉驗證，**5/5 都是原生後綴 ≤2，與過濾器完全一致**。
+
+**價格佐證**：那 5 件 L150+ 頭盔的價格是 **2 alch（≈0.14c）／5 alch／1 chaos ×3**——
+「賣相差所以便宜」在數字上非常明顯，這正是這招的價值所在。
+
+### ⚠ 估值時別把已有的工藝重複計算
+
+若物件**已經有一條工藝抗性後綴**，它現在顯示的抗性**已經含那條工藝**。既然要抹掉重上，
+正確算法是：
+
+```
+effective_res = (現有抗性 − 已存在的工藝抗性) + 該部位最佳工藝值
+```
+
+辨識現有工藝靠 `flags.crafted` / `domain == "crafted"`（見 [../QUERY.md](../QUERY.md)）。
+**只用 count 過濾器是看不出這件事的**，所以解析階段仍然要標記哪幾條是工藝詞綴。
+
+## 備援：從 fetch 回傳自己判斷後綴空位（2026-07-28 實測）
 
 **可以精確判斷。** fetch 回傳的每條詞綴物件裡，`mods[].tier` 的**開頭字母就是詞綴類型**：
 
@@ -89,12 +141,12 @@ Praetor Crown 3 條（前後綴全滿）、Pig-Faced Bascinet 3 條。**空位�
 **展開成多個虛擬候選**（不工藝／工藝火 35／冰 35／雷 35／火冰 20+20／火雷 20+20／冰雷 20+20…），
 讓求解器自己挑要補哪一種。展開後候選數約 ×7，但 Pareto 剪枝與 `POE_FAST` 都吃得下。
 
-搜尋端同時要調整：這類物件應該用「**高生命 + 低抗性 + 未腐化**」去撈
-（現有的 `*_maxlife` 池子其實已經偏向這種貨，只是沒給它工藝加分）。
+搜尋端同時要調整：這類物件要用「**高生命 + 低抗性 + 未腐化 + count(空後綴|工藝後綴)**」去撈
+（見本檔上方的 count 群組寫法）。現有的 `*_maxlife` 池子其實已經偏向這種貨，
+只是既沒加 count 過濾、也沒給它工藝加分。
 
 ## ❓ 待確認
 
-- **一件裝備能同時存在幾條工藝詞綴？** 使用者的描述（「抹除原本的工藝詞綴，然後上新的」）
-  讀起來是**一次一條**，估值也照一條算。若實際上能多條（例如某種「可擁有多個工藝詞綴」的手段），
-  上面的展開模型要跟著改。**確認前一律只算一條。**
+- ~~一件裝備能同時存在幾條工藝詞綴？~~ **已確認（使用者，2026-07-28）：正常情況下只有一條。**
+  所以估值就是「一件最多加一條工藝抗性」，展開模型照這個算。
 - 各部位工藝上限是否隨物品等級／基底不同而變（目前照使用者給的表，未逐項實測）。

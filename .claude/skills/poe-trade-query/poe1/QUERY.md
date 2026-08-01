@@ -219,6 +219,8 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 
 群組本身也吃 `"disabled": true`（整組停用），單一條目同樣可以 `disabled`。
 
+✅ **`count` 群組實測可用（2026-07-28）**：`{"type":"count","value":{"min":1},"filters":[…]}` 回 200，可用來表達「下列條件至少滿足 N 條」的 OR 語義。實例（找可上工藝抗性的裝備）見 [knowledge/crafting.md](knowledge/crafting.md)。
+
 ⚠ **`weight` / `weight2` 實測會撞複雜度上限**：即使只放一條 explicit 詞綴，API 仍回 `Query is too complex. Please reduce the amount of filters used.`（already authenticated 時依然如此）。型別名本身是有效的——送假值 `xyzzy` 會回 `Invalid statgroup type type`，這兩個回的是複雜度錯誤，兩者不同。加權查詢要能跑得先想辦法壓複雜度。
 
 ## 參考表（`references/`，2026-07-27 產出）
