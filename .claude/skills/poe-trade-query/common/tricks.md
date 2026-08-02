@@ -112,7 +112,11 @@ For "buy N pieces within budget X satisfying joint constraints (some total acros
 | realm | script | 求解器 | 附帶 |
 |---|---|---|---|
 | **POE2** | [`../scripts/gear_combo_optimizer_poe2.py`](../scripts/gear_combo_optimizer_poe2.py) + [`verify_links_poe2.py`](../scripts/verify_links_poe2.py) | 分階組合 + 桶截斷（有損，要測收斂） | 驗證另開一支 |
-| **POE1** | [`../scripts/gear_combo_optimizer_poe1.py`](../scripts/gear_combo_optimizer_poe1.py) | **截頂 + Pareto + 3-D 後綴最大值（精確）**，另有 `POE_FAST` 瘦身模式 | 探頂／撈池／求解／驗證／收斂／交付**全部內建**，子命令切換 |
+| **POE1**（生命／3 抗） | [`../scripts/gear_combo_optimizer_poe1.py`](../scripts/gear_combo_optimizer_poe1.py) | **截頂 + Pareto + 3-D 後綴最大值（精確）**，另有 `POE_FAST` 瘦身模式 | 探頂／撈池／求解／驗證／收斂／交付**全部內建**，子命令切換 |
+| **POE1**（生命＋ES 加權／5 軸約束） | [`../scripts/gear_combo_es_poe1.py`](../scripts/gear_combo_es_poe1.py) | 五軸截頂 + Pareto + **雙上界向量化 join**；`POE_FAST` 預設 **200**（精確解跑不完） | 多 `deep`（不重搜延伸池子）與 `negatives`（負面詞綴分類後問使用者） |
+
+**約束軸數決定選哪一套**：3-D 查表在約束變成 5 條時會爆成上億格，這是 POE1 有兩支的原因，
+不是重複造輪子。三代的分層／失真點／耗時對照見 [`optimizer-algorithms.md`](optimizer-algorithms.md)。
 
 兩支的端點、欄位名、stat id、幣別、詞綴正則**都是各自遊戲的 profile，不可互抄**（見各自檔頭）。
 POE1 那支另有兩個實用件：**雙傳輸層**（POESESSID 死了自動改走已登入瀏覽器的 in-page fetch）與

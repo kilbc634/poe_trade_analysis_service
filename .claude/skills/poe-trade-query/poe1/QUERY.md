@@ -245,9 +245,31 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 
 ## 配裝工具（多部位聯合求解）
 
+**先照需求挑對腳本**——兩支都是 POE1，差別在目標函數與約束軸數：
+
+| 需求 | 用哪支 |
+|---|---|
+| 目標只有**生命**、約束只有**三抗** | [`gear_combo_optimizer_poe1.py`](../scripts/gear_combo_optimizer_poe1.py) |
+| 目標是**生命＋ES 加權**、還要顧**力量／敏捷**等屬性 | [`gear_combo_es_poe1.py`](../scripts/gear_combo_es_poe1.py) |
+
 **[`../scripts/gear_combo_optimizer_poe1.py`](../scripts/gear_combo_optimizer_poe1.py)** —— POE1 專用，
 2026-07-28 以「30c 配齊六部位補血補抗」實戰驗證過。子命令：
 `selftest`（對拍驗算，改求解器後必跑）／`probe`／`pools`／`solve`／`verify`／`converge`／`report`。
+
+**[`../scripts/gear_combo_es_poe1.py`](../scripts/gear_combo_es_poe1.py)** —— 2026-08-02 建立，
+以「10 divine 配頭盔／手套／戒指／腰帶，最大化 `2.20×生命 + 2.41×ES`，
+同時滿足三抗＋力量＋敏捷」建成。與上面那支的差異：
+
+- **目標函數是加權和**，且 **ES 要分兩種來源讀**（護甲類 `extended.es`、飾品類詞綴文字）——
+  見 [knowledge/slots.md](knowledge/slots.md) 的 ES 章節，弄反會整個部位算成 0。
+- **五條約束軸**（火／冰／雷／力量／敏捷）。B 世代那套 3-D 後綴最大值查表在 5 軸下會爆掉，
+  所以改用向量化 join＋兩個精確上界，細節與收斂實測見
+  [`../common/optimizer-algorithms.md`](../common/optimizer-algorithms.md) 的 **C 世代**。
+- 多兩個子命令：**`deep`**（不重搜、把每個池子從 30 件延伸到 100 件）與
+  **`negatives`**（把樣本裡的負面詞綴分類後列出來**問使用者**要禁哪些——
+  黑名單綁流派，每次都要重問，見 [knowledge/crafting.md](knowledge/crafting.md)）。
+- **`POE_FAST` 預設 200**（不是 0）：這題的完全精確解跑不完，200 是「達到收斂頭條」
+  且「塞得進 20 分鐘」的階。求解前會印 ETA。
 
 要點：**端點、欄位名、stat id、詞綴正則都是 POE1 profile**（別跟 `gear_combo_optimizer_poe2.py` 混用）；
 求解器是精確解（抗性截頂＋Pareto＋3-D 後綴最大值），`POE_FAST=75` 可在 6 秒內重算；
