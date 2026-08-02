@@ -65,14 +65,15 @@ MEASURED LESSONS, don't relearn them the hard way:
   * Do NOT put a literal-currency price cap on pool searches: it silently drops
     listings priced in exalted/chromatic/alch (POE1 exalted is only ~0.93c!).
     Use sort=price asc and filter on the real price locally.
-  * KNOWN GAP -- scoring ignores CRAFTABLE resistance. An uncorrupted item with a
-    free suffix can take a bench craft worth up to +35 res (armour/belt) almost
-    free, and those items are CHEAP because they look bad. This script only
-    counts resistance already on the item, so it systematically undervalues the
-    cheapest useful gear. Suffix slots ARE detectable (mods[].tier starts with
-    'P' or 'S'; count DISTINCT (name, tier) -- one displayed line can come from
-    two mods). Fix = expand each craftable candidate into its craft options.
-    Mechanics, per-slot caps and the detection rule: ../poe1/knowledge/crafting.md
+  * BENCH CRAFTING is modelled (POE_CRAFT=1, default). An uncorrupted item with a
+    free suffix takes a resistance craft worth up to +35 almost free, and such
+    listings are CHEAP because they look bad. Measured A/B on one snapshot: the
+    same life costs ~40% less budget with crafting on (993 life at 12c vs 20c),
+    and the edge GROWS as the budget shrinks (+29 life at 8c, +8 at 30c).
+    Craftable pools use a search-time count group; see q(craftable_only=True).
+    !! thin() must run BEFORE expand_crafts() -- see prep(). Expanding first made
+    the crafted run score BELOW the uncrafted one, which is impossible on the
+    merits; it was truncation damage. Details: ../poe1/knowledge/crafting.md
 """
 import glob
 import itertools
@@ -311,13 +312,32 @@ async page => await page.evaluate(async () => {
       if (!it || it.gone) continue;
       const item = it.item, lst = it.listing || {};
       const mods = [];
-      for (const k of ['implicitMods','explicitMods','craftedMods','fracturedMods','enchantMods']) {
-        for (const m of (item[k] || [])) mods.push(clean(typeof m === 'string' ? m : (m.description || '')));
-      }
       const d = {life:0, str:0, fire:0, cold:0, light:0};
-      for (const line of mods) for (const [src, keys] of PATS) {
-        const mm = line.match(new RegExp(src));
-        if (mm) for (const k of keys) d[k] += parseInt(mm[1]);
+      const craftRes = {fire:0, cold:0, light:0};
+      const affixes = new Set();
+      for (const k of ['implicitMods','explicitMods','craftedMods','fracturedMods','enchantMods']) {
+        for (const m of (item[k] || [])) {
+          const obj = (m !== null && typeof m === 'object');
+          const text = clean(obj ? (m.description || '') : m);
+          mods.push(text);
+          const isCrafted = !!(obj && (m.domain === 'crafted' || (m.flags && m.flags.crafted)));
+          for (const [src, keys] of PATS) {
+            const mm = text.match(new RegExp(src));
+            if (mm) for (const k2 of keys) {
+              d[k2] += parseInt(mm[1]);
+              if (isCrafted && k2 in craftRes) craftRes[k2] += parseInt(mm[1]);
+            }
+          }
+          if (obj) for (const sub of (m.mods || [])) {
+            if (sub && sub.tier) affixes.add(JSON.stringify([sub.name, sub.tier, isCrafted]));
+          }
+        }
+      }
+      // DISTINCT (name, tier): one displayed line can come from two mods
+      let nativeSuffix = 0;
+      for (const a of affixes) {
+        const [, tier, isC] = JSON.parse(a);
+        if (String(tier).startsWith('S') && !isC) nativeSuffix++;
       }
       const p = lst.price || {};
       if (!(p.currency in RATES)) continue;
@@ -326,6 +346,7 @@ async page => await page.evaluate(async () => {
                  ilvl:item.ilvl, corrupt:!!item.corrupted,
                  life:d.life + Math.floor(d.str/2), flat:d.life, str:d.str,
                  fire:d.fire, cold:d.cold, light:d.light,
+                 craft_res:craftRes, native_suffix:nativeSuffix,
                  price:Math.round(p.amount * RATES[p.currency] * 1000)/1000,
                  raw:p.amount + ' ' + p.currency,
                  seller:(lst.account||{}).name || '?', mods});
@@ -414,7 +435,8 @@ def SF(sid, mn):
     return {"id": sid, "value": {"min": mn}, "disabled": False}
 
 
-def q(category, stat_filters, price_max=None, lvl_max=REQ_LVL_MAX, rarity=RARITY):
+def q(category, stat_filters, price_max=None, lvl_max=REQ_LVL_MAX, rarity=RARITY,
+      craftable_only=False):
     """POE1 query body. status/sort live at the root, NOT inside filters.
 
     price_max uses the LITERAL-chaos mode, which compares real amounts but only
@@ -428,8 +450,21 @@ def q(category, stat_filters, price_max=None, lvl_max=REQ_LVL_MAX, rarity=RARITY
         filters["req_filters"] = {"filters": {"lvl": {"max": lvl_max}}}
     if price_max is not None:
         filters["trade_filters"] = {"filters": {"price": {"option": "chaos", "max": price_max}}}
+    stats = [{"type": "and", "filters": stat_filters}]
+    if craftable_only:
+        # user-taught: filter at SEARCH time instead of fetching then discarding.
+        # count/min:1 == "at least one of these" == a free suffix OR an existing
+        # crafted suffix we can wipe and re-craft. Measured: count groups do NOT
+        # hit the complexity limit (unlike weight/weight2). See crafting.md
+        stats.append({"type": "count", "value": {"min": 1}, "filters": [
+            {"id": "pseudo.pseudo_number_of_empty_suffix_mods",
+             "value": {"min": 1}, "disabled": False},
+            {"id": "pseudo.pseudo_number_of_crafted_suffix_mods",
+             "value": {"min": 1}, "disabled": False}]})
+        filters.setdefault("misc_filters", {"filters": {}})
+        filters["misc_filters"]["filters"]["corrupted"] = {"option": "false"}
     return {"query": {"status": {"option": "securable"},      # Instant Buyout
-                      "stats": [{"type": "and", "filters": stat_filters}],
+                      "stats": stats,
                       "filters": filters},
             "sort": {"price": "asc"}}
 
@@ -471,20 +506,50 @@ def _clean(s):
     return re.sub(r"\[([^\[\]|]*\|)?([^\[\]]*)\]", r"\2", s)
 
 
+def _scan_mods(item):
+    """-> (totals, crafted_res, native_suffix_count, mod_texts).
+
+    Beyond the numbers we need two things for bench-crafting (crafting.md):
+      * which resistance is ALREADY from a crafted mod -- it gets wiped when we
+        re-craft, so it must be subtracted before adding the new craft, or we
+        double-count.
+      * how many NATIVE suffixes are used. Resistance crafts are suffixes, and a
+        rare has 3 suffix slots; an existing crafted suffix is reclaimable, so it
+        does not count against us.
+    Affixes are counted as DISTINCT (name, tier) -- one displayed line can come
+    from two mods (a hybrid prefix plus a pure one), so counting lines overcounts.
+    """
+    d = dict.fromkeys(MOD_KEYS, 0)
+    craft_res = {"fire": 0, "cold": 0, "light": 0}
+    affixes, texts = set(), []
+    for k in ("implicitMods", "explicitMods", "craftedMods", "fracturedMods", "enchantMods"):
+        for m in item.get(k) or []:
+            obj = isinstance(m, dict)
+            text = _clean(m if not obj else m.get("description", ""))
+            texts.append(text)
+            is_crafted = bool(obj and (m.get("domain") == "crafted"
+                                       or (m.get("flags") or {}).get("crafted")))
+            for pat, keys in MOD_PATTERNS:
+                mm = re.search(pat, text)
+                if mm:
+                    for key in keys:
+                        d[key] += int(mm.group(1))
+                        if is_crafted and key in craft_res:
+                            craft_res[key] += int(mm.group(1))
+            if obj:
+                for sub in (m.get("mods") or []):
+                    tier = sub.get("tier") or ""
+                    if tier:
+                        affixes.add((sub.get("name"), tier, is_crafted))
+    # crafted mods carry a non-S tier (observed "R3"), so they naturally fall out
+    native_suffix = len({a for a in affixes if a[1].startswith("S") and not a[2]})
+    return d, craft_res, native_suffix, texts
+
+
 def parse_item(it, qid):
     """fetch result -> normalized candidate row (same shape as the in-page JS)."""
     item, lst = it["item"], it.get("listing") or {}
-    mods = []
-    for k in ("implicitMods", "explicitMods", "craftedMods", "fracturedMods", "enchantMods"):
-        for m in item.get(k) or []:
-            mods.append(_clean(m if isinstance(m, str) else m.get("description", "")))
-    d = dict.fromkeys(MOD_KEYS, 0)
-    for line in mods:
-        for pat, keys in MOD_PATTERNS:
-            mm = re.search(pat, line)
-            if mm:
-                for k in keys:
-                    d[k] += int(mm.group(1))
+    d, craft_res, native_suffix, mods = _scan_mods(item)
     p = lst.get("price") or {}
     if p.get("currency") not in RATES:
         return None
@@ -499,6 +564,7 @@ def parse_item(it, qid):
             # pseudo_total_life convention: flat life + Strength/2
             "life": d["life"] + d["str"] // 2, "flat": d["life"], "str": d["str"],
             "fire": d["fire"], "cold": d["cold"], "light": d["light"],
+            "craft_res": craft_res, "native_suffix": native_suffix,
             "price": round(p["amount"] * RATES[p["currency"]], 3),
             "raw": f"{p['amount']} {p['currency']}",
             "seller": (lst.get("account") or {}).get("name", "?"), "mods": mods}
@@ -579,10 +645,29 @@ POOLS = {
     "belt_dual":    ("belt", [SF(TOT_LIFE, 183), SF(TOT_RES, 65)]),
 }
 
+# Craftable pools: high life, resistance NOT required, free suffix (crafting.md).
+# These are the cheap "ugly" listings -- we supply the resistance ourselves, so
+# the search only has to maximise life. Marked craftable_only -> the count group
+# + uncorrupted filter go into the query.
+CRAFT_POOLS = {
+    "helm_craft":   ("helm",  [SF(TOT_LIFE, 150)]),
+    "helm_craft2":  ("helm",  [SF(TOT_LIFE, 175)]),
+    "glove_craft":  ("glove", [SF(TOT_LIFE, 120)]),
+    "glove_craft2": ("glove", [SF(TOT_LIFE, 140)]),
+    "amu_craft":    ("amu",   [SF(TOT_LIFE, 130)]),
+    "amu_craft2":   ("amu",   [SF(TOT_LIFE, 150)]),
+    "ring_craft":   ("ring",  [SF(TOT_LIFE, 120)]),
+    "ring_craft2":  ("ring",  [SF(TOT_LIFE, 140)]),
+    "belt_craft":   ("belt",  [SF(TOT_LIFE, 160)]),
+    "belt_craft2":  ("belt",  [SF(TOT_LIFE, 185)]),
+}
+POOLS.update(CRAFT_POOLS)
+
 
 def cmd_pools(force=False):
     for name, (slot, stats) in POOLS.items():
-        run_pool(name, q(CAT[slot], stats), force=force)
+        run_pool(name, q(CAT[slot], stats, craftable_only=name in CRAFT_POOLS),
+                 force=force)
 
 
 # ------------------------- optimizer -------------------------
@@ -656,7 +741,11 @@ def pareto(cands):
     """Drop candidates another beats on price AND all four axes."""
     out = []
     for c in sorted(cands, key=lambda c: (c["price"], -c["life"])):
-        if not any(all(k[a] >= c[a] for a in AXES) and k["price"] <= c["price"] for k in out):
+        # craft potential is a fifth axis: a corrupted / suffix-full item must
+        # not prune a craftable one, that free suffix is worth up to +35 res
+        if not any(all(k[a] >= c[a] for a in AXES)
+                   and craft_potential(k) >= craft_potential(c)
+                   and k["price"] <= c["price"] for k in out):
             out.append(c)
     return out
 
@@ -683,7 +772,12 @@ def thin(cands, k):
                 lambda c: -c["light"],
                 lambda c: -(c["fire"] + c["cold"] + c["light"]),
                 lambda c: -c["life"] / max(c["price"], 0.5),
-                lambda c: (c["price"], -c["life"])):
+                lambda c: (c["price"], -c["life"]),
+                # craftable leaders -- they lose every ranking above because
+                # their on-item resistance is low BY DESIGN, yet they are exactly
+                # the cheap "buy ugly, craft the res yourself" picks
+                lambda c: (-craft_potential(c), -c["life"]),
+                lambda c: (-craft_potential(c), c["price"], -c["life"])):
         for c in sorted(cands, key=key)[:n]:
             if c["id"] not in seen:
                 seen.add(c["id"])
@@ -691,11 +785,91 @@ def thin(cands, k):
     return keep
 
 
+# ------------------------- bench crafting -------------------------
+# ../poe1/knowledge/crafting.md. Buying an item with a FREE SUFFIX and crafting
+# the resistance yourself is the main cost-cutting play: such items look bad, so
+# they are cheap (measured: L150+ helmets at 2 alch ~= 0.14c), and the craft is
+# effectively free and re-rollable, so we value it at the tier's MAX roll.
+#
+# One crafted mod per item (user-confirmed), and resistance mods are suffixes,
+# so the item must be uncorrupted with at most 2 NATIVE suffixes used.
+CRAFT_CAPS = {                  # slot class -> (single-element, dual-element each)
+    "armour": (35, 20),         # helmet / gloves / boots / chest / belt
+    "jewel":  (28, 16),         # amulet / ring -- weaker, and in practice these
+}                               # slots are usually reserved for other crafts
+CRAFT_CLASS = {"helm": "armour", "glove": "armour", "belt": "armour",
+               "amu": "jewel", "ring": "jewel"}
+# The element+chaos crafts (+15 to one element) are deliberately NOT modelled:
+# for a pure elemental-resistance objective they are strictly dominated by the
+# single (+35/+28) and dual (+20/+16) options. Add them only if chaos res ever
+# enters the scoring.
+CRAFT = int(os.environ.get("POE_CRAFT", "1"))    # 0 disables, for A/B measurement
+
+
+def craft_options(slot):
+    """-> [(label, (dfire, dcold, dlight)), ...] for one crafted suffix."""
+    single, dual = CRAFT_CAPS[CRAFT_CLASS[slot]]
+    return [(f"火+{single}", (single, 0, 0)),
+            (f"冰+{single}", (0, single, 0)),
+            (f"雷+{single}", (0, 0, single)),
+            (f"火冰+{dual}", (dual, dual, 0)),
+            (f"火雷+{dual}", (dual, 0, dual)),
+            (f"冰雷+{dual}", (0, dual, dual))]
+
+
+def has_free_suffix(c):
+    """Intrinsic property of the listing -- independent of the CRAFT toggle, so
+    pareto/thin rank identically whether or not crafting is enabled (keeps the
+    A/B honest). Pools cached before this feature lack native_suffix -> False."""
+    ns = c.get("native_suffix")
+    return bool(not c.get("corrupt") and ns is not None and ns <= 2)
+
+
+def craftable(c):
+    return bool(CRAFT) and has_free_suffix(c)
+
+
+def craft_potential(c):
+    """1 while the free suffix is still UNUSED, so a variant that already spent
+    its craft cannot dominate the un-crafted original."""
+    return 1 if (has_free_suffix(c) and not c.get("craft")) else 0
+
+
+def expand_crafts(cands):
+    """Each craftable candidate becomes several virtual candidates, one per craft
+    choice, so the optimizer picks WHICH resistance to craft as part of the joint
+    solve (a lopsided requirement wants single-element; a broad one wants dual).
+    The uncrafted variant is kept as a floor."""
+    out = []
+    for c in cands:
+        out.append(dict(c, craft=None))
+        if not craftable(c):
+            continue
+        cr = c.get("craft_res") or {}
+        # strip any resistance already coming from a crafted mod -- re-crafting
+        # wipes it, so counting both would double-count
+        base = (c["fire"] - cr.get("fire", 0),
+                c["cold"] - cr.get("cold", 0),
+                c["light"] - cr.get("light", 0))
+        for label, (df, dc, dl) in craft_options(c["slot"]):
+            out.append(dict(c, fire=base[0] + df, cold=base[1] + dc,
+                            light=base[2] + dl, craft=label))
+    return out
+
+
 def prep(pools):
+    """pareto -> thin on PHYSICAL listings, THEN expand craft options.
+
+    Order matters. Expanding first creates ~7 virtual candidates per listing and
+    consumes the thin() budget with variants of a few items instead of a diverse
+    set of listings. Measured: expand-then-thin scored BELOW the no-craft run,
+    which is impossible on the merits (the craft set is a superset) -- it was
+    pure truncation damage, not a real finding.
+    """
     p = {k: pareto(v) for k, v in pools.items()}
     if FAST:
         p = {k: thin(v, FAST) for k, v in p.items()}
-    return p
+    return {k: pareto(expand_crafts(v)) for k, v in p.items()}
 
 
 def frontier(groups, need):
@@ -736,6 +910,10 @@ def ring_pairs(rings, need):
     """Unordered distinct pairs -> clamped aggregates."""
     out = {}
     for r1, r2 in itertools.combinations(rings, 2):
+        # craft expansion creates several entries per physical listing -- pairing
+        # two variants of the same ring would "buy" one item twice
+        if r1["id"] == r2["id"]:
+            continue
         pr = round(r1["price"] + r2["price"], 3)
         if pr > BUDGET:
             continue
@@ -842,9 +1020,10 @@ def cmd_solve(margin=None, tiers=None, quiet=False):
               f"F{s['res']['fire']} C{s['res']['cold']} L{s['res']['light']}", flush=True)
         if not quiet:
             for i in s["items"]:
+                cr = f" 工藝:{i['craft']}" if i.get("craft") else ""
                 print(f"   {i['slot']:6s} {i['raw']:>13s} L{i['life']:>4} "
                       f"F{i['fire']:>3} C{i['cold']:>3} L{i['light']:>3}  "
-                      f"{i['name'][:34]:34s} @{i['seller']} [{i['pool']}]", flush=True)
+                      f"{i['name'][:32]:32s} @{i['seller']} [{i['pool']}]{cr}", flush=True)
     json.dump(out, open(os.path.join(WORKDIR, "result.json"), "w"), indent=1)
     return out
 
@@ -858,7 +1037,9 @@ def cmd_selftest(k=7, seed=7):
     import random
     random.seed(seed)
     need = tuple(n + MARGIN for n in NEED)
-    p = {kk: pareto(v) for kk, v in load().items()}
+    # expand_crafts FIRST so the test covers craft variants too -- notably that
+    # two variants of the SAME physical ring never end up in one combo
+    p = {kk: pareto(expand_crafts(v)) for kk, v in load().items()}
     sub = {kk: random.sample(v, min(k, len(v))) for kk, v in p.items()}
     if any(len(v) < 2 for v in sub.values()):
         sys.exit("not enough candidates cached -- run `pools` first")
@@ -868,6 +1049,8 @@ def cmd_selftest(k=7, seed=7):
         bf = None
         for h, g, a in itertools.product(sub["helm"], sub["glove"], sub["amu"]):
             for r1, r2 in itertools.combinations(sub["ring"], 2):
+                if r1["id"] == r2["id"]:      # same listing, different craft
+                    continue
                 for b in sub["belt"]:
                     items = (h, g, a, r1, r2, b)
                     if round(sum(i["price"] for i in items), 3) > budget + 1e-9:
@@ -1149,6 +1332,8 @@ def cmd_report(tiers=None, out_dir=None):
                     + (f" + 力量 {it['str']}/2" if it["str"] else "") + "）"
                     + f"<br>火 {it['fire']} / 冰 {it['cold']} / 雷 {it['light']}")
             note = []
+            if it.get("craft"):
+                note.append(f"**買回來上工藝：{it['craft']}%**（已計入左欄抗性）")
             if it["id"] in shared:
                 note.append("**多套共用同一件**")
             if it.get("corrupt"):
