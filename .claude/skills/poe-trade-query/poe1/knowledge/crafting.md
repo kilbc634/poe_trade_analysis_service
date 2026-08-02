@@ -106,6 +106,52 @@ Implicit Modifiers Cannot Be Changed
 但如果缺口集中在單一元素（例如只缺火），單元素 35 才是對的選擇。**選哪一種要看缺口分佈，
 這正好是聯合求解器該決定的事**，不要預設。
 
+## ⚠ 換工藝＝洗掉舊工藝，舊工藝的**所有**貢獻都要扣（2026-08-03 踩到）
+
+一件只能有一條工藝（見本檔結論），所以「上一條抗性工藝」等於「洗掉現有那條」。
+求解器原本只扣掉舊工藝的**抗性**：
+
+```python
+craft_res = {"fire": 0, "cold": 0, "light": 0}
+if is_crafted and key in craft_res:      # ← life/es/str/dex 全部靜靜跳過
+    craft_res[key] += val
+```
+
+實例：`Apocalypse Dome Lich's Circlet` 的第三條後綴是 `+13 to Strength and Intelligence`
+（`of Craft`，`domain=crafted`，tier `S0`）。求解器讓它同時保有 13 力量**又**加上 +35% 火抗，
+交付的組合力量從 105 掉到 **92，低於需求 95** —— 是**不達標**，不只是次佳。
+
+**規模不小：實測快取的 3155 件裡有 781 件（約 25%）本身就帶著工藝詞綴。**
+
+要點：
+
+- 扣的時候**生命要重算不能相減**：`pseudo_total_life = 平擊生命 + 力量//2`，整數除法不可分配。
+  正解是 `life = (flat - craft_life) + (str - craft_str)//2`。
+- **護甲件（頭盔／手套）的 ES 工藝洗不掉**：ES 讀 `extended.es`，那是算好的防具值，
+  舊工藝若是 `+# to maximum Energy Shield` 已經烘進去、無法從掛單資料反算。
+  這種件直接**禁止換工藝**，不要估。
+- **快取回溯不了**：池子只存詞綴「文字」，不存哪條是工藝。所以這類修正沒辦法套用在舊資料上，
+  必須重抓（`gear_combo_es_poe1.py reparse`）。反過來說，**存池子時就該把工藝旗標一起存**。
+
+### 判斷工藝詞綴：看 `domain` / `flags`，不要看 tier
+
+`S0` 的定義是「不在該部位的自然詞綴池」，**精華硬塞的也是 S0**
+（見 [slots.md](slots.md) 的腰帶 dex/int 反例）。所以 S0 只能當旁證。權威訊號是
+`domain == "crafted"` 或 `flags.crafted`，工藝詞綴的 `mods[].name` 通常是 `of Craft`。
+
+## ⚠ 懲罰詞綴不是都以負號開頭（2026-08-03 踩到）
+
+負面詞綴偵測寫成 `^\s*-\d`，於是 `46% reduced Elemental Damage with Attack Skills`
+這類**完全沒被列進給使用者過目的清單**——交付的戒指帶著它，報告上一個字都沒提。
+
+但 `reduced` 也**不能一律當懲罰**：實測 3155 件裡的 27 種 `reduced/less` 詞綴中，
+`reduced Enemy Stun Threshold`（72 件）、`reduced Flask Charges used`（19）、
+`reduced Attribute Requirements`（5）、`reduced Freeze Duration on you`、
+`reduced Effect of Curses on you` 全都是**好處**；`Minions ...` 系列則只對召喚流有意義。
+真正的懲罰集中在傷害／速度／命中／魔力回復。
+
+結論：`\d+% (reduced|less) ` 這類**不做自動分類**，一律原文列進交付表讓使用者自己判斷。
+
 ## 項鍊／戒指通常不這樣做（使用者提醒）
 
 兩個原因：**能上的抗性數值較差**（28/16 vs 35/20），而且**這兩個部位的工藝欄位通常留給更值錢的

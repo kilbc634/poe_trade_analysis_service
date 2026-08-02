@@ -55,6 +55,43 @@ Measured directly with `ratelog.py` (2.5s spacing, per-request Ip-State logged).
 - **Anti-rapid-click is yet another separate layer.** ~4 requests in ~2s returns 429 "wait 60s" while the visible state is only `4:10:0` (far below cap) — a burst guard the headers can't predict. Fixed inter-request floors are what prevent it, NOT the header logic.
 - **Measured floor (authed pool, 2026-07-08, user-requested speed test) — this bullet is the authoritative pacing number, everything else in this file defers to it: search 2s + fetch 1.5s is SAFE** when combined with the header-adaptive `_throttle_wait()`. A full 33-search / ~190-fetch-batch authed run at that pace hit **zero 429s**. Mechanics: at 2s the search window nears cap every ~2 POSTs and the throttle inserts a 5s wait (so effective search pace self-caps ~3.5s — faster fixed pacing than 2s buys nothing); fetch at 1.5s ran clean throughout, so the old 2.5s fetch floor was conservative. The floors only guard bursts; the adaptive throttle does the real work. (Anon pool untested at this pace — its hidden quota walls you anyway.)
 
+### 自適應配速取代「撞牆才罰站」（2026-08-03，POE1 authed 實測）
+
+上面那條「fetch 固定 1.5s」的建議**在長任務下是錯的**，而且錯得很貴。實測 POE1
+`trade-fetch-request-limit`（authed，逐項來自 header，不是推的）：
+
+| 規則 | 上限 | 換算永續配速 |
+|---|---|---|
+| Account | `6:4:10` | 0.67 s/req |
+| Ip | `12:4:60` | 0.33 s/req |
+| Ip | `16:12:60` | 0.75 s/req |
+| Ip | **`100:300:300`** | **3.0 s/req** |
+| Ip | **`1000:10800:1800`** | **10.8 s/req** |
+
+- **1.5s 固定間隔 ≈ 2.0 s/req，遠超 100/300s 那條的 3.0 s/req。** 所以長任務必然週期性撞牆。
+  一輪 `deep`（420 次 fetch）實測罰站 4 次、每次 300 秒 —— 35 分鐘裡有 20 分鐘在純等。
+- **真正的長跑天花板是 `1000:10800`（3 小時 1000 次）。** 撞到它的懲罰是 **1800 秒**。
+  一次完整的「pools + deep + verify」就會用掉 700–800 次，很容易摸到。
+- **舊的 `cur >= mx-1 → sleep(per)` 邏輯在這條規則上會睡 10800 秒（3 小時），看起來就像當機。**
+
+正解是**事前配速**：腳本自存每次請求的時間戳，發送前算出「再送一筆會不會超過任何窗口」，
+只睡到剛好有空位。實作見 `scripts/gear_combo_es_poe1.py` 的 `_rl_pace()` / `_rl_observe()`。
+三個關鍵設計：
+
+1. **補影時間戳要分層。** header 只給「窗口內用了幾次」，不給時間點；程序重啟後我方記錄是空的。
+   用伺服器計數回填，但**必須按巢狀窗口的帶狀區間分配**：「3h 內 788 次、5min 內 51 次」
+   代表 737 次落在 5min–3h 之間。把 788 平均鋪滿 3 小時，會有約 2.8% 誤落進 5 分鐘窗，
+   把緊窗計數灌水 —— 實測讓一個該等 65 秒的情境等了 574 秒。
+2. **保留伺服器保險，但只睡週期的 10%。** 事前配速是估計值（知道次數、不知道時間點），
+   可能猜錯。`cur >= mx-1` 時仍要停一下，因為自我等待永遠比吃 429 便宜
+   （100/300s 罰 300 秒、1000/10800 罰 1800 秒）。但睡整個週期太荒謬，睡 10% 就足以離開
+   臨界區，之後交給配速器自己收斂。
+3. **最低間隔 0.6 秒。** 站台的 anti-rapid-click 是獨立於所有公開窗口的一層（見上一節），
+   數學上合法的爆發照樣會被判連打。這個地板與窗口計算取大值。
+
+實測效果：一輪 180 列的重抓，全程等待 0.2–1.8 秒、**零罰站、22 秒完成**；
+模擬 3 小時額度打滿時配速器輸出 16.6 秒/次（＝該規則的永續配速），而非 3 小時。
+
 ### Debunked: VPN IP switching does NOT help (2026-07-08)
 
 Tempting idea (a former `--vpn-pause` mode, now removed): pause on a long wait, switch VPN exit, resume — betting the penalty is per-IP. **Measured false.** Across manual VPN switches the anon `Retry-After` kept counting *down* continuously (600→538→468→331→clear) instead of resetting — the "clean window" was just the penalty timer expiring, not the IP change. Commercial VPN datacenter exits are also often pre-poisoned by other users' anon traffic (a freshly-switched exit 429'd on its first request). And the hidden anon quota is enforced regardless of IP. Switching VPN is dead weight; **logging in is the actual fix.** Kept the lesson, deleted the mode.

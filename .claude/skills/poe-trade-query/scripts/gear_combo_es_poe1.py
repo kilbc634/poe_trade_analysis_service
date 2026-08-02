@@ -71,7 +71,7 @@ LEAGUE = "Allflame"
 WORKDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gear_pools_poe1_es")
 
 # --- the request -------------------------------------------------------
-DIV = 172.7308               # 1 divine in chaos. REFRESH: poe2scout /api/pc/Leagues
+DIV = 174.1874               # 1 divine in chaos. REFRESH: poe2scout /api/pc/Leagues
 BUDGET = round(10 * DIV, 2)  # 10 divine
 NEED_RES = (142, 73, 112)    # (fire, cold, lightning) shortfall to cover
 NEED_STR = 95
@@ -179,9 +179,127 @@ RESULT_URL = "https://www.pathofexile.com/trade/search/{league}/{qid}"
 FETCH_CAP = 10
 
 
-def _throttle_wait(hdrs):
+# ---------------------- rate limiting -----------------------------------
+# MEASURED on /api/trade/fetch (policy `trade-fetch-request-limit`, 2026-08-03):
+#   Account  6:4:10
+#   Ip       12:4:60, 16:12:60, 100:300:300, 1000:10800:1800
+# i.e. the binding rules are 100 per 5 minutes (3.0 s/req sustained) and
+# 1000 per 3 HOURS (10.8 s/req sustained). Search is a SEPARATE policy/quota.
+#
+# The old strategy -- run flat out, then on `cur >= mx-1` sleep the rule's whole
+# PERIOD -- is wrong twice over:
+#   * throughput: 100 requests at ~2s then a 300s stall is 5.0 s/req effective,
+#     worse than simply pacing at 3.1 s/req and never stalling (1.6x slower).
+#   * on the 3-hour rule it sleeps `per` = 10800s. Three hours, in one call,
+#     looking exactly like a hang. Nearly triggered 2026-08-03 at 788/1000.
+# Instead: keep our own timestamps, and before each request sleep only until a
+# slot actually frees. Seeded from the server's own counters so a fresh process
+# inherits the window a previous one filled.
+_RL = {}
+
+# Floor on the gap between two requests, regardless of what the window maths
+# says. The site has anti-rapid-click protection (../common/tricks.md): a burst
+# that fits every published window can still be treated as hammering and earn a
+# 429. User's instruction 2026-08-03.
+MIN_INTERVAL = 0.6
+
+# The server-state backstop is KEPT (user's instruction 2026-08-03): eating a
+# real 429 costs a penalty (60s on the short IP rules, 300s at 100/5min, 1800s
+# at 1000/3h) that dwarfs any wait we impose on ourselves, so it is worth
+# over-waiting to avoid one. But sleeping the rule's WHOLE period was
+# indefensible -- 10800s on the 3-hour rule. Sleep a tenth of it instead: enough
+# to fall clear of the cap, after which the adaptive pacer resumes and holds the
+# sustainable rate on its own.
+BACKSTOP_FRACTION = 0.10
+
+
+def _rl_key(url):
+    return "fetch" if "/api/trade/fetch/" in url else "search"
+
+
+def _rl_observe(key, hdrs):
+    """Learn the rules, and top up our timestamp log to match the server's count.
+
+    Our log only knows about requests THIS process made; the counters cover the
+    whole IP/account. Where the server says more, the difference is back-filled
+    as phantom timestamps spread evenly across the window -- so a process that
+    starts mid-window paces from the true position instead of bursting into a
+    wall it cannot see.
+    """
     def parse(s):
-        return [tuple(int(x) for x in t.split(":")) for t in s.split(",") if t]
+        return [tuple(int(x) for x in t.split(":")) for t in (s or "").split(",") if t]
+    st = _RL.setdefault(key, {"rules": [], "hits": []})
+    rules, counts = [], []
+    for rule in [r.strip() for r in (hdrs.get("X-Rate-Limit-Rules") or "").split(",") if r.strip()]:
+        lim, state = hdrs.get(f"X-Rate-Limit-{rule}"), hdrs.get(f"X-Rate-Limit-{rule}-State")
+        if not lim or not state:
+            continue
+        for (mx, per, _pen), (cur, _p2, _lk) in zip(parse(lim), parse(state)):
+            rules.append((mx, per))
+            counts.append((cur, per))
+    if rules:
+        st["rules"] = rules
+    now = time.time()
+    # Back-fill BAND BY BAND, shortest window outwards. The windows are nested:
+    # "788 in the last 3h" and "51 in the last 5min" together say 737 requests
+    # landed between 5min and 3h ago. Spreading all 788 across the whole 3h
+    # instead drops ~2.8% of them into the 5-minute window, inflating the count
+    # the tight rule is measured against -- measured cost of getting this wrong:
+    # a 574s pace where 65s was correct.
+    counts.sort(key=lambda cp: cp[1])
+    prev_per = prev_cur = 0
+    for cur, per in counts:
+        want = cur - prev_cur                 # requests inside this band alone
+        mine = sum(1 for t in st["hits"] if prev_per <= now - t < per)
+        gap, span = want - mine, per - prev_per
+        if gap > 0 and span > 0:
+            st["hits"].extend(now - (prev_per + span * (i + 0.5) / gap)
+                              for i in range(gap))
+        prev_per, prev_cur = per, max(prev_cur, cur)
+    horizon = max((p for _, p in st["rules"]), default=0)
+    st["hits"] = sorted(t for t in st["hits"] if now - t < horizon)
+
+
+def _rl_pace(key):
+    """Sleep just long enough that one more request stays under every window."""
+    st = _RL.get(key)
+    if not st or not st["rules"]:
+        return
+    now = time.time()
+    horizon = max(p for _, p in st["rules"])
+    st["hits"] = hits = sorted(t for t in st["hits"] if now - t < horizon)
+    window = 0.0
+    for mx, per in st["rules"]:
+        recent = [t for t in hits if now - t < per]
+        room = mx - 1                      # keep one slot of headroom
+        if len(recent) >= room:
+            drop = len(recent) - room + 1  # how many must age out
+            window = max(window, recent[drop - 1] + per - now)
+    # The 0.2s margin covers clock skew against a WINDOW BOUNDARY; it has no
+    # business inflating the anti-rapid-click floor, which is an absolute
+    # spacing and would otherwise silently become 0.8s.
+    if window > 0:
+        window += 0.2
+    # hits is sorted, so hits[-1] is the most recent request we know about
+    floor = (hits[-1] + MIN_INTERVAL - now) if hits else 0.0
+    delay = max(window, floor)
+    if delay > 0:
+        print(f"  pacing {delay:.2f}s (self-tracked, no stall)", flush=True)
+        time.sleep(delay)
+    _RL[key]["hits"].append(time.time())
+
+
+def _throttle_wait(hdrs):
+    """Backstop on top of _rl_pace(): react to what the SERVER says.
+
+    _rl_pace works from an estimate (it knows request COUNTS from the headers but
+    has to guess when those requests happened), so it can be wrong. This catches
+    the case where it was wrong in the dangerous direction and we are one slot
+    from a cap -- see BACKSTOP_FRACTION for why the sleep is a tenth of the
+    period rather than all of it.
+    """
+    def parse(s):
+        return [tuple(int(x) for x in t.split(":")) for t in (s or "").split(",") if t]
     wait = 0
     for rule in [r.strip() for r in (hdrs.get("X-Rate-Limit-Rules") or "").split(",") if r.strip()]:
         lim, st = hdrs.get(f"X-Rate-Limit-{rule}"), hdrs.get(f"X-Rate-Limit-{rule}-State")
@@ -191,7 +309,7 @@ def _throttle_wait(hdrs):
             if locked > 0:
                 wait = max(wait, locked + 2)
             elif cur >= mx - 1:
-                wait = max(wait, per)
+                wait = max(wait, per * BACKSTOP_FRACTION)
     return wait
 
 
@@ -203,15 +321,18 @@ def req(url, data=None):
     if POESESSID:
         headers["Cookie"] = f"POESESSID={POESESSID}"
     r = urllib.request.Request(url, data=data, headers=headers)
+    key = _rl_key(url)
     for _ in range(4):
+        _rl_pace(key)
         try:
             with urllib.request.urlopen(r) as resp:
                 out = json.load(resp)
                 if _auth_ok is None:
                     _auth_ok = "Account" in (resp.headers.get("X-Rate-Limit-Rules") or "")
+                _rl_observe(key, resp.headers)
                 w = _throttle_wait(resp.headers)
                 if w:
-                    print(f"  rate-limit near cap -> waiting {w}s", flush=True)
+                    print(f"  server says near cap -> backstop wait {w:.0f}s", flush=True)
                     time.sleep(w)
                 return out
         except urllib.error.HTTPError as e:
@@ -235,7 +356,7 @@ def http_search(name, body, cache=True):
     j = req(SEARCH_URL.format(league=LEAGUE), json.dumps(body).encode("utf-8"))
     json.dump(j, open(f, "w"))
     print(f"{name:26s} id={j.get('id')} total={j.get('total')}", flush=True)
-    time.sleep(2)
+    # pacing handled by _rl_pace() in req(); a fixed sleep here just adds to it
     return j
 
 
@@ -251,7 +372,7 @@ def http_pool(name, body, need):
             row = parse_item(it, qid, POOL_SLOT.get(name))
             if row:
                 rows.append(row)
-        time.sleep(1.5)
+        # pacing handled by _rl_pace() in req(); a fixed sleep here just adds to it
     return {"qid": qid, "total": s.get("total"), "rows": rows}
 
 
@@ -457,6 +578,13 @@ def _clean(s):
 # actually turned up in THIS sample and let them choose. (user 2026-08-02:
 # 「並不是所有負面詞都是不可以接受的…可以把幾個可能會影響到流派運作的 pickup 出來詢問」)
 NEGATIVE_RE = re.compile(r"^\s*-\d")
+# Penalties do not all start with a minus sign. "46% reduced Elemental Damage
+# with Attack Skills" is a downside; "20% reduced Enemy Stun Threshold" is an
+# upside; "10% reduced Attribute Requirements" is an upside. There is no way to
+# tell from the text alone, so these are never auto-classified -- they are
+# printed verbatim in the deliverable for the buyer to judge. Found 2026-08-03
+# when the winning ring turned out to carry one that nothing had reported.
+REDUCED_RE = re.compile(r"\d+% (reduced|less) ")
 
 # Three classes, and only the third needs a human:
 #   modelled   -- already a term in MOD_PATTERNS, so its penalty is counted in
@@ -507,14 +635,30 @@ MAX_SUFFIX_DEFAULT = 3          # a normal rare
 
 
 def _scan_mods(item):
-    """-> (totals, crafted_res, native_suffix_count, mod_texts).
+    """-> (totals, crafted_contribution, native_suffix_count, mod_texts, craft_es).
 
     Minion-only lines are skipped: "Minions have +11% to all Elemental
     Resistances" is a real implicit on Bone Rings and would otherwise be counted
     as if the character got the resistance.
+
+    !! The crafted contribution covers EVERY axis, not just resistance. An item
+    may hold only ONE bench craft (../poe1/knowledge/crafting.md), so putting a
+    resistance craft on it REMOVES whatever craft is already there -- along with
+    all of that mod's stats. Tracking only the crafted RESISTANCE made the solver
+    keep a crafted "+13 to Strength and Intelligence" while ALSO adding +35% fire
+    to the same slot. Measured 2026-08-03 on Apocalypse Dome Lich's Circlet
+    (`of Craft` S0): the delivered combo would have lost 13 strength on crafting
+    and landed at 92 against a requirement of 95 -- an answer that does not meet
+    the spec, not merely a suboptimal one.
+
+    `craft_es` flags a crafted mod that touches Energy Shield. On ARMOUR slots ES
+    is read from extended.es, which already bakes the craft in and cannot be
+    un-baked from the listing data, so such items are barred from craft swapping
+    rather than mis-valued.
     """
     d = dict.fromkeys(MOD_KEYS, 0)
-    craft_res = {"fire": 0, "cold": 0, "light": 0}
+    craft_all = dict.fromkeys(MOD_KEYS, 0)
+    craft_es = False
     affixes, texts = set(), []
     for k in ("implicitMods", "explicitMods", "craftedMods", "fracturedMods", "enchantMods"):
         for m in item.get(k) or []:
@@ -525,21 +669,23 @@ def _scan_mods(item):
                 continue
             is_crafted = bool(obj and (m.get("domain") == "crafted"
                                        or (m.get("flags") or {}).get("crafted")))
+            if is_crafted and "Energy Shield" in text:
+                craft_es = True
             for pat, keys in MOD_PATTERNS:
                 mm = re.search(pat, text)
                 if mm:
                     val = int(mm.group(1))          # int() handles the sign
                     for key in keys:
                         d[key] += val
-                        if is_crafted and key in craft_res:
-                            craft_res[key] += val
+                        if is_crafted:
+                            craft_all[key] += val
             if obj:
                 for sub in (m.get("mods") or []):
                     tier = sub.get("tier") or ""
                     if tier:
                         affixes.add((sub.get("name"), tier, is_crafted))
     native_suffix = len({a for a in affixes if a[1].startswith("S") and not a[2]})
-    return d, craft_res, native_suffix, texts
+    return d, craft_all, native_suffix, texts, craft_es
 
 
 def _suffix_cap(texts):
@@ -586,7 +732,7 @@ def _prop(item, name):
 
 def parse_item(it, qid, slot):
     item, lst = it["item"], it.get("listing") or {}
-    d, craft_res, native_suffix, mods = _scan_mods(item)
+    d, craft_mod, native_suffix, mods, craft_es = _scan_mods(item)
     p = lst.get("price") or {}
     if p.get("currency") not in RATES:
         return None
@@ -607,7 +753,12 @@ def parse_item(it, qid, slot):
             "es": es, "es_now": _prop(item, "Energy Shield"), "es_mod": d["es_mod"],
             "str": d["str"], "dex": d["dex"],
             "fire": d["fire"], "cold": d["cold"], "light": d["light"],
-            "craft_res": craft_res, "native_suffix": native_suffix,
+            # full per-axis contribution of the craft already on the item -- it
+            # ALL goes away when the resistance craft replaces it. `craft_res` is
+            # kept as the resistance-only view for older cached pools.
+            "craft_mod": craft_mod, "craft_es": craft_es,
+            "craft_res": {k: craft_mod[k] for k in ("fire", "cold", "light")},
+            "native_suffix": native_suffix,
             "price": round(p["amount"] * RATES[p["currency"]], 3),
             "raw": f"{p['amount']} {p['currency']}",
             "seller": (lst.get("account") or {}).get("name", "?"), "mods": mods}
@@ -773,6 +924,79 @@ def cmd_pools(force=False):
                          es_min=es_min, craftable_only=craft), force=force)
 
 
+def cmd_reparse():
+    """Re-fetch every cached row by (qid, hash) and re-parse it with the CURRENT
+    parser, replacing the stored row.
+
+    Needed because pools keep only the parsed result plus mod TEXT -- which mods
+    were bench crafts is not recoverable from the cache, so a parser change that
+    depends on that flag (see _scan_mods, 2026-08-03) cannot be applied
+    retroactively without going back to the API.
+
+    Doubles as a liveness refresh: rows whose listing is gone are dropped, which
+    is exactly what `converge` would otherwise discover one round at a time.
+    """
+    def stale(r):
+        """Needs a round trip? Only if the missing craft data could change its
+        value -- i.e. the item could actually carry a bench craft. A corrupted /
+        mirrored / suffix-full listing is barred from crafting either way, so its
+        cached row is already correct and re-fetching it would spend quota (the
+        scarce resource here) to rewrite identical numbers. Measured 2026-08-03:
+        186 rows genuinely stale out of 1277 un-reparsed."""
+        if craft_known(r):
+            return False
+        ns = r.get("native_suffix")
+        return (ns is not None and not r.get("corrupt") and not r.get("mirrored")
+                and ns < r.get("suffix_cap", MAX_SUFFIX_DEFAULT))
+
+    n_fixed = n_gone = n_kept = 0
+    for fn in sorted(glob.glob(os.path.join(WORKDIR, "parsed_*.json"))):
+        d = json.load(open(fn))
+        slot = POOLS.get(d.get("name", ""), (None,))[0]
+        if slot is None:
+            continue
+        rows = d.get("rows", [])
+        todo = [r for r in rows if stale(r) and r.get("hash") and r.get("qid")]
+        if not todo:
+            n_kept += len(rows)
+            continue
+        by_qid = {}
+        for r in todo:
+            by_qid.setdefault(r["qid"], []).append(r["hash"])
+        replaced, failed = {}, False
+        for qid, hashes in by_qid.items():
+            for i in range(0, len(hashes), FETCH_CAP):
+                try:
+                    got = _fetch_hashes(qid, hashes[i:i + FETCH_CAP])
+                except Exception as e:
+                    print(f"  {d['name']}: fetch failed ({e}); leaving rows stale")
+                    failed = True
+                    break
+                for it in got:
+                    if it and not it.get("gone"):
+                        row = parse_item(it, qid, slot)
+                        if row:
+                            replaced[row["id"]] = dict(row, pool=d.get("name"))
+            if failed:
+                break
+        todo_ids = {r["id"] for r in todo}
+        out = []
+        for r in rows:
+            if r["id"] in replaced:
+                out.append(replaced[r["id"]])
+            elif r["id"] in todo_ids and not failed:
+                n_gone += 1            # asked for it, server no longer has it
+            else:
+                out.append(r)
+        n_fixed += len(replaced)
+        n_kept += len(out) - len(replaced)
+        d["rows"] = out
+        json.dump(d, open(fn, "w"))
+        print(f"{d['name']:26s} refreshed {len(replaced):>3}, sold {len(todo)-len(replaced):>2}"
+              f", kept {len(out)-len(replaced):>3}", flush=True)
+    print(f"\nreparse done: {n_fixed} rows refreshed, {n_gone} sold, {n_kept} kept as-is")
+
+
 def cmd_negatives(top=40):
     """List the negative mods present in the collected sample, classified, so the
     user can decide which ones disqualify a listing for THEIR build.
@@ -842,7 +1066,7 @@ def cmd_deep(upto=100):
             if transport() == "http":
                 j = req(FETCH_URL.format(ids=",".join(hashes[i:i + FETCH_CAP]),
                                          qid=s["id"]))
-                time.sleep(1.5)
+                # pacing handled by _rl_pace() in req(); a fixed sleep here just adds to it
             else:
                 js = (_HASH_FETCH_JS.replace("__QID__", json.dumps(s["id"]))
                       .replace("__HASHES__", json.dumps(hashes[i:i + FETCH_CAP])))
@@ -877,6 +1101,17 @@ def craft_options(slot):
             (f"火雷+{dual}", (dual, 0, dual)), (f"冰雷+{dual}", (0, dual, dual))]
 
 
+def craft_known(c):
+    """Was this row parsed by a build that records the FULL crafted contribution?
+
+    Rows cached before 2026-08-03 only stored the crafted resistance, so a
+    non-resistance craft on them is invisible and applying a resistance craft
+    would over-credit the item (see _scan_mods). Such rows are barred from craft
+    expansion rather than trusted -- re-run `reparse` to make them usable again.
+    """
+    return isinstance(c.get("craft_mod"), dict)
+
+
 def has_free_suffix(c):
     """Can a resistance suffix still be bench-crafted onto this listing?
 
@@ -895,6 +1130,13 @@ def has_free_suffix(c):
     ns = c.get("native_suffix")
     if ns is None or c.get("corrupt") or c.get("mirrored"):
         return False
+    if not craft_known(c):
+        return False
+    # An ES-touching craft on an armour piece is already inside extended.es and
+    # cannot be subtracted back out of it, so swapping it away would leave the
+    # score overstated by an unknown amount. Refuse rather than guess.
+    if c.get("craft_es") and c["slot"] in ARMOUR_SLOTS:
+        return False
     return ns < c.get("suffix_cap", MAX_SUFFIX_DEFAULT)
 
 
@@ -907,17 +1149,31 @@ def craft_potential(c):
 
 
 def expand_crafts(cands):
+    """Add one virtual candidate per resistance craft the item could carry.
+
+    Applying a craft REPLACES any craft already on the item, so every axis that
+    craft contributed has to come back off first -- not just resistance. Life is
+    recomputed rather than adjusted, because pseudo_total_life folds in
+    Strength//2 and integer division does not distribute over subtraction.
+    """
     out = []
     for c in cands:
         out.append(dict(c, craft=None))
         if not craftable(c):
             continue
-        cr = c.get("craft_res") or {}
-        base = (c["fire"] - cr.get("fire", 0), c["cold"] - cr.get("cold", 0),
-                c["light"] - cr.get("light", 0))
+        cm = c.get("craft_mod") or {}
+        flat = c["flat"] - cm.get("life", 0)
+        st, dx = c["str"] - cm.get("str", 0), c["dex"] - cm.get("dex", 0)
+        # armour ES lives in extended.es and craftable() already refused any item
+        # whose existing craft touched it, so only jewellery needs the subtraction
+        es = c["es"] if c["slot"] in ARMOUR_SLOTS else c["es"] - cm.get("es_mod", 0)
+        base = (c["fire"] - cm.get("fire", 0), c["cold"] - cm.get("cold", 0),
+                c["light"] - cm.get("light", 0))
         for label, (df, dc, dl) in craft_options(c["slot"]):
             out.append(dict(c, fire=base[0] + df, cold=base[1] + dc,
-                            light=base[2] + dl, craft=label))
+                            light=base[2] + dl, craft=label,
+                            flat=flat, str=st, dex=dx, es=es,
+                            life=flat + st // 2))
     return out
 
 
@@ -1036,29 +1292,101 @@ PRICE_BIN = 1.0     # chaos. Aggregates are deduped per this bucket; at a 1727c
                     # never relaxes the real per-combo price used downstream.
 
 
-def clamp_key(f, c, l, s, d, need):
-    return (min(f, need[0]), min(c, need[1]), min(l, need[2]),
-            min(s, need[3]), min(d, need[4]))
+def clamp_key(f, c, l, s, d, cap):
+    return (min(f, cap[0]), min(c, cap[1]), min(l, cap[2]),
+            min(s, cap[3]), min(d, cap[4]))
+
+
+# !! The clamp ceiling is NOT `need`. Clamping at `need` is only sound while every
+# aggregate is non-negative, and POE1 listings carry real penalties
+# ("-60% to Lightning Resistance", "-92% to Cold Resistance" on a ring). Once one
+# half goes negative on an axis, the OTHER half must supply MORE than `need` to
+# compensate -- but it too was clamped at `need`, so it can never express the
+# surplus and the (feasible, often optimal) combo is silently dropped.
+#
+# Caught by selftest 2026-08-02: brute force 314602, solver 293722 -- the solver
+# skipped its own best A aggregate because a negative-resistance item made
+# `deficit` exceed what any clamped J entry could show. The direction is safe
+# (never returns an infeasible combo) but it is a WRONG ANSWER, not just a lossy
+# one, and it hits the exact solver too.
+#
+# Fix: when clamping a partial aggregate over a set S of slots, the ceiling is
+#   cap[S][axis] = need[axis] - sum(min achievable value over slots NOT in S)
+# so the partial can always represent enough surplus to cover however negative
+# the remaining slots might go. Soundness of the INTERMEDIATE clamp (stage 1 of a
+# half, before stage 2's slot is added) follows from cap_stage1 = cap_stage2 -
+# m_stage2slot: for any glove value gv >= m_glove, capH + gv >= capA, so an
+# already-capped stage-1 value still clamps to exactly capA at stage 2.
+#
+# Cost is near zero in practice: the ceiling only rises on axes where some slot
+# rolls negative, and it rises on the OPPOSITE half -- e.g. the ring's -92 cold
+# lifts the helm+glove ceiling to 165 cold, a level helm+glove cannot reach
+# anyway, so no extra states become reachable.
+def slot_minima(cands):
+    """Per-axis minimum an aggregate of this slot can contribute."""
+    if not cands:
+        return (0, 0, 0, 0, 0)
+    return tuple(min(c[a] for c in cands)
+                 for a in ("fire", "cold", "light", "str", "dex"))
+
+
+def _cap(need, *others):
+    """need + how negative the slots NOT yet folded in could go, per axis.
+
+    Each remaining slot contributes max(0, -min) -- its own negative reach only.
+    Two properties this formula must keep, both learned by breaking them:
+
+      * cap >= need, ALWAYS. A tighter ceiling (subtracting a POSITIVE minimum)
+        looks like a free optimization and is not: solve() derives its per-axis
+        deficit as `need - ak`, which assumes ak was never clamped below the true
+        value. Clamping below need overstates the deficit and the solver returns
+        None on a feasible problem. Measured: selftest went from a 293722-vs-
+        314602 understatement to finding nothing at all.
+      * summing each slot's NEGATIVE reach separately, not the reach of their sum.
+        A glove that can go -13 and a ring that always gives +20 must still lift
+        the ceiling by 13; netting them to 0 makes the intermediate clamp lossy
+        again (min(min(h,cap)+gv, cap) != min(h+gv, cap) when gv < 0).
+    """
+    return tuple(need[i] + sum(max(0, -o[i]) for o in others) for i in range(5))
 
 
 def frontier(groups):
-    """Per clamped state keep only the price/score Pareto frontier."""
+    """Per clamped state keep only the price/score Pareto frontier.
+
+    !! The running maximum starts at None, NOT at -1. Scores go NEGATIVE: a ring
+    carrying "-131 to maximum Life" scores 220*-131 = -28820, and against a -1
+    sentinel `score > best` is false on the very first entry, so the whole state
+    is discarded. Measured 2026-08-03 (selftest seed 10): that ring was the only
+    aggregate in its state, J could not express the state at all, and solve()
+    returned None on a problem brute force solved at 212532.
+
+    Third instance of the same root cause as the clamp ceiling and the deficit
+    shortcut -- an unstated "everything is non-negative" assumption that was true
+    until the mod parser started reading penalties correctly. When a value's
+    RANGE changes, every sentinel, clamp and early-exit downstream needs
+    re-deriving, not just the arithmetic.
+    """
     by_key = {}
     for g in groups:
         by_key.setdefault(g[2], []).append(g)
     out = []
     for lst in by_key.values():
         lst.sort(key=lambda g: (g[0], -g[1]))
-        best = -1
+        best = None
         for g in lst:
-            if g[1] > best:
+            if best is None or g[1] > best:
                 best = g[1]
                 out.append(g)
     return out
 
 
-def combine(left, right, need):
-    """left x right -> clamped aggregates. Group = (price, score, state, items)."""
+def combine(left, right, cap):
+    """left x right -> clamped aggregates. Group = (price, score, state, items).
+
+    `cap` is the per-axis clamp ceiling for the slot set AFTER folding in `right`
+    -- see the note above clamp_key. Passing `need` here is the bug that selftest
+    caught; it is only correct when nothing can go negative.
+    """
     best = {}
     for lp, ls, lk, litems in left:
         for c in right:
@@ -1066,7 +1394,7 @@ def combine(left, right, need):
             if p > BUDGET:
                 continue
             k = clamp_key(lk[0] + c["fire"], lk[1] + c["cold"], lk[2] + c["light"],
-                          lk[3] + c["str"], lk[4] + c["dex"], need)
+                          lk[3] + c["str"], lk[4] + c["dex"], cap)
             sc = ls + round(W_LIFE * 100) * c["life"] + round(W_ES * 100) * c["es"]
             dk = (k, int(p / PRICE_BIN))
             cur = best.get(dk)
@@ -1077,8 +1405,15 @@ def combine(left, right, need):
 
 def build_halves(p, need):
     zero = [(0.0, 0, (0, 0, 0, 0, 0), ())]
-    A = combine(combine(zero, p["helm"], need), p["glove"], need)
-    J = combine(combine(zero, p["ring"], need), p["belt"], need)
+    mH, mG = slot_minima(p["helm"]), slot_minima(p["glove"])
+    mR, mB = slot_minima(p["ring"]), slot_minima(p["belt"])
+    # ceiling per stage = need - (minima of the slots still to come, in EITHER half)
+    capH = _cap(need, mG, mR, mB)      # helm alone
+    capA = _cap(need, mR, mB)          # helm + glove
+    capR = _cap(need, mH, mG, mB)      # ring alone
+    capJ = _cap(need, mH, mG)          # ring + belt
+    A = combine(combine(zero, p["helm"], capH), p["glove"], capA)
+    J = combine(combine(zero, p["ring"], capR), p["belt"], capJ)
     return A, J
 
 
@@ -1115,6 +1450,13 @@ def solve(A, J, budget, need):
     #                 ~10ms and doing it 527k times is hours -- the cheap bound
     #                 rejects almost every row for the price of one binary search.
     jscmax = int(jsc.max())
+    # Per-axis floor of J. Used to skip an axis mask ONLY when it is provably
+    # always satisfied. The old test was `if deficit[axis] > 0`, i.e. "A already
+    # covers this axis, so J cannot hurt" -- false, because J can be NEGATIVE.
+    # Measured 2026-08-02: that shortcut returned a combo with cold -24 against a
+    # requirement of 33 (a ring carrying -68% cold, A covering +44). Unlike the
+    # clamp bug this one fails UNSAFE: the answer misses the requirement.
+    jkmin = jk.min(axis=0)
     porder = np.argsort(jp, kind="stable")
     jp_sorted = jp[porder]
     jsc_prefmax = np.maximum.accumulate(jsc[porder])
@@ -1134,7 +1476,7 @@ def solve(A, J, budget, need):
         deficit = needv - ak[i]
         m = np.ones(jp.size, dtype=bool)
         for axis in range(5):
-            if deficit[axis] > 0:
+            if deficit[axis] > jkmin[axis]:
                 m &= jk[:, axis] >= deficit[axis]
         if rem < jmaxp:
             m &= jp <= rem + 1e-9
@@ -1250,23 +1592,26 @@ def selftest_parse():
     ]
     bad = 0
     for item, want in cases:
-        got, _, _, _ = _scan_mods(item)
+        got, _, _, _, _ = _scan_mods(item)
         for k, v in want.items():
             if got[k] != v:
                 print(f"  PARSE FAIL {item} -> {k}={got[k]} want {v}")
                 bad += 1
     # es_of must not double count on armour, and must read mods on jewellery
     armour = {"extended": {"es": 284}, "explicitMods": [{"description": "+49 to maximum Energy Shield"}]}
-    d, _, _, _ = _scan_mods(armour)
+    d, _, _, _, _ = _scan_mods(armour)
     if es_of(armour, "helm", d) != 284:
         print("  ES FAIL armour should use extended.es only"); bad += 1
     jewel = {"extended": {}, "explicitMods": [{"description": "+46 to maximum Energy Shield"}]}
-    d, _, _, _ = _scan_mods(jewel)
+    d, _, _, _, _ = _scan_mods(jewel)
     if es_of(jewel, "ring", d) != 46:
         print("  ES FAIL jewellery should use mod text"); bad += 1
 
     # --- craft eligibility: corrupted / MIRRORED / suffix cap ---------------
-    base = {"native_suffix": 1, "suffix_cap": 3}
+    # craft_mod={} means "parsed by a build that records crafts, and this item has
+    # none" -- a row WITHOUT the key is a stale cache entry and must be refused
+    # (covered separately above).
+    base = {"native_suffix": 1, "suffix_cap": 3, "slot": "ring", "craft_mod": {}}
     checks = [
         (dict(base), True, "plain rare with a free suffix"),
         (dict(base, corrupt=True), False, "corrupted"),
@@ -1274,13 +1619,91 @@ def selftest_parse():
         (dict(base, native_suffix=3), False, "suffixes full"),
         # the reference Reflecting-Mist ring: "-2 Suffix Modifiers allowed" so the
         # cap is 1, and its single slot is already spent
-        (dict(native_suffix=1, suffix_cap=1), False, "mist ring, cap 1, 1 used"),
-        (dict(native_suffix=0, suffix_cap=1), True, "mist ring, cap 1, 0 used"),
+        (dict(base, native_suffix=1, suffix_cap=1), False, "mist ring, cap 1, 1 used"),
+        (dict(base, native_suffix=0, suffix_cap=1), True, "mist ring, cap 1, 0 used"),
     ]
     for c, want, why in checks:
         if has_free_suffix(c) != want:
             print(f"  CRAFT FAIL ({why}): got {has_free_suffix(c)}, want {want}")
             bad += 1
+    # --- frontier() must survive NEGATIVE scores --------------------------
+    # A ring with "-131 to maximum Life" scores 220*-131 = -28820. The old
+    # running-maximum sentinel was -1, so such a group failed `score > best` on
+    # the first entry and its whole clamped state vanished -- solve() then
+    # returned None on a problem brute force answered at 212532 (selftest
+    # seed 10, 2026-08-03).
+    #
+    # This lives here, as a DETERMINISTIC case, on purpose. The randomised
+    # brute-force cross-check does catch it -- but only when the sample happens
+    # to draw a negative-score listing, which depends on the cached pool of the
+    # day: the very same 12-seed run passed before `reparse` changed the
+    # candidate set and failed after. RNG is not a regression guard.
+    neg = [(10.0, 220 * -131, (5, 0, 0, 0, 0), ())]
+    if len(frontier(neg)) != 1:
+        print("  FRONTIER FAIL: a lone negative-score aggregate was dropped")
+        bad += 1
+    # boundary: the old sentinel kept 0 and dropped -1
+    for sc in (1, 0, -1, -2):
+        if len(frontier([(1.0, sc, (0, 0, 0, 0, 0), ())])) != 1:
+            print(f"  FRONTIER FAIL: lone aggregate with score {sc} was dropped")
+            bad += 1
+    # and it must still prune a dominated entry, negative or not
+    dom = [(1.0, -500, (0, 0, 0, 0, 0), ()), (2.0, -900, (0, 0, 0, 0, 0), ())]
+    if len(frontier(dom)) != 1:
+        print("  FRONTIER FAIL: dearer-and-worse entry should be pruned")
+        bad += 1
+
+    # --- craft SWAP accounting -------------------------------------------
+    # Reference item: Apocalypse Dome Lich's Circlet, 2026-08-03. Its third
+    # suffix is a BENCH CRAFT ("+13 to Strength and Intelligence", `of Craft`
+    # S0). Putting +35% fire on it means removing that craft, so 13 strength --
+    # and the 6 life that Strength//2 contributed -- must come off too.
+    helm_raw = {"item": {"id": "h1", "name": "Apocalypse Dome",
+                         "baseType": "Lich's Circlet", "extended": {"es": 442},
+                         "explicitMods": [
+                             {"description": "+119 to maximum Life",
+                              "mods": [{"name": "Athlete's", "tier": "P2"}]},
+                             {"description": "+44% to Lightning Resistance",
+                              "mods": [{"name": "of the Lightning", "tier": "S2"}]},
+                             {"description": "+328 to Accuracy Rating",
+                              "mods": [{"name": "of the Marksman", "tier": "S3"}]},
+                             {"description": "+13 to Strength and Intelligence",
+                              "domain": "crafted", "flags": {"crafted": True},
+                              "mods": [{"name": "of Craft", "tier": "S0"}]}]},
+                "id": "hash1",
+                "listing": {"price": {"amount": 3, "currency": "divine"}}}
+    row = parse_item(helm_raw, "q", "helm")
+    if row["str"] != 13 or row["life"] != 119 + 6:
+        print(f"  CRAFTSWAP FAIL base: str={row['str']} life={row['life']}")
+        bad += 1
+    variants = [v for v in expand_crafts([row]) if v.get("craft")]
+    if not variants:
+        print("  CRAFTSWAP FAIL: item with a reclaimable crafted suffix produced "
+              "no craft variants"); bad += 1
+    for v in variants:
+        if v["str"] != 0 or v["life"] != 119 or v["flat"] != 119:
+            print(f"  CRAFTSWAP FAIL {v['craft']}: str={v['str']} life={v['life']}"
+                  " -- the replaced craft's strength was not removed")
+            bad += 1
+            break
+    # an ES-touching craft on ARMOUR cannot be un-baked from extended.es
+    es_craft = {"item": {"id": "h2", "name": "", "baseType": "Lich's Circlet",
+                         "extended": {"es": 400},
+                         "explicitMods": [
+                             {"description": "+53 to maximum Energy Shield",
+                              "domain": "crafted", "flags": {"crafted": True},
+                              "mods": [{"name": "of Craft", "tier": "S0"}]}]},
+                "id": "hash2",
+                "listing": {"price": {"amount": 1, "currency": "chaos"}}}
+    r2 = parse_item(es_craft, "q", "helm")
+    if not r2["craft_es"] or has_free_suffix(r2):
+        print("  CRAFTSWAP FAIL: armour with an ES bench craft must not be "
+              "offered for craft swapping"); bad += 1
+    # rows cached before craft_mod existed must not be craft-expanded on trust
+    if has_free_suffix({"native_suffix": 0, "suffix_cap": 3, "slot": "helm"}):
+        print("  CRAFTSWAP FAIL: a row with no craft_mod must not be craftable")
+        bad += 1
+
     if _suffix_cap(["-2 Suffix Modifiers allowed", "+1 Prefix Modifier allowed"]) != 1:
         print("  SUFFIX-CAP FAIL: -2 Suffix Modifiers allowed should give cap 1")
         bad += 1
@@ -1334,7 +1757,7 @@ def _brute(sub, budget, need):
     return bf
 
 
-def cmd_selftest(k=8, seed=11):
+def cmd_selftest(k=10, seeds=12):
     """Cross-check solve() against a literal 4-nested-loop brute force on random
     subsets. Run after ANY optimizer edit -- an off-by-one in the clamp or a
     mis-ordered dedup produces plausible-but-wrong answers, not crashes.
@@ -1344,44 +1767,59 @@ def cmd_selftest(k=8, seed=11):
     nothing. Scaled-down requirement vectors are what actually exercise the
     clamp/frontier/join; the full vector is kept as the last (usually infeasible)
     row so the infeasible path is covered too.
+
+    !! SAMPLE SIZE IS THE WHOLE TEST. The 2026-08-02 version used ONE seed and
+    five scales and reached 6 feasible cases -- it passed while the solver carried
+    two real defects (a clamp that silently dropped its own best aggregate, and an
+    axis shortcut that returned combos MISSING the requirement). Both need a
+    negative-mod listing to be drawn into the subset, which one seed rarely does.
+    Twelve seeds x six scales reaches ~200 feasible cases and catches both. Do not
+    trim this back for speed; it runs in well under a minute.
     """
     import random
     bad = selftest_parse()
-    random.seed(seed)
     full = needs()
     pools = load()
     if any(len(v) < 2 for v in pools.values()):
         sys.exit("not enough candidates cached -- run `pools` first")
     p = {kk: pareto(expand_crafts(v)) for kk, v in pools.items()}
-    fails = tested = 0
-    for scale in (0.0, 0.25, 0.5, 0.75, 1.0):
-        need = tuple(int(round(n * scale)) for n in full)
-        sub = {kk: random.sample(v, min(k, len(v))) for kk, v in p.items()}
-        A, J = build_halves(sub, need)
-        for budget in (15, 40, 120, 400, BUDGET):
-            bf = _brute(sub, budget, need)
-            res = solve(A, J, float(budget), need)
-            got = None
-            if res:
-                s = summarize(*res)
-                got = round(s["score"] * 100)
-                assert s["price"] <= budget + 1e-9, f"OVER BUDGET {s['price']}>{budget}"
-                assert len({i["id"] for i in s["items"]}) == 4, "duplicate listing"
-                for key, nd in zip(("fire", "cold", "light", "str", "dex"), need):
-                    assert s["res"][key] >= nd, f"{key} short {s['res'][key]}<{nd}"
-            ok = got == bf
-            fails += not ok
-            tested += bf is not None
-            print(f"need x{scale:<4}  F{need[0]:>3} C{need[1]:>3} L{need[2]:>3} "
-                  f"S{need[3]:>3} D{need[4]:>3}  budget {budget:>6.0f}c  "
-                  f"bf={str(bf):>7} solve={str(got):>7}  "
-                  f"{'OK' if ok else '*** MISMATCH ***'}")
-    print(f"\n{tested} feasible cases exercised")
-    if not tested:
-        print("*** VACUOUS: no feasible case -- the solver was never exercised ***")
+    fails = tested = viol = 0
+    for seed in range(1, seeds + 1):
+        random.seed(seed)
+        for scale in (0.0, 0.15, 0.3, 0.45, 0.6, 0.8, 1.0):
+            need = tuple(int(round(n * scale)) for n in full)
+            sub = {kk: random.sample(v, min(k, len(v))) for kk, v in p.items()}
+            A, J = build_halves(sub, need)
+            for budget in (60, 200, 600, 1200, BUDGET):
+                bf = _brute(sub, budget, need)
+                res = solve(A, J, float(budget), need)
+                got = None
+                if res:
+                    s = summarize(*res)
+                    got = round(s["score"] * 100)
+                    if s["price"] > budget + 1e-9:
+                        print(f"  OVER BUDGET {s['price']}>{budget}"); viol += 1
+                    if len({i["id"] for i in s["items"]}) != 4:
+                        print("  DUPLICATE LISTING"); viol += 1
+                    for key, nd in zip(("fire", "cold", "light", "str", "dex"), need):
+                        if s["res"][key] < nd:
+                            print(f"  *** CONSTRAINT VIOLATED seed{seed} x{scale} "
+                                  f"{budget:.0f}c: {key} {s['res'][key]}<{nd}")
+                            viol += 1
+                if bf is not None:
+                    tested += 1
+                if got != bf:
+                    fails += 1
+                    print(f"  *** MISMATCH seed{seed} x{scale} budget {budget:.0f}c: "
+                          f"bf={bf} solve={got}")
+    print(f"\n{tested} feasible cases exercised over {seeds} seeds"
+          f"  (mismatches {fails}, constraint violations {viol})")
+    if tested < 50:
+        print("*** TOO FEW feasible cases -- raise k or seeds; this proves little ***")
         fails += 1
-    print("RESULT:", "all match" if not (fails or bad) else f"{fails+bad} PROBLEMS")
-    return 1 if (fails or bad) else 0
+    print("RESULT:", "all match" if not (fails or bad or viol)
+          else f"{fails + bad + viol} PROBLEMS")
+    return 1 if (fails or bad or viol) else 0
 
 
 # ------------------------- verification & buy links -------------------------
@@ -1452,7 +1890,7 @@ def _fetch_hashes(qid, hashes):
         return []
     if transport() == "http":
         j = req(FETCH_URL.format(ids=",".join(hashes), qid=qid))
-        time.sleep(1.5)
+        # pacing handled by _rl_pace() in req(); a fixed sleep here just adds to it
     else:
         js = (_HASH_FETCH_JS.replace("__QID__", json.dumps(qid))
                             .replace("__HASHES__", json.dumps(hashes)))
@@ -1493,7 +1931,7 @@ def verify_one(it, live=None, resolved=False):
     mode = transport()
     if mode == "http":
         s = req(SEARCH_URL.format(league=LEAGUE), json.dumps(body).encode("utf-8"))
-        time.sleep(1.5)
+        # pacing handled by _rl_pace() in req(); a fixed sleep here just adds to it
         qid, total = s["id"], s.get("total")
         if need_fallback:
             for x in _fetch_hashes(qid, (s.get("result") or [])[:FETCH_CAP]) or []:
@@ -1647,6 +2085,17 @@ def cmd_report(tiers=None, out_dir=None):
                 note.append("**Mirrored（複製品）——永久定型，任何工藝都不能上**")
             if it.get("negatives"):
                 note.append("⚠ 負面詞綴：" + "、".join(f"`{t}`" for t in it["negatives"]))
+            # `reduced` / `less` lines are NOT listed as negatives: plenty of them
+            # are upside ("reduced Enemy Stun Threshold", "reduced Attribute
+            # Requirements", "reduced Freeze Duration on you"). But NEGATIVE_RE
+            # only sees a leading minus sign, so before this they were invisible
+            # in the deliverable -- the 2026-08-03 winner shipped a mirrored ring
+            # carrying "46% reduced Elemental Damage with Attack Skills" with no
+            # mention anywhere. Surface them verbatim and let the buyer judge.
+            red = [t for t in (it.get("mods") or []) if REDUCED_RE.search(t)]
+            if red:
+                note.append("含 reduced 詞綴（請自行判斷利弊）："
+                            + "、".join(f"`{t}`" for t in red))
             if (it.get("seller_total") or 1) > 1:
                 note.append(f"該賣家有 {it['seller_total']} 件符合，認價格 {it['raw']}")
             if not it["live"]:
@@ -1687,8 +2136,8 @@ def cmd_report(tiers=None, out_dir=None):
 
 # ------------------------- main -------------------------
 def main():
-    cmds = {"probe", "pools", "deep", "negatives", "solve", "verify", "converge",
-            "report", "selftest"}
+    cmds = {"probe", "pools", "deep", "reparse", "negatives", "solve", "verify",
+            "converge", "report", "selftest"}
     argv = [a for a in sys.argv[1:] if not a.startswith("-")]
     cmd = argv[0] if argv else "solve"
     if cmd not in cmds:
@@ -1706,6 +2155,8 @@ def main():
         cmd_pools(force="--force" in sys.argv)
     elif cmd == "deep":
         cmd_deep(int(rest[0]) if rest else 100)
+    elif cmd == "reparse":
+        cmd_reparse()
     elif cmd == "solve":
         cmd_solve(tiers=[float(x) for x in rest] or None)
     elif cmd == "verify":
