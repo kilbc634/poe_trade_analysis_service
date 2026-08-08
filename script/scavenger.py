@@ -41,7 +41,7 @@ WS_URL = f"wss://www.pathofexile.com/api/{API_BASE}/live/{WS_LEAGUE_PATH}/{QUERY
 
 HEADERS = {
     "Origin": "https://www.pathofexile.com",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
     "Cookie": f"POESESSID={POESESSID}"
 }
 

@@ -30,7 +30,7 @@ POE1 lives under `/trade/` on the same site as POE2's `/trade2/`. The transport 
 - **搜尋回應存 100 個 result hash**（與 POE2 相同）——深抓價格階梯可用後段。
 - **`status.option` 五個值，與 POE2 完全相同**：`securable`（Instant Buyout）/ `available`（Instant Buyout and In Person）/ `onlineleague`（In Person, Online in League）/ `online`（In Person, Online）/ `any`。
 - **限流與 POE2 共用同一個池**（實測交錯打兩款遊戲，`trade-search-request-limit` 的 IP 計數連續累加）——詳見 [`../common/tricks.md`](../common/tricks.md)。
-- **fetch 回傳結構**：`item.extended` 有 `ev`/`ar`/`es`/`ev_aug`/`base_defence_percentile`/`hashes`/`text`；`item.sockets` 存在（POE1 的插槽/連線系統）；`listing.price` 形如 `{type:'~b/o', amount:7, currency:'chaos'}`；有 `whisper_token`／`hideout_token`；稀有裝另有 `note`（賣家標價註記）、`requirements`、`properties`。
+- **fetch 回傳結構**：`item.extended` 有 `ev`/`ar`/`es`/`ev_aug`/`base_defence_percentile`/`hashes`/`text`；`item.sockets` 存在（POE1 的插槽/連線系統）；`listing.price` 形如 `{type:'~b/o', amount:7, currency:'chaos'}`；有 `whisper_token` **或** `hideout_token`（二擇一，見下方 whisper 那節）；稀有裝另有 `note`（賣家標價註記）、`requirements`、`properties`。
 
 ### 詞綴回傳格式（稀有鞋實測，含 crafted）
 
@@ -58,7 +58,12 @@ POE1 lives under `/trade/` on the same site as POE2's `/trade2/`. The transport 
 - 每條都自帶 `mods[].tier` 與 `magnitudes` 的 roll 區間，可直接判斷這條是不是接近該階上限，不必另外查表。
 - `extended.mods` 在這件樣本是**空的**（`{}`）——階級資訊在各詞綴物件裡，不在 extended 底下。
 - **描述文字是純文字，沒有內嵌 wiki 連結括號**（`+31% to Fire Resistance`、`+128 to maximum Life`）。這件樣本的 5 條詞綴都沒有；若之後遇到含括號的再補記。
-- **whisper / 前往藏身處：`POST /api/trade/whisper`**，body `{"token":"<JWT>"}`（token 取自 fetch 回傳的 `listing.whisper_token` / `listing.hideout_token`）。角色**離線時回 `400 "Your account must be in-game to use this feature"`**，不會對賣家送出任何東西；線上時會真的執行。實作範例見 [`script/scavenger.py`](../../../../script/scavenger.py)。
+- **whisper / 前往藏身處：`POST /api/trade/whisper`**，body `{"token":"<JWT>"}`。角色**離線時回 `400 "Your account must be in-game to use this feature"`**，不會對賣家送出任何東西；線上時會真的執行（實測回 `{"success":true}`，約 1.9 秒）。實作範例見 [`script/wholesalers.py`](../../../../script/wholesalers.py)。
+- **POE1 的 token 分兩種，同一筆掛單只會有其中一種**，決定於**該掛單是不是 Instant Buyout（離線交易）**，不是倉庫頁種類（2026-08 實測 71 筆）：
+  - **`hideout_token`**（JWT `tok:"hideout"`）：Instant Buyout 掛單，也就是 `status.option = "securable"` 搜得到的那些。送出後**直接把你傳送到賣家藏身處自助購買**，賣家 `account.online` 為 `null`（離線）照樣成立 —— 這就是「離線交易」。這類掛單另有 `fee` 欄位（6c 的 T16 地圖 fee=810）。JWT 效期 300 秒（`exp - iat`），但正常流程 fetch 完馬上就送出，碰不到。
+  - **`whisper_token`**：非 Instant Buyout 的舊式掛單。這支只是**發密語給賣家**，不會傳送，所以沒有自動購買的觸發點。**使用者說明（2026-08）：自從 Instant Buyout 上線後，實務上已經沒有玩家在用舊的密語模式了**，所以自動化腳本只要把查詢設成 `securable`，就可以當作 `hideout_token` 必定存在（`listing["hideout_token"]` 直接取值即可）。
+  - POE2 則一律是 `hideout_token`（且沒有 `whisper_token`）。
+- **Instant Buyout 掛單的倉庫座標一定落在 12×12 一般倉庫頁內**（實測 40 筆 securable 掛單，`stash.x`/`stash.y` 最大值都是 11，零例外）—— 四倍頁那類版面不支援 Instant Buyout，所以自動點格的腳本不必為它們做特例。反之若查詢沒設 securable，撈到的一般掛單就會出現 `(182,0)`、`(16,20)` 這種命運卡片頁/四倍頁座標。
 
 ### UI 送出的實際請求（攔截 `window.fetch` / `XHR` 實測）
 
