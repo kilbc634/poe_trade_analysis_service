@@ -1,6 +1,28 @@
 # -*- coding: utf-8 -*-
 """Multi-slot gear combo optimizer for POE2 trade (多部位配裝聯合求解), 6-slot proven.
 
+!! ========================= [尚未優化] 2026-08-10 =========================
+!! gear_combo_es_poe1.py went through a round of transport / robustness fixes and
+!! hot-loop optimisation. This script did NOT. It still works, but it carries the
+!! same two transport/robustness defects. Deliberately left as-is (user's call,
+!! 2026-08-10): fix when someone next actually needs this script.
+!!
+!! 1. RATE LIMIT LANDMINE (`_throttle_wait`, the `wait = max(wait, per)` branch).
+!!    On a near-cap counter it sleeps the rule's WHOLE period -- and the fetch
+!!    policy has a multi-hour window, so that branch can sleep for hours in one
+!!    call and look exactly like a hang. Note the rate-limit budget is SHARED
+!!    ACROSS BOTH GAMES (../common/tricks.md), so a POE1 run can leave this
+!!    script one request away from the wall.
+!!    Fix: port `_rl_pace()` / `_rl_observe()` from the ES script.
+!! 2. NON-ATOMIC SAVES (2 sites of `json.dump(obj, open(path, "w"))`).
+!!    An interrupted run leaves a truncated file with the old contents gone.
+!!    Fix: port `save_json()` (temp file + os.replace).
+!! 3. Hot-loop speed: the ES script's layout work does NOT apply here -- this one
+!!    combines through Python dict bucketing, not a numpy mask over a candidate
+!!    array. Follow ../common/optimizer-algorithms.md ("可複用的優化檢查清單")
+!!    if it ever needs speeding up, rather than copying code across.
+!! =========================================================================
+
 !! REALM: POE2 ONLY as written. The ALGORITHM (pool per slot -> parse -> staged
 !! combine -> budget tiers) is realm-agnostic, but the endpoint paths, the filter
 !! group/field names, the mod-text regexes, the currency and the scoring function
@@ -60,6 +82,7 @@ Optimizer scaling lessons (learned the hard way at 6 slots / ~1500 candidates):
     optimizer's lossy point and runtime: ../common/optimizer-algorithms.md
 
 Usage: edit CONFIG + SEARCHES + constraints in main(), then run.
+  [尚未優化 2026-08-10] 限流分支可能一次睡數小時、存檔非原子；詳見檔頭
   (no args)          searches + fetches (cached) + optimize; uses the POESESSID
                      from setting.py (authenticated pool). If it is missing or
                      expired the script warns and exits — refresh it, or:

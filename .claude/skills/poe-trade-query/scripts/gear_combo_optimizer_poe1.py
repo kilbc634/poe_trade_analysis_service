@@ -1,6 +1,34 @@
 # -*- coding: utf-8 -*-
 """Multi-slot gear combo optimizer for POE1 /trade (多部位配裝聯合求解), 6-slot proven.
 
+!! ========================= [尚未優化] 2026-08-10 =========================
+!! gear_combo_es_poe1.py went through a round of transport / robustness fixes and
+!! hot-loop optimisation. This script did NOT. It still works -- it was verified
+!! on a real 6-slot 30c task -- but it carries two defects that were real enough
+!! to be worth fixing there, and one missing improvement. Deliberately left as-is
+!! (user's call, 2026-08-10): fix when someone next actually needs this script.
+!!
+!! 1. RATE LIMIT LANDMINE (`_throttle_wait`, the `wait = max(wait, per)` branch).
+!!    On hitting a near-cap counter it sleeps the rule's WHOLE period. POE1's
+!!    fetch policy includes a 1000-per-10800s rule, so that branch can sleep
+!!    THREE HOURS in one call and look exactly like a hang. Measured on the ES
+!!    script 2026-08-10 at 788/1000 used -- roughly ten minutes from firing.
+!!    Fix: port `_rl_pace()` / `_rl_observe()` (self-tracked timestamps, sleep
+!!    only until a slot frees) plus the 10%-of-period backstop and the 0.6s
+!!    anti-rapid-click floor.
+!! 2. NON-ATOMIC SAVES (5 sites of `json.dump(obj, open(path, "w"))`).
+!!    `open(..., "w")` truncates before writing, so an interrupted run leaves an
+!!    empty or half-written file with the old contents already gone. Worst on the
+!!    pool caches, which cost tens of minutes of rate-limited fetching.
+!!    Fix: port `save_json()` (temp file + os.replace).
+!! 3. Hot-loop speed: the ES script's layout work (axis-major, int16, index-set
+!!    shrinking) does NOT apply here -- that is shaped for a per-row numpy mask
+!!    over a candidate array, and this script joins through a 3-D suffix-max
+!!    table instead. If this one ever needs speeding up, follow the checklist in
+!!    ../common/optimizer-algorithms.md ("可複用的優化檢查清單") rather than
+!!    copying code across.
+!! =========================================================================
+
 !! REALM: POE1 ONLY. Sibling of gear_combo_optimizer_poe2.py (POE2 ONLY).
 !! The ALGORITHM is realm-agnostic; every endpoint path, filter field name, stat
 !! id, currency and mod-text regex below was re-derived from ../poe1/QUERY.md and
@@ -35,6 +63,7 @@ Pipeline (../common/tricks.md):
   report   markdown deliverable per ../common/delivery.md.
 
 Usage:
+    [尚未優化 2026-08-10] 限流分支可能一次睡 3 小時、存檔非原子；詳見檔頭
     python gear_combo_optimizer_poe1.py selftest      # brute-force check the solver FIRST
     python gear_combo_optimizer_poe1.py probe
     python gear_combo_optimizer_poe1.py pools
