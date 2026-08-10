@@ -1488,6 +1488,35 @@ def solve(A, J, budget, need):
     jkmin = jk.min(axis=0)
     jkT = _axis_major(jk)            # axis-major, int16 -- see _axis_major()
     jsc_argmax = int(np.argmax(jsc))  # fast path when nothing constrains J
+    # Exact "how many J rows have axis >= v" tables, one per axis.
+    #
+    # Knowing the count BEFORE touching J is what lets the axes be tried
+    # selectivity-first, and lets a hopeless row be dropped without any scan at
+    # all. The point of doing it as a lookup table rather than a sorted copy is
+    # SIZE. Two rejected alternatives, both measured 2026-08-10 against v1's 58s:
+    #   * argsort indices per axis (+4 MB): 89s. Those indices come out ordered
+    #     by VALUE, so every later `jkT[axis][cand]` gather jumps randomly around
+    #     a 400 KB array; nonzero() yields ascending indices that stream.
+    #   * sorted values per axis for binary search (+2 MB): 107s. No indexing
+    #     problem, but 2 MB was enough on its own to push the working set from
+    #     5.4 MB back over this CPU's 8 MB L3 -- the cliff is that sharp.
+    # State values are small clamped integers, so an exact suffix-count table
+    # spans only the axis's own range: about 6 KB for all five, O(1) to query.
+    ge_lo, ge_tab = [], []
+    for a in range(5):
+        row = jkT[a]
+        lo, hi = int(row.min()), int(row.max())
+        cnt = np.bincount((row - lo).astype(np.int64), minlength=hi - lo + 1)
+        ge_lo.append(lo)
+        # ge[v - lo] = number of rows with value >= v
+        ge_tab.append(np.cumsum(cnt[::-1])[::-1].astype(np.int64).copy())
+
+    def _count_ge(a, d):
+        off = d - ge_lo[a]
+        if off <= 0:
+            return jp.size
+        tab = ge_tab[a]
+        return int(tab[off]) if off < tab.size else 0
     porder = np.argsort(jp, kind="stable")
     jp_sorted = jp[porder]
     jsc_prefmax = np.maximum.accumulate(jsc[porder])
@@ -1506,22 +1535,37 @@ def solve(A, J, budget, need):
                 continue
         deficit = needv - ak[i]
         # Narrow an INDEX SET axis by axis instead of building five full-length
-        # boolean masks and ANDing them. Only the first constrained axis pays for
-        # a scan of all of J; each later one touches just what survived, and an
-        # axis that empties the set bails out immediately -- which is the common
-        # case, 41342 of 159277 masks came back empty on the reference run.
-        # Combined with the axis-major int16 layout: 1.019 ms -> 0.214 ms (4.75x).
-        cand = None
+        # boolean masks and ANDing them. Each axis after the first only touches
+        # what survived, and an axis that empties the set bails out immediately
+        # -- the common case: 41342 of 159277 masks came back empty.
+        #
+        # A table lookup per constrained axis says how many J rows it admits,
+        # without touching J. Two things fall out of knowing that up front:
+        #   * if any axis admits ZERO, skip the row without scanning anything;
+        #   * the axes can be tried SELECTIVITY FIRST, so the one full scan runs
+        #     on the tightest constraint and every later shrink starts from the
+        #     smallest possible set. Fixed order could lead with an axis that
+        #     rules almost nothing out and hand the rest a huge array to chew.
+        # The scan itself stays nonzero(), whose output is ascending -- see the
+        # note on axis_val for why value-ordered indices are a trap.
+        constrained = []
         for axis in range(5):
             if deficit[axis] <= jkmin[axis]:
                 continue                      # provably satisfied by every J
-            row = jkT[axis]
-            cand = (np.nonzero(row >= deficit[axis])[0] if cand is None
-                    else cand[row[cand] >= deficit[axis]])
+            constrained.append((_count_ge(axis, int(deficit[axis])), axis))
+        cand = None
+        if constrained:
+            constrained.sort()                # fewest survivors first
+            if constrained[0][0] == 0:
+                continue                      # some axis admits nothing at all
+            for n, (_cnt, axis) in enumerate(constrained):
+                row = jkT[axis]
+                cand = (np.nonzero(row >= deficit[axis])[0] if n == 0
+                        else cand[row[cand] >= deficit[axis]])
+                if cand.size == 0:
+                    break
             if cand.size == 0:
-                break
-        if cand is not None and cand.size == 0:
-            continue
+                continue
         if cand is None:
             # nothing constrains J at all
             if rem >= jmaxp:
