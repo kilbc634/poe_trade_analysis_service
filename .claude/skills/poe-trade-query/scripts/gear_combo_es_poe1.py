@@ -148,6 +148,28 @@ _ETA_GROUPS_PER_SEC = 3.23e9
 # ======================================================================
 
 
+def save_json(path, obj, **kw):
+    """Write JSON so an interrupted run cannot destroy the previous contents.
+
+    `json.dump(obj, open(path, "w"))` truncates the file the moment it opens it
+    and only then starts writing. Kill the process in between -- a crash, a
+    Ctrl-C, a Stop-Process while chasing something else -- and the file is left
+    empty or half-written, with the old contents already gone.
+
+    That matters most for the pool caches: parsed_*.json holds data that took
+    tens of minutes to fetch under a rate limit, so losing one means re-fetching
+    it. Writing to a sibling temp file and then os.replace() makes the swap
+    atomic on the same volume, so the file is always either the old version or
+    the new one, never a truncated hybrid.
+    """
+    tmp = f"{path}.tmp"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump(obj, fh, **kw)
+        fh.flush()
+        os.fsync(fh.fileno())
+    os.replace(tmp, path)
+
+
 def _cookie_cache():
     d = os.path.dirname(os.path.abspath(__file__))
     for _ in range(8):
@@ -372,7 +394,7 @@ def http_search(name, body, cache=True):
         print(f"{name:26s} cached id={j.get('id')} total={j.get('total')}", flush=True)
         return j
     j = req(SEARCH_URL.format(league=LEAGUE), json.dumps(body).encode("utf-8"))
-    json.dump(j, open(f, "w"))
+    save_json(f, j)
     print(f"{name:26s} id={j.get('id')} total={j.get('total')}", flush=True)
     # pacing handled by _rl_pace() in req(); a fixed sleep here just adds to it
     return j
@@ -487,7 +509,7 @@ def run_pool(name, body, need=N_PER_POOL, force=False):
         return d
     mode = transport()
     d = (http_pool if mode == "http" else browser_pool)(name, body, need)
-    json.dump({"name": name, "body": body, **d}, open(out_f, "w"))
+    save_json(out_f, {"name": name, "body": body, **d})
     print(f"{name:26s} [{mode}] qid={d['qid']} total={d['total']} rows={len(d['rows'])}",
           flush=True)
     return d
@@ -1009,7 +1031,7 @@ def cmd_reparse():
         n_fixed += len(replaced)
         n_kept += len(out) - len(replaced)
         d["rows"] = out
-        json.dump(d, open(fn, "w"))
+        save_json(fn, d)
         print(f"{d['name']:26s} refreshed {len(replaced):>3}, sold {len(todo)-len(replaced):>2}"
               f", kept {len(out)-len(replaced):>3}", flush=True)
     print(f"\nreparse done: {n_fixed} rows refreshed, {n_gone} sold, {n_kept} kept as-is")
@@ -1097,7 +1119,7 @@ def cmd_deep(upto=100):
                     have.add(row["id"])
                     d["rows"].append(row)
                     added += 1
-        json.dump(d, open(pf, "w"))
+        save_json(pf, d)
         ps = [r["price"] for r in d["rows"]]
         print(f"{name:26s} +{added:>3} -> {len(d['rows']):>3} rows  "
               f"price {min(ps):.0f}-{max(ps):.0f}c", flush=True)
@@ -1211,7 +1233,7 @@ def sold_ids():
 def add_sold(ids):
     p = os.path.join(WORKDIR, _SOLD)
     cur = sold_ids() | set(ids)
-    json.dump(sorted(cur), open(p, "w"))
+    save_json(p, sorted(cur))
     return cur
 
 
@@ -1692,7 +1714,7 @@ def cmd_solve(margin=None, tiers=None, quiet=False):
         # with the budget (affordable A entries went 216 -> 5k -> 46k -> 131k on
         # the reference task), so the expensive tiers come last and a kill used to
         # throw away every cheap tier that had already succeeded.
-        json.dump(out, open(rf, "w"), indent=1)
+        save_json(rf, out, indent=1)
         print(f"\n[<= {b:g}c] SCORE={s['score']:.0f}  life={s['life']} es={s['es']}  "
               f"spend={s['price']:.2f}c  F{s['res']['fire']} C{s['res']['cold']} "
               f"L{s['res']['light']} STR{s['res']['str']} DEX{s['res']['dex']}", flush=True)
@@ -1704,7 +1726,7 @@ def cmd_solve(margin=None, tiers=None, quiet=False):
                       f"F{i['fire']:>3} C{i['cold']:>3} L{i['light']:>3} "
                       f"S{i['str']:>3} D{i['dex']:>3}  {i['name'][:30]:30s} "
                       f"@{i['seller']} [{i['pool']}]{cr}", flush=True)
-    json.dump(out, open(rf, "w"), indent=1)
+    save_json(rf, out, indent=1)
     print(f"\ntotal solve time {time.time()-t0:.1f}s", flush=True)
     return out
 
@@ -1776,6 +1798,34 @@ def selftest_parse():
         if has_free_suffix(c) != want:
             print(f"  CRAFT FAIL ({why}): got {has_free_suffix(c)}, want {want}")
             bad += 1
+    # --- an interrupted save must not destroy the previous file ------------
+    # The pool caches cost tens of minutes of rate-limited fetching, so a
+    # half-written parsed_*.json is the most expensive failure this script has.
+    import shutil
+    import tempfile
+    _tmpdir = tempfile.mkdtemp(prefix="gearsolver_selftest_")
+    try:
+        _p = os.path.join(_tmpdir, "t.json")
+        save_json(_p, {"v": 1})
+        try:
+            save_json(_p, {"v": object()})   # not serialisable -> fails mid-write
+        except TypeError:
+            pass
+        else:
+            print("  ATOMIC FAIL: expected the bad payload to raise"); bad += 1
+        try:
+            if json.load(open(_p, encoding="utf-8")) != {"v": 1}:
+                print("  ATOMIC FAIL: a failed write clobbered the old contents")
+                bad += 1
+        except Exception as e:
+            print(f"  ATOMIC FAIL: old file is unreadable after a failed write ({e})")
+            bad += 1
+        save_json(_p, {"v": 2})
+        if json.load(open(_p, encoding="utf-8")) != {"v": 2}:
+            print("  ATOMIC FAIL: a good write did not land"); bad += 1
+    finally:
+        shutil.rmtree(_tmpdir, ignore_errors=True)
+
     # --- frontier() must survive NEGATIVE scores --------------------------
     # A ring with "-131 to maximum Life" scores 220*-131 = -28820. The old
     # running-maximum sentinel was -1, so such a group failed `score > best` on
@@ -2118,7 +2168,7 @@ def cmd_verify(tier=None):
                "score": res[tier]["score"], "life": res[tier]["life"],
                "es": res[tier]["es"], "price": res[tier]["price"],
                "res": res[tier]["res"], "items": out}
-    json.dump(payload, open(os.path.join(WORKDIR, f"verified_{tier}.json"), "w"), indent=1)
+    save_json(os.path.join(WORKDIR, f"verified_{tier}.json"), payload, indent=1)
     print(f"\nall_live={all(i['live'] for i in out)} -> verified_{tier}.json")
     return payload
 
