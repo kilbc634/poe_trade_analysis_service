@@ -26,12 +26,13 @@ Usage:
     python gear_combo_es_poe1.py probe
     python gear_combo_es_poe1.py pools
     python gear_combo_es_poe1.py deep         # extend pools to 100 without re-searching
+    python gear_combo_es_poe1.py reparse      # re-fetch rows whose craft data is stale
     python gear_combo_es_poe1.py negatives    # ASK the user which downsides to ban
-    python gear_combo_es_poe1.py solve        # POE_FAST defaults to 200 (~20 min)
+    python gear_combo_es_poe1.py solve        # POE_FAST defaults to 280 (~5 min)
     python gear_combo_es_poe1.py converge
     python gear_combo_es_poe1.py report
-    POE_FAST=90 python ... solve              # ~1 min, for a quick re-solve
-    POE_FAST=0  python ... solve              # exact -- did NOT finish in hours
+    POE_FAST=130 python ... solve             # ~1 min, but NOT converged -- see FAST
+    POE_FAST=0   python ... solve             # exact -- did NOT finish in hours
 
 Requires numpy. Everything else is stdlib.
 
@@ -110,23 +111,34 @@ ARMOUR_SLOTS = {"helm", "glove"}
 
 # Candidates kept per slot before craft expansion. 0 = exact.
 #
-# DEFAULT 200, chosen against a 20-minute budget the user set for the compute
-# phase (2026-08-02). Measured on a ~3960-listing sample, all 7 tiers:
-#     60 -> 17s | 90 -> 48s | 130 -> 137s | 200 -> 1170s | 280 -> 2243s
-# and the 1727c headline was 3324 / 3328 / 3328 / 3361 / 3361 -- i.e. 200 is both
-# the first rung that reaches the converged headline AND the largest that fits in
-# 20 minutes. Cost grows roughly with |A|x|J|, so it is QUADRATIC in this number:
-# doubling the retention is ~4x the wall clock. Exact (0) did not finish in hours.
-FAST = int(os.environ.get("POE_FAST", "200"))
+# DEFAULT 280. Re-measured 2026-08-10 after the v1/v2 hot-loop work made the
+# solver ~5x faster; the old default of 200 was picked when 280 cost 37 minutes.
+# Full 7-tier ladder on a ~3150-listing sample, machine idle:
+#     130 -> ~60s | 280 -> 296s | 400 -> 726s
+# and the 1741.87c headline was 3160 / 3204 / 3204, with the 500c and 900c rungs
+# also identical at 280 and 400. So 280 is the first rung that reaches the
+# converged headline, and it fits the 20-minute budget four times over.
+#
+# !! 130 IS NOT CONVERGED any more. It was, before the craft-swap accounting was
+# fixed (130/200/280 all returned 3274 on the old, over-credited candidates).
+# Correcting the candidate values changed the shape of the ladder -- a reminder
+# that the converged rung is a property of the DATA, not of the algorithm, and
+# has to be re-derived whenever candidate scoring changes.
+#
+# Cost grows roughly with |A|x|J|, so it is QUADRATIC in this number: doubling
+# the retention is ~4x the wall clock. Exact (0) did not finish in hours.
+FAST = int(os.environ.get("POE_FAST", "280"))
 CRAFT = int(os.environ.get("POE_CRAFT", "1"))
 
-# Reference point for the ETA print in cmd_solve: |A|*|J| -> seconds, calibrated
-# on the FAST=200 run above (267,965 x 421,120 groups, 1170s, 7 tiers).
-# Checked against the other rungs -- it OVERESTIMATES everywhere else (60: 33s vs
-# 17s measured; 280: 3062s vs 2243s), because the bound pruning gets relatively
-# more effective at both ends. Conservative is the right direction for a "will
-# this fit in the time budget?" call, so it is left uncorrected.
-_ETA_GROUPS_PER_SEC = 267965 * 421120 / 1170.0
+# Reference point for the ETA print in cmd_solve: |A|*|J| -> seconds. Calibrated
+# 2026-08-10 on the post-v2 solver, full 7-tier ladders, machine idle:
+#     FAST=280  437,018 x   666,257 groups   296.5s  -> 9.82e11 groups/s
+#     FAST=400  510,253 x 1,122,938 groups   725.8s  -> 7.89e11 groups/s
+# The model is only roughly linear in |A|x|J|, so the two disagree by ~25%. Take
+# the SMALLER rate, which makes the printed ETA the pessimistic one -- this
+# number exists to answer "will this fit in my time budget?", and an estimate
+# that runs long is the harmless direction to be wrong in.
+_ETA_GROUPS_PER_SEC = 7.89e11
 # ======================================================================
 
 
