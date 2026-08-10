@@ -111,13 +111,14 @@ ARMOUR_SLOTS = {"helm", "glove"}
 
 # Candidates kept per slot before craft expansion. 0 = exact.
 #
-# DEFAULT 280. Re-measured 2026-08-10 after the v1/v2 hot-loop work made the
-# solver ~5x faster; the old default of 200 was picked when 280 cost 37 minutes.
+# DEFAULT 280. Re-measured 2026-08-10 after the hot-loop work (v1/v2/v3) made the
+# solver ~16x faster; the old default of 200 was picked when 280 cost 37 minutes.
 # Full 7-tier ladder on a ~3150-listing sample, machine idle:
-#     130 -> ~60s | 280 -> 296s | 400 -> 726s
+#     130 -> 15s | 280 -> 90s | 550 -> 269s
 # and the 1741.87c headline was 3160 / 3204 / 3204, with the 500c and 900c rungs
-# also identical at 280 and 400. So 280 is the first rung that reaches the
-# converged headline, and it fits the 20-minute budget four times over.
+# identical at 280, 400 and 550 too. So 280 is the first rung that reaches the
+# converged headline, and it fits the 20-minute budget thirteen times over.
+# (Only the cheapest 250c rung is still moving at 550: 2331 -> 2384 -> 2407.)
 #
 # !! 130 IS NOT CONVERGED any more. It was, before the craft-swap accounting was
 # fixed (130/200/280 all returned 3274 on the old, over-credited candidates).
@@ -131,14 +132,19 @@ FAST = int(os.environ.get("POE_FAST", "280"))
 CRAFT = int(os.environ.get("POE_CRAFT", "1"))
 
 # Reference point for the ETA print in cmd_solve: |A|*|J| -> seconds. Calibrated
-# 2026-08-10 on the post-v2 solver, full 7-tier ladders, machine idle:
-#     FAST=280  437,018 x   666,257 groups   296.5s  -> 9.82e11 groups/s
-#     FAST=400  510,253 x 1,122,938 groups   725.8s  -> 7.89e11 groups/s
-# The model is only roughly linear in |A|x|J|, so the two disagree by ~25%. Take
-# the SMALLER rate, which makes the printed ETA the pessimistic one -- this
-# number exists to answer "will this fit in my time budget?", and an estimate
-# that runs long is the harmless direction to be wrong in.
-_ETA_GROUPS_PER_SEC = 7.89e11
+# 2026-08-10 on the post-v3 solver, full 7-tier ladders, machine idle:
+#     FAST=280  437,080 x   666,257 = 2.912e11 groups /  90.2s -> 3.23e9 groups/s
+#     FAST=550  562,080 x 1,633,688 = 9.183e11 groups / 269.1s -> 3.41e9 groups/s
+# The two agree within 6% -- much tighter than the pre-v3 calibration, because
+# the per-axis score bound prunes more uniformly across rungs. Still take the
+# SMALLER rate so the printed ETA errs long: this number exists to answer "will
+# this fit in my time budget?", and over-running is the harmless direction.
+#
+# !! Write the product out when re-calibrating. Both earlier attempts at this
+# constant were off by exactly 1000x from misjudging |A|x|J| by eye, and the
+# symptom is quiet: the ETA just prints "~0 min" and nobody checks it against a
+# stopwatch. Sanity-check by hand: 2.9e11 / 3.23e9 should come out near 90.
+_ETA_GROUPS_PER_SEC = 3.23e9
 # ======================================================================
 
 
@@ -1514,7 +1520,7 @@ def solve(A, J, budget, need):
     #     5.4 MB back over this CPU's 8 MB L3 -- the cliff is that sharp.
     # State values are small clamped integers, so an exact suffix-count table
     # spans only the axis's own range: about 6 KB for all five, O(1) to query.
-    ge_lo, ge_tab = [], []
+    ge_lo, ge_tab, ge_best = [], [], []
     for a in range(5):
         row = jkT[a]
         lo, hi = int(row.min()), int(row.max())
@@ -1522,6 +1528,17 @@ def solve(A, J, budget, need):
         ge_lo.append(lo)
         # ge[v - lo] = number of rows with value >= v
         ge_tab.append(np.cumsum(cnt[::-1])[::-1].astype(np.int64).copy())
+        # best[v - lo] = highest J score among rows with value >= v.
+        # The sorted scratch arrays are built once and dropped; only the small
+        # per-value table survives, so this costs ~2.5 KB rather than the 2 MB
+        # that keeping the sorted axis resident was measured to cost.
+        order = np.argsort(row, kind="stable")
+        vals, sc = row[order], jsc[order]
+        sufmax = np.maximum.accumulate(sc[::-1])[::-1]
+        first = np.searchsorted(vals, np.arange(lo, hi + 1), side="left")
+        ge_best.append(np.where(first < vals.size,
+                                sufmax[np.minimum(first, vals.size - 1)],
+                                np.iinfo(np.int64).min).copy())
 
     def _count_ge(a, d):
         off = d - ge_lo[a]
@@ -1529,6 +1546,14 @@ def solve(A, J, budget, need):
             return jp.size
         tab = ge_tab[a]
         return int(tab[off]) if off < tab.size else 0
+
+    def _best_ge(a, d):
+        """Highest score any J satisfying `axis a >= d` can have, price ignored."""
+        off = d - ge_lo[a]
+        if off <= 0:
+            return jscmax
+        tab = ge_best[a]
+        return int(tab[off]) if off < tab.size else np.iinfo(np.int64).min
     porder = np.argsort(jp, kind="stable")
     jp_sorted = jp[porder]
     jsc_prefmax = np.maximum.accumulate(jsc[porder])
@@ -1561,10 +1586,22 @@ def solve(A, J, budget, need):
         # The scan itself stays nonzero(), whose output is ascending -- see the
         # note on axis_val for why value-ordered indices are a trap.
         constrained = []
+        axis_bound = jscmax
         for axis in range(5):
             if deficit[axis] <= jkmin[axis]:
                 continue                      # provably satisfied by every J
-            constrained.append((_count_ge(axis, int(deficit[axis])), axis))
+            d = int(deficit[axis])
+            constrained.append((_count_ge(axis, d), axis))
+            # A feasible J has to clear EVERY axis, so its score cannot exceed
+            # the best available on any single one of them. Taking the minimum
+            # over the constrained axes is therefore a valid upper bound -- and a
+            # much tighter one than `jscmax`, which ignores the requirement
+            # entirely. Cost: one table lookup per axis, no contact with J.
+            b = _best_ge(axis, d)
+            if b < axis_bound:
+                axis_bound = b
+        if best is not None and int(asc[i]) + axis_bound < best[0]:
+            continue
         cand = None
         if constrained:
             constrained.sort()                # fewest survivors first
