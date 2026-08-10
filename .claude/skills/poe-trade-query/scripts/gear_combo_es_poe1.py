@@ -1423,6 +1423,35 @@ def _arrays(G):
             np.array([[*g[2]] for g in G], dtype=np.int32))
 
 
+def _axis_major(k):
+    """(N,5) row-major states -> (5,N) axis-major, narrowed to int16 when it fits.
+
+    Both halves of this matter, and both were measured on the real 201605-row J
+    (2026-08-10, i7-4790, 8 MB L3):
+
+    * LAYOUT. The mask compares ONE axis at a time, but `k[:, axis]` on a (N,5)
+      C-contiguous array walks memory with a 20-byte stride. The CPU always
+      fetches a full 64-byte cache line, so ~52 of every 64 bytes pulled in are
+      discarded. Storing each axis contiguously makes the scan sequential:
+      1.019 ms -> 0.371 ms per mask, a 2.75x win for a transpose.
+    * WIDTH. States are clamped resistances and attributes -- the real range is
+      about -95..154, and the ceiling is bounded by `need` plus slot slack, so a
+      few hundred at most. int32 wastes half the traffic: -> 0.261 ms (3.90x).
+
+    Working set matters as much as speed here: jk shrinks 4.0 MB -> 2.0 MB, which
+    is the difference between the hot data fitting in L3 or not. Measured
+    side-effect: with a memory-hungry process running alongside, the old layout
+    slowed 1.60-2.88x while this one slows only 1.20-1.48x.
+
+    The dtype is chosen from the data rather than hardcoded, so a future
+    requirement vector that somehow exceeds int16 degrades to int32 instead of
+    silently wrapping around.
+    """
+    lo, hi = int(k.min()), int(k.max())
+    dtype = np.int16 if np.iinfo(np.int16).min < lo and hi < np.iinfo(np.int16).max else np.int32
+    return np.ascontiguousarray(k.T, dtype=dtype)
+
+
 def solve(A, J, budget, need):
     """max score over A x J meeting `need` within `budget`. Exact for the given
     candidate sets."""
@@ -1457,6 +1486,8 @@ def solve(A, J, budget, need):
     # requirement of 33 (a ring carrying -68% cold, A covering +44). Unlike the
     # clamp bug this one fails UNSAFE: the answer misses the requirement.
     jkmin = jk.min(axis=0)
+    jkT = _axis_major(jk)            # axis-major, int16 -- see _axis_major()
+    jsc_argmax = int(np.argmax(jsc))  # fast path when nothing constrains J
     porder = np.argsort(jp, kind="stable")
     jp_sorted = jp[porder]
     jsc_prefmax = np.maximum.accumulate(jsc[porder])
@@ -1474,15 +1505,41 @@ def solve(A, J, budget, need):
             if aff < 0 or int(asc[i]) + int(jsc_prefmax[aff]) < best[0]:
                 continue
         deficit = needv - ak[i]
-        m = np.ones(jp.size, dtype=bool)
+        # Narrow an INDEX SET axis by axis instead of building five full-length
+        # boolean masks and ANDing them. Only the first constrained axis pays for
+        # a scan of all of J; each later one touches just what survived, and an
+        # axis that empties the set bails out immediately -- which is the common
+        # case, 41342 of 159277 masks came back empty on the reference run.
+        # Combined with the axis-major int16 layout: 1.019 ms -> 0.214 ms (4.75x).
+        cand = None
         for axis in range(5):
-            if deficit[axis] > jkmin[axis]:
-                m &= jk[:, axis] >= deficit[axis]
-        if rem < jmaxp:
-            m &= jp <= rem + 1e-9
-        if not m.any():
+            if deficit[axis] <= jkmin[axis]:
+                continue                      # provably satisfied by every J
+            row = jkT[axis]
+            cand = (np.nonzero(row >= deficit[axis])[0] if cand is None
+                    else cand[row[cand] >= deficit[axis]])
+            if cand.size == 0:
+                break
+        if cand is not None and cand.size == 0:
             continue
-        cand = np.nonzero(m)[0]
+        if cand is None:
+            # nothing constrains J at all
+            if rem >= jmaxp:
+                k = jsc_argmax
+                tot = int(asc[i]) + int(jsc[k])
+                if best is None or tot > best[0] or (tot == best[0]
+                                                     and ap[i] + jp[k] < best[3]):
+                    best = (tot, int(i), int(k), float(ap[i] + jp[k]))
+                continue
+            cand = np.arange(jp.size)
+        # price is filtered LAST, on the narrowed set, and stays float64 so the
+        # 1e-9 tolerance keeps the meaning it has everywhere else in this file
+        # (in float32 that epsilon is far below the representable step at 1700c
+        # and would silently drop listings priced exactly at the remainder)
+        if rem < jmaxp:
+            cand = cand[jp[cand] <= rem + 1e-9]
+            if cand.size == 0:
+                continue
         k = cand[int(np.argmax(jsc[cand]))]
         tot = int(asc[i]) + int(jsc[k])
         if best is None or tot > best[0] or (tot == best[0]
