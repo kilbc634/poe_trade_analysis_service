@@ -1,4 +1,4 @@
-> ⛔ **POE1 ONLY** ｜ 聯盟：**Allflame**（遊戲版本未記錄）｜ 最後整理：**2026-07-28**
+> ⛔ **POE1 ONLY** ｜ 聯盟：**Allflame**（3.29 Curse of the Allflame）｜ 最後整理：**2026-08-17**
 > 若 `setting.py` 的 `REALM=poe2`，立刻停止並改讀 `../poe2/`。
 > **狀態：傳輸層與 query schema 已實測可用；`knowledge/` 已有匯率、腰帶部位分佈與腰帶行情，其餘部位與機制估值待累積。**
 > 下面標 ❓ 的每一項都還沒實測過——不准把 `../poe2/` 的任何 id、欄位名、幣別、機制或行情搬過來填，
@@ -144,7 +144,7 @@ GET      /api/trade/fetch/{h1},{h2},{h3}?query=EBO2DX8YS5&pseudos[]=pseudo.pseud
 | `type_filters` | `category`(opt)、`rarity`(opt) |
 | `weapon_filters` | `damage`、`aps`、`crit`、`dps`、`pdps`、`edps` |
 | `armour_filters` | `ar`、`ev`、`es`、`ward`、`block`、`base_defence_percentile` |
-| `socket_filters` | `sockets`、`links` |
+| `socket_filters` | `sockets`、`links` —— **兩者除了 `min`/`max` 還吃顏色子欄位 `r`/`g`/`b`/`w`**（2026-08-17 實測） |
 | `req_filters` | `lvl`、`str`、`dex`、`int`、`class`(opt) |
 | `map_filters` | `map_tier`、`map_packsize`、`map_iiq`、`map_iir`、`map_gold`、`chart_sulphur`、`chart_shape`(opt)、`area_level`、`map_series`(opt, 28)、`map_blighted`(opt)、`map_uberblighted`(opt)、`map_completion_reward`(opt) |
 | `heist_filters` | `heist_wings`/`heist_max_wings`、`heist_escape_routes`/`_max_`、`heist_reward_rooms`/`_max_`、`heist_objective_value`(opt)、以及八種技能等級 `heist_lockpicking`/`_brute_force`/`_perception`/`_demolition`/`_counter_thaumaturgy`/`_trap_disarmament`/`_agility`/`_deception`/`_engineering` |
@@ -224,9 +224,47 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 
 群組本身也吃 `"disabled": true`（整組停用），單一條目同樣可以 `disabled`。
 
+✅ **`socket_filters` 的顏色子欄位實測可用（2026-08-17）**：
+
+```jsonc
+"socket_filters": { "filters": {
+    "links":   { "min": 6 },
+    "sockets": { "b": 2, "r": 2 }   // 語義是「至少 N 個該色」，多個顏色之間是 AND
+} }
+```
+
+實測 28 筆回傳全部符合 `B≥2 且 R≥2`。`r`/`g`/`b`/`w` 四色皆可，可與 `min`/`max` 並用。
+實例（君主之膚挑插槽顏色）見 [knowledge/releveling.md](knowledge/releveling.md)。
+
+✅ **`not` 群組實測可用（2026-08-17）**：`{"type":"not","filters":[{"id":…}, …]}` 一組可放多條，
+語義是「這些詞綴一條都不能有」。實例：君主之膚排除 16 個不能用的核心天賦，
+在架 3116 → 1982（15 條版本量測），抽驗確認無漏網（見 [knowledge/releveling.md](knowledge/releveling.md)）。
+**核心天賦在 `stats.tsv` 裡就是以天賦英文名為文字的 explicit 詞綴**（例：`explicit.stat_2648570028` = `Ancestral Bond`）。
+
 ✅ **`count` 群組實測可用（2026-07-28）**：`{"type":"count","value":{"min":1},"filters":[…]}` 回 200，可用來表達「下列條件至少滿足 N 條」的 OR 語義。實例（找可上工藝抗性的裝備）見 [knowledge/crafting.md](knowledge/crafting.md)。
 
-⚠ **`weight` / `weight2` 實測會撞複雜度上限**：即使只放一條 explicit 詞綴，API 仍回 `Query is too complex. Please reduce the amount of filters used.`（already authenticated 時依然如此）。型別名本身是有效的——送假值 `xyzzy` 會回 `Invalid statgroup type type`，這兩個回的是複雜度錯誤，兩者不同。加權查詢要能跑得先想辦法壓複雜度。
+✅ **`weight` 群組實測可用（2026-08-17，推翻本檔 07-28 的紀錄）**——關鍵是**權重要放在條目的 `value.weight` 裡**，不是條目或群組的頂層欄位：
+
+```jsonc
+"stats": [
+  { "type": "and", "filters": [] },                    // ← UI 一定會帶一個空的 and 群組
+  { "type": "weight", "value": { "min": 77 },          // ← 門檻放群組的 value.min
+    "filters": [
+      { "id": "explicit.stat_1573130764", "value": { "weight": 1 } },
+      { "id": "explicit.stat_4067062424", "value": { "weight": 1 } },
+      { "id": "explicit.stat_1754445556", "value": { "weight": 1 } }
+    ] }
+]
+```
+
+- **計分方式：每條詞綴取其數值區間的中點（`(min+max)/2`）× 權重，全部加總**，再用群組的 `value.min` 篩。
+  驗證：`min=77` 回來的物品，三條「Adds X to Y … Damage to Attacks」算出的 Σ(lo+hi)/2 正好是 77。
+- 因此 **`weight` 可以表達「這些詞綴我都要，但只在乎總量」**——這是 `and`（逐條下限）與 `count`（只數條數）都做不到的語義。
+- **07-28 那次記成「一送就撞複雜度上限」，原因幾乎確定是權重欄位的形狀寫錯**（放在條目頂層而非 `value` 內）。
+  型別名本身早就驗證有效（送假值 `xyzzy` 回 `Invalid statgroup type type`，與複雜度錯誤不同）。
+  **教訓：拿不到預期回應時，先去 UI 建一個同型查詢、用 `GET /api/trade/search/{league}/{query_id}` 取回原文比對，
+  不要直接把失敗歸因到伺服器限制。** 這次就是使用者提供 query_id 才發現的。
+- 實例（重練套裝挑附加點傷）見 [knowledge/releveling.md](knowledge/releveling.md)。`weight2` 尚未實測。
 
 ## 參考表（`references/`，2026-07-27 產出）
 
@@ -242,7 +280,7 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 
 > **優先度低（使用者 2026-07-27 判定）** —— 這幾項實務上很少用到，**不要主動花時間去補**。等真的碰到需求時再照下面的線索驗一次就好。
 
-- ❓ **`weight` / `weight2` 要怎麼壓到複雜度上限以下才跑得動**（見上）。
+- ❓ **`weight2` 的語義與 `weight` 差在哪**（`weight` 本身已於 2026-08-17 實測可用，見上）。
 - ❓ **`crucible` / `mercenary` 兩種群組的條目結構**——型別名確定了，但群組內 filters 長什麼樣沒看過。這兩種在 `references/stats.tsv` 各有 2492 / 534 條專屬詞綴。
 - ❓ **fractured / synthesised / scourge / veiled 等其他旗標的回傳長相**。crafted 已確認（見上），其餘照同樣方法抓一件比對即可。
 
@@ -287,4 +325,9 @@ POESESSID 過期時會自動改走已登入瀏覽器的 in-page fetch。方法�
 
 ## Knowledge base
 
-`poe1/knowledge/` 目前有 [exchange-rates.md](knowledge/exchange-rates.md)（匯率來源）、[slots.md](knowledge/slots.md)（腰帶詞綴位拆解 + **頭盔／手套／項鍊／戒指／腰帶六部位的生命×三抗天花板**）、[market.md](knowledge/market.md)（腰帶高端階梯 + **1–10c 低價帶市場形狀與通貨換算表**）。使用者教的每一條 POE1 事實都寫進這裡，並在 [INDEX.md](knowledge/INDEX.md) 加一行中英雙語關鍵字。分類原則見 [`../SKILL.md`](../SKILL.md)：**換一款遊戲還成立的才放 `../common/`，其餘全部留在這裡。**
+⚠ **先分辨題型**：使用者講「重練／練小號／twink／速通劇情」時，那**不是** CP 值配裝題——
+目標函數是最小化通關時間、硬約束是需求等級而非價格、而且沒有配裝空間。
+直接讀 [knowledge/releveling.md](knowledge/releveling.md)，**不要動求解器**。
+
+`poe1/knowledge/` 目前有 [exchange-rates.md](knowledge/exchange-rates.md)（匯率來源）、
+[releveling.md](knowledge/releveling.md)（**重練套路**：需求等級主軸、3.29 穢生陷阱、力量猛射×學富之筆全套清單與核心天賦排除法）、[slots.md](knowledge/slots.md)（腰帶詞綴位拆解 + **頭盔／手套／項鍊／戒指／腰帶六部位的生命×三抗天花板**）、[market.md](knowledge/market.md)（腰帶高端階梯 + **1–10c 低價帶市場形狀與通貨換算表**）。使用者教的每一條 POE1 事實都寫進這裡，並在 [INDEX.md](knowledge/INDEX.md) 加一行中英雙語關鍵字。分類原則見 [`../SKILL.md`](../SKILL.md)：**換一款遊戲還成立的才放 `../common/`，其餘全部留在這裡。**
