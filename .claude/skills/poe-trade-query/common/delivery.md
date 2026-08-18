@@ -25,3 +25,13 @@ Table rules:
 ## Why file > chat
 
 User feedback 2026-07: direct chat delivery gets missed or washed away by later messages, and the assistant itself may forget the links in later turns. A timestamped file in the project root is re-openable, clickable in any markdown viewer, and survives the session.
+
+## ⚠ These files are DISPOSABLE — never cite one from the knowledge base (2026-08-17)
+
+`search_results_*.md` is gitignored at the project root, i.e. **untracked scratch output**. Any given file
+may be deleted, or simply never have existed in a fresh checkout. So:
+
+- **Never link to a specific `search_results_<timestamp>.md` from a `knowledge/` file or from `QUERY.md`** —
+  it becomes a dead link the moment the scratch file is cleaned up. Record the **format** in the KB, not a filename.
+- Conversely, the deliverable itself is still the right place for the volatile stuff (live prices, query_ids,
+  seller links). Durable method and measured *shapes* go to `knowledge/`; the disposable snapshot goes to the file.
