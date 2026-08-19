@@ -170,7 +170,12 @@ FAST = int(os.environ.get("POE_FAST", "0"))
 
 
 def _load_poesessid():
-    """POESESSID from setting.py (env-backed), walking up from this file."""
+    """POESESSID via setting.py, walking up from this file.
+
+    setting.py resolves the env var -> .poesessid (gitignored one-line file in the
+    project root, the single manual slot). Falls back to the env var directly if no
+    setting.py is found.
+    """
     import importlib.util
     d = os.path.dirname(os.path.abspath(__file__))
     for _ in range(8):

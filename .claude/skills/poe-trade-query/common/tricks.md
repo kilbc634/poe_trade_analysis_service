@@ -14,7 +14,7 @@ Controlled test 2026-07 against the search POST: bare `User-Agent: Mozilla/5.0` 
 
 **Escalation ladder if a plain-HTTP call still gets blocked (user-confirmed policy 2026-07):**
 1. Full realistic UA (usually enough — Cloudflare scores a normal UA high).
-2. Add cookies from `.poe_cookies.json` (project root, gitignored) — holds `POESESSID`, `cf_clearance`, and the UA they were captured under. `cf_clearance` is bound to **IP + UA**, so always send it with the stored `user_agent` (but it is only needed for the Cloudflare-gated `/data/*` endpoints, NOT search/fetch). Do NOT store POETOKEN (short-lived login-only OAuth JWT, not needed for trade APIs). **A logged-in POESESSID matters for far more than whisper/buy: it puts search/fetch on a SEPARATE, near-unlimited rate-limit pool** — see "The header counters are a DECOY" below. Prefer sourcing it from `setting.py` (env-backed) over the cookie cache for bulk jobs.
+2. Add cookies from `.poe_cookies.json` (project root, gitignored) — holds `POESESSID`, `cf_clearance`, and the UA they were captured under. `cf_clearance` is bound to **IP + UA**, so always send it with the stored `user_agent` (but it is only needed for the Cloudflare-gated `/data/*` endpoints, NOT search/fetch). Do NOT store POETOKEN (short-lived login-only OAuth JWT, not needed for trade APIs). **A logged-in POESESSID matters for far more than whisper/buy: it puts search/fetch on a SEPARATE, near-unlimited rate-limit pool** — see "The header counters are a DECOY" below. Prefer sourcing it from `setting.py` over the cookie cache for bulk jobs — `setting.py` resolves env → `.poesessid` (the single manual slot, gitignored). For ad-hoc `curl` outside Python, substitute it at call time **and gate it** (`test -s .poesessid && curl … "Cookie: POESESSID=$(cat .poesessid)"` — an ungated missing file goes out anonymous and looks like success, see "POESESSID 的存放" below) and never read the value into the conversation. Full arrangement: the "POESESSID 的存放" section below.
 3. Still blocked → add full browser-parity headers (template from a real Chrome capture): `accept: */*`, `accept-language`, `origin: https://www.pathofexile.com`, `referer: <this realm's trade search page URL — see the realm's QUERY.md>`, `x-requested-with: XMLHttpRequest`, `sec-fetch-dest: empty`, `sec-fetch-mode: cors`, `sec-fetch-site: same-origin`, and the `sec-ch-ua*` client-hint family matching the UA (`sec-ch-ua: "Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"`, `sec-ch-ua-mobile: ?0`, `sec-ch-ua-platform: "Windows"`, …).
 4. Last resort → open-poe-trade headed browser, let the challenge clear, then go back to plain HTTP.
 
@@ -23,7 +23,7 @@ Controlled test 2026-07 against the search POST: bare `User-Agent: Mozilla/5.0` 
 > ⚠ **This step can be permission-blocked, and then it fails silently (2026-07-28).** Reading the cookie values out of the browser was **denied by the permission classifier** ("Blocked by classifier"), so that session's refresh never happened and the cache stayed 24 days stale while the task carried on via in-page fetch. Consequences to plan around:
 > - **Never assume the refresh succeeded.** After attempting it, re-read `saved_at` to confirm it actually moved; if it didn't, say so instead of reporting the cache as refreshed.
 > - The task itself does **not** need the cookie: in-page fetch already runs on the logged-in pool. The refresh only benefits *future* plain-HTTP runs — so a denial is not a reason to stop or to re-ask.
-> - To make it work unattended, the user must allow that specific export command in settings (`permissions.allow`); otherwise the only path is the user refreshing `setting.py` / the cache by hand. Per [the POESESSID-expiry policy below](#poesessid-過期時的處置順序使用者指定-2026-07-28先問再-fallback), ask them once, don't loop on it.
+> - To make it work unattended, the user must allow that specific export command in settings (`permissions.allow`); otherwise the only path is the user refreshing the POESESSID (see open-poe-trade Step 1) / the cache by hand. Per [the POESESSID-expiry policy below](#poesessid-過期時的處置順序使用者指定-2026-07-28先問再-fallback), ask them once, don't loop on it.
 >
 > **Ready-made:** `.claude/skills/open-poe-trade/refresh_poe_cookies.py` does the export + write (with a downgrade guard, and it re-reads the file to report what actually landed). It is allowlisted in `.claude/settings.local.json`, so it runs unattended. Details in that skill's **Step 4**.
 
@@ -161,16 +161,50 @@ POE1 那支另有兩個實用件：**雙傳輸層**（POESESSID 死了自動改�
 
 **Default output rule (user-confirmed 2026-07):** for price checks, do NOT navigate the browser to the results page — just give the user the search-result URL(s) to copy (build them per the realm's QUERY.md). This holds even when a browser happens to be open. Only `goto` the results page when the user explicitly asks to see it.
 
+## POESESSID 的存放：`.poesessid`，不是環境變數（2026-08-19 定案）
+
+token 放在專案根目錄的 **`.poesessid`**（單行純文字，gitignored）。`setting.py` 在版控裡，
+所以它的 `os.getenv('POESESSID', '')` 預設值**永遠留空**——這條是硬規則，任何改動都不得
+把值寫回去。使用者的習慣是把新 token 貼進那個引號，`.claude/hooks/vacuum_poesessid.py`
+（UserPromptSubmit hook，註冊在版控的 `.claude/settings.json`）會在他下一則訊息時搬進
+`.poesessid` 並清空 `setting.py`。所以**在 `setting.py` 裡看到 token 是搬運前的正常狀態，
+不是事故**：別為它發警告、也別自己動手去清，hook 會處理（空值不覆蓋，沒貼東西時它完全不動作）。
+這個安排是使用者定案的，**不要提議搬去別的地方、也不要提醒它不安全**。
+
+**為什麼是檔案而不是環境變數**（實測 2026-08-19）：環境變數只在**啟動子行程的那一刻**由父行程
+複製下去，子行程改不動父行程，行程結束就消失。Bash / PowerShell 工具**每次呼叫都是新 shell**，
+前一次的 `export` / `$env:` 不會留到下一次；而執行中的 Claude Code 本體的環境表格從它啟動起
+就固定了，**沒有任何 hook 或腳本能熱插入**。`.claude/settings.local.json` 的 `env` 雖然能注入，
+但那是 session 啟動時讀的，換 token 要重開。反過來，檔案是「用的時候才讀」，所以**改完下一條
+命令就吃到新值**——不必重開 session、不必重啟 Claude Code。這就是它比 env 更適合的原因。
+
+**檔案不存在時的行為（實測 2026-08-19）**：`setting.py` 回空字串、poe2 那支印診斷後 `exit 2`、
+poe1 的 `transport()` 改走 `browser`、PowerShell 的 `Get-Content` 直接丟例外——這些都 fail 得很大聲。
+**唯一的陷阱是 ad-hoc 的 Bash 單行**：`$(cat .poesessid)` 在缺檔時只把錯誤寫到 stderr，
+命令替換得到空字串，於是 header 變成 `Cookie: POESESSID=` 而請求**照樣以匿名身分送出**，
+落進匿名池的隱藏配額（~30 次後 ~600 秒懲罰）。也就是說「檔案不見了」會被誤讀成「限流變嚴了」。
+所以 ad-hoc 取用一律加 `test -s .poesessid &&` 守門。
+
+取用方式（shell 替換、PowerShell 的 `.Trim()`、不要把值讀進對話）見
+`../../open-poe-trade/SKILL.md` 的 Step 1。
+
 ## POESESSID 過期時的處置順序（使用者指定 2026-07-28，**先問再 fallback**）
 
 發現 POESESSID 過期（回應 `Rules=Ip`、沒有 `Account`）時，**不要自己默默切備援**：
 
-1. **先問使用者要不要手動更新**——他偏好自己去拿一把新的貼進 `setting.py` / 環境變數，
+1. **先問使用者要不要手動更新**——他偏好自己去拿一把新的貼進 `setting.py` 的 getenv 預設值
+   （UserPromptSubmit hook 會在他下一則訊息時把它搬進 `.poesessid`），
    因為那才是能讓後續純 HTTP 腳本、`scavenger.py` 都恢復正常的根治做法。
 2. **等 60 秒。** 60 秒內沒回覆，就直接走下面的 in-page fetch 備援，不要卡住整個任務。
 3. 之後若使用者補上了新的 POESESSID，優先切回純 HTTP（快得多，也不必開瀏覽器）。
 
-**「先問」的理由**：in-page fetch 只是繞過去，`setting.py` 裡那把仍然是壞的；
+**不要用格式判斷有效性（使用者指定 2026-08-19）。** token 有沒有效**只有打 API 才知道**，
+而且官方哪天換格式無法預測。更重要的是：「已過期」與「格式不對」對我來說本來就分不出來，
+**也不該分**——一律當作**失效**，走上面這同一條流程（先問使用者、等 60 秒、再 fallback）。
+所以 `.claude/hooks/vacuum_poesessid.py` 只管搬運、不做 32-hex 之類的形狀檢查，
+也不要在任何腳本裡加這種前置驗證——唯一的判定點是實際請求的回應。
+
+**「先問」的理由**：in-page fetch 只是繞過去，`.poesessid` 裡那把仍然是壞的；
 下次任何不經瀏覽器的工具照樣會失敗。
 
 ## UA 紀律：**絕對不要寫死 UA**（使用者提醒 2026-07-28）
@@ -191,7 +225,7 @@ POE1 那支另有兩個實用件：**雙傳輸層**（POESESSID 死了自動改�
 
 ## POESESSID 過期時的備援：用已登入的瀏覽器做 in-page fetch（2026-07-28 實測）
 
-`setting.py` 與 `.poe_cookies.json` 兩把 POESESSID 都過期（回應只有 `Rules=Ip`、沒有 `Account`）時，
+`.poesessid`（`setting.py` 讀的就是它）與 `.poe_cookies.json` 兩把 POESESSID 都過期（回應只有 `Rules=Ip`、沒有 `Account`）時，
 **不必向使用者要新 cookie，也不必去瀏覽器裡把 cookie 撈出來**（後者可能被權限層擋下，而且沒必要）：
 
 1. `playwright-cli open --headed --persistent` 開站——persistent profile 通常還留著登入狀態，

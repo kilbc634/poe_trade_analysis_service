@@ -111,9 +111,10 @@ EXCLUDE_IDS = set()                     # item ids sold mid-session -> re-optimi
 ANON = "--anon" in sys.argv             # opt in to the anonymous pool (see docstring)
 
 def _load_poesessid():
-    """Read POESESSID from setting.py (walk up from CWD & this file to find it);
-    fall back to the env var. Returns '' if none. setting.py itself just does
-    os.getenv('POESESSID',''), so the env is the same source it would use."""
+    """Read POESESSID via setting.py (walk up from CWD & this file to find it);
+    fall back to the env var. Returns '' if none. setting.py resolves the env var
+    -> .poesessid (gitignored one-line file in the project root, the single manual
+    slot), so both paths end at the same value."""
     import importlib.util
     seen = []
     for base in (os.getcwd(), os.path.dirname(os.path.abspath(__file__))):
@@ -174,8 +175,8 @@ def req(url, data=None):
                 if POESESSID and not _auth_checked:      # confirm the cookie logged us in
                     _auth_checked = True
                     if "Account" not in (resp.headers.get("X-Rate-Limit-Rules") or ""):
-                        print("!! POESESSID from setting.py did NOT authenticate (likely "
-                              "expired). Refresh it in setting.py, or rerun with --anon to\n"
+                        print("!! POESESSID did NOT authenticate (likely expired). Refresh "
+                              ".poesessid, or rerun with --anon to\n"
                               "   proceed anonymously (hits the hidden ~30-request penalty).",
                               flush=True)
                         sys.exit(2)
@@ -460,13 +461,13 @@ def main():
     os.makedirs(WORKDIR, exist_ok=True)
     if "--optimize-only" not in sys.argv:      # network stages need a rate-limit pool
         if not POESESSID and not ANON:
-            print("!! No POESESSID in setting.py — anonymous trade access hits an\n"
+            print("!! No POESESSID found — anonymous trade access hits an\n"
                   "   UNDOCUMENTED hidden quota (~30 fetches then a ~600s IP penalty;\n"
                   "   see ../common/tricks.md). The logged-in pool is separate and ran\n"
-                  "   50 fetches with zero penalty. Put a fresh POESESSID in setting.py,\n"
-                  "   or rerun with --anon to proceed anonymously anyway.", flush=True)
+                  "   50 fetches with zero penalty. Put a fresh POESESSID in .poesessid\n"
+                  "   (project root, one line), or rerun with --anon anyway.", flush=True)
             sys.exit(2)
-        print(f"[mode] {'AUTH (setting.py POESESSID)' if POESESSID else 'ANON (--anon)'}", flush=True)
+        print(f"[mode] {'AUTH (POESESSID via setting.py)' if POESESSID else 'ANON (--anon)'}", flush=True)
         for name, (body, _n) in SEARCHES.items():
             search(name, body)
         for name, (_body, n) in SEARCHES.items():

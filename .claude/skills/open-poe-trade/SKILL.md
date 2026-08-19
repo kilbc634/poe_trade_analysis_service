@@ -65,13 +65,31 @@ Build every URL from this table using `REALM` + `LEAGUE` from `setting.py` — *
 
 ## Step 1 — Get the POESESSID
 
-1. Read `setting.py` and look at the `POESESSID` line:
+**The token lives in `.poesessid`** — project root, one line of plain text, gitignored. `setting.py` is version-controlled and its `os.getenv('POESESSID', '')` default is deliberately empty. This arrangement is settled: don't propose moving the token elsewhere and don't warn that it is unsafe. Why a file rather than an env var is in [`../poe-trade-query/common/tricks.md`](../poe-trade-query/common/tricks.md) ("POESESSID 的存放").
+
+1. **Never read the value into the conversation.** Don't `cat` it, don't Read it, don't print it, don't type it into a command string (command strings land in context and in the permission-allowlist history). Let the shell substitute it at the moment of use:
+   ```bash
+   # Bash — command substitution keeps the value out of the transcript.
+   # ALWAYS gate on `test -s`. Without it a missing or empty .poesessid expands to an
+   # EMPTY cookie and the request still goes out — ANONYMOUS (measured 2026-08-19:
+   # header became `Cookie: POESESSID=`). `cat`'s "No such file" only reaches stderr
+   # and is easy to miss, and on /api/profile the result is a 401 that looks exactly
+   # like an expired token. On search/fetch it silently lands on the anonymous pool's
+   # hidden ~30-request quota and its ~600s penalty — i.e. a missing file reads as
+   # "the rate limit got strict". Gate it, and treat the gate failing as "no token".
+   test -s .poesessid && curl -s -H "Cookie: POESESSID=$(cat .poesessid)" https://www.pathofexile.com/api/profile
    ```
-   POESESSID = os.getenv('POESESSID', '<default>')
+   PowerShell needs no such gate — `Get-Content` on a missing file throws. Neither do the
+   Python entry points: `setting.py` yields `''`, `gear_combo_optimizer_poe2.py` prints a
+   diagnosis and exits 2 before any request, and `gear_combo_optimizer_poe1.py`'s
+   `transport()` returns `'browser'` (anonymous HTTP is deliberately never used).
+   ```powershell
+   # PowerShell — .Trim() is required, the file ends with a newline
+   $env:POESESSID = (Get-Content .poesessid -Raw).Trim()
    ```
-   (grep it: `POESESSID = os.getenv` in `setting.py`.)
-2. If the default (the 2nd argument) is a **non-empty** string, use it.
-3. If it is empty (`''`), **ask the user for their POESESSID** — do not guess. Explain it's the `POESESSID` cookie from a logged-in pathofexile.com session (found via browser dev tools → Application → Cookies). Treat it as a secret: don't echo it back or commit it into `setting.py`.
+   Python needs nothing special: `setting.py` resolves env → `.poesessid` itself, so `from setting import POESESSID` and the optimizers' `_load_poesessid()` keep working unchanged.
+2. Confirm it exists without revealing it: `test -s .poesessid && echo present`.
+3. If it is missing or empty, **ask the user for a fresh one** — do not guess. It's the `POESESSID` cookie from a logged-in pathofexile.com session (browser dev tools → Application → Cookies). The user's habit is to paste it into `setting.py`'s getenv default; the `UserPromptSubmit` hook `.claude/hooks/vacuum_poesessid.py` moves it into `.poesessid` and re-blanks `setting.py` on their next message. So a token sitting in `setting.py` is a normal hand-off state, not an accident — don't warn about it, and don't put one there yourself.
 
 Also read `REALM` and `LEAGUE` from `setting.py` to build the correct URL (defaults: `poe2` / `Runes of Aldur`).
 
@@ -88,7 +106,9 @@ playwright-cli run-code "async page => { const c = await page.context().newCDPSe
 
 # b) inject the session cookie (skips the login form)
 #    NOTE: do NOT pass --path=/ — playwright-cli 0.1.14 rejects it ("Invalid cookie fields"); path defaults to / anyway.
-playwright-cli cookie-set POESESSID <POESESSID> --domain=.pathofexile.com --httpOnly --secure
+#    Gated on test -s for the same reason as Step 1: a missing file would inject an EMPTY
+#    cookie, and the Step 3 probe would then read as "session invalid" instead of "no token".
+test -s .poesessid && playwright-cli cookie-set POESESSID "$(cat .poesessid)" --domain=.pathofexile.com --httpOnly --secure
 
 # b2) pre-select "Instant Buyout" as the default status. The trade site persists the status dropdown in a
 #     localStorage key (per the routing table); seeding it means a fresh trade page (no query_id) opens on
@@ -122,7 +142,7 @@ Expected: step (d) returns `LOGGED-IN <account>#####`.
   ```bash
   playwright-cli --raw eval "(async()=>{const r=await fetch('/api/profile');return r.status})()"
   ```
-  **200** = logged in; **401** = the POESESSID is not an authenticated session. Note POESESSID **also exists when logged out**, so a well-formed 32-char value can still be anonymous (and the server won't necessarily replace it — this session just fails auth). On 401, re-injecting won't help — ask the user for a POESESSID from a **currently logged-in** pathofexile.com session (confirm the account name shows top-right first; logging in rotates the value), then update `setting.py` / the env var. You can also pre-validate a POESESSID from the shell without a browser: `GET https://www.pathofexile.com/api/profile` with header `Cookie: POESESSID=<value>` → 200 vs 401.
+  **200** = logged in; **401** = the POESESSID is not an authenticated session. Note POESESSID **also exists when logged out**, so a well-formed 32-char value can still be anonymous (and the server won't necessarily replace it — this session just fails auth). On 401, re-injecting won't help — ask the user for a POESESSID from a **currently logged-in** pathofexile.com session (confirm the account name shows top-right first; logging in rotates the value), then have them paste it in (their habit: `setting.py`'s getenv default, which the hook moves into `.poesessid` — see Step 1). You can also pre-validate a POESESSID from the shell without a browser: `GET https://www.pathofexile.com/api/profile` with header `Cookie: POESESSID=<value>` → 200 vs 401.
 
 ## Step 4 — 回寫 cookie 暫存（每次開完瀏覽器都要做）
 
