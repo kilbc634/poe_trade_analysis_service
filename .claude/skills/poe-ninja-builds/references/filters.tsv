@@ -1,0 +1,18 @@
+category	param	multi_semantics	sample_value	notes
+Items	items	AND	Mageblood	獨特物與稀有部位混在一起（Rare Gloves / Magic Flask 也是選項）
+Main Skills	skills	AND	Winter Orb	主技能；同時列 base 與 transfigured（如 Cyclone of Tumult）
+Main Skill Modes	skillmodes	AND	Normal	Normal / Totem / Trap / Mine
+Vestigial Modifiers	vestigialmods	AND	#%25+increased+Rarity+of+Items+found	神殿腰帶 buff（Shrine Belt Buffs 是其外層標題）；值含 # 佔位符
+Second Ascendancy	secondascendancy	AND	None	3.29 血脈 Bloodline；None 佔 77%25
+Passives	keypassives	AND	Chaos+Inoculation	核心天賦 keystone
+Anointed Passives	anointed	AND	Disciple+of+the+Slaughter	項鍊敷油
+Atlas	atlasskills	AND	Mounting+Modifiers	地圖圖鑑天賦
+Bandits	bandit	AND	Eramir	單數；5 個選項
+Pantheon	pantheon	AND	The+Brine+King	
+Masteries	masteries	AND	12%25+increased+Mana+Reservation+Efficiency+of+Skills	值是精通的完整敘述文字
+Runegrafts	runegrafts	AND	Runegraft+of+Treachery	
+Tattoos	tattoos	AND	Tattoo+of+the+Ngamahu+Firewalker	
+Animated Guardian	guardianitems	AND	Leer+Cast	注意參數名不是 guardian
+All Gems	allgems	AND	Faster+Attacks+Support	含輔助寶石，比 skills 更廣
+Weapon Configuration	weaponmode	AND	Wand+/+Shield	值含斜線，不必轉義
+(左欄職業列表)	class	OR	Elementalist	不在那 16 組篩選面板內；base class 與 ascendancy 共用同一參數

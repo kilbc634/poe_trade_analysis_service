@@ -1,0 +1,54 @@
+group	label	slug	default
+(fixed)	Name	character	yes
+Character	Level	level	yes
+Character	Movement Speed	movementspeed	
+Character	Item Rarity	itemrarity	
+Character	Strength	str	
+Character	Dexterity	dex	
+Character	Intelligence	int	
+Character	Keystones	keystoneskill	yes
+Defensive	Life	life	yes
+Defensive	ES	energyshield	yes
+Defensive	Ward	ward	
+Defensive	Mana	mana	
+Defensive	Fire Resistance	fireres	
+Defensive	Cold Resistance	coldres	
+Defensive	Lightning Resistance	lightningres	
+Defensive	Chaos Resistance	chaosres	
+Defensive	Armour	armour	
+Defensive	Evasion	evasion	
+Defensive	Block	block	
+Defensive	Spell Block	sblock	
+Defensive	Spell Dodge	sdodge	
+Defensive	Spell Suppression	suppress	
+Defensive	Physical Taken As	phystakenas	
+Simulated	EHP	ehp	yes
+Simulated	Physical Max Hit	physicalmax	
+Simulated	Fire Max Hit	firemax	
+Simulated	Cold Max Hit	coldmax	
+Simulated	Lightning Max Hit	lightningmax	
+Simulated	Chaos Max Hit	chaosmax	
+Simulated	Lowest Max Hit	lowestmax	
+Simulated	DPS	dps	yes
+Recovery	Life Regen	liferegen	
+Recovery	ES Regen	energyshieldregen	
+Recovery	Mana Regen	manaregen	
+Recovery	ES Recharge	energyshieldrecharge	
+Recovery	Life Recharge	liferecharge	
+Recovery	Life Recoup	liferecoup	
+Recovery	Mana Recoup	manarecoup	
+Recovery	ES Recoup	energyshieldrecoup	
+Recovery	Life on Block	lifeonblock	
+Recovery	ES on Block	energyshieldonblock	
+Recovery	Life on Suppress	lifeonsuppress	
+Charges	Endurance Charges	echarges	
+Charges	Frenzy Charges	fcharges	
+Charges	Power Charges	pcharges	
+Items	# Cluster Jewels	cjewels	
+Items	# Large Cluster Jewels	lcjewels	
+Items	# Medium Cluster Jewels	mcjewels	
+Items	# Small Cluster Jewels	scjewels	
+Items	# Unique Equipment	uequip	
+Items	# Mirrored Items	mequip	
+Items	# Mirrored Weapons	mweapons	
+Items	# Mirrored Armours	marmours	
