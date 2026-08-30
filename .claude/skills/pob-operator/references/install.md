@@ -66,13 +66,19 @@ session 從專案往上一層就找得到。
 
 ## Step 3：建立入口
 
-把這個 skill 的 `template/` 兩個檔案複製過去（**不要手打重抄**）：
+把這個 skill 的 `template/` 複製過去（**不要手打重抄**）：
 
 ```bash
-mkdir -p "<選定路徑>/pob-headless"
-cp "<skill 目錄>/template/pob.py"       "<選定路徑>/pob-headless/"
-cp "<skill 目錄>/template/make_boot.py" "<選定路徑>/pob-headless/"
+D="<選定路徑>/pob-headless"
+mkdir -p "$D/output"
+cp "<skill 目錄>/template/pob.py"        "$D/"
+cp "<skill 目錄>/template/make_boot.py"  "$D/"
+cp "<skill 目錄>/template/README.md"     "$D/"
+cp "<skill 目錄>/template/output_README.md" "$D/output/README.md"
 ```
+
+`README.md` 是給**人**看的——使用者之後打開這個資料夾，要知道它是什麼、
+會不會動到 PoB、能不能刪。`output/` 則是產出的落腳處，見 Step 3 之後的說明。
 
 `pob.py` 會自己找 PoB 安裝位置，依序是：`POB_INSTALL` 環境變數 →
 預設的 `%APPDATA%\Path of Building Community` → 解除安裝登錄檔

@@ -113,6 +113,23 @@ python pob.py "路徑\某個build.xml"
 
 **欄位名、怎麼換寶石、怎麼改設定、怎麼選技能 part** → [`references/api.md`](references/api.md)
 
+### 產出寫哪裡
+
+**跑分析產生的任何東西——腳本、量測 json、報告、log——一律寫進
+`<入口>/pob-headless/output/`，不要丟在入口根目錄。** 根目錄只該有
+`pob.py`、`make_boot.py`、`headless_boot.lua`、`README.md`、`cache/`、`output/`
+（外加 Python 自己產生的 `__pycache__/`）。
+
+在 `output/` 裡跑腳本要 import `pob`，記得把上層加進路徑：
+
+```python
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from pob import PoB
+```
+
+`output/` 可以隨時清空，裡面沒有運作所需的東西。
+
 ---
 
 ## 一定要知道的坑
