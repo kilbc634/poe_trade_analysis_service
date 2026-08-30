@@ -149,18 +149,22 @@ ctypes 回呼回傳值時必定存取違規（回傳 0 個值正常，回傳 ≥
 實務上不影響：`load_build_code()` / `export_code()` 都在 Python 端做編解碼，
 失去的只有 PoB 自己的 UI 匯入路徑（`ImportTab` / `CompareTab` / `PartyTab`），headless 用不到。
 
-**沒有官方 API 文件。** 官方對 headless 的全部說明就是 `docs/rundown.md` 的一段話。
-需要查沒記載的用法時，三個來源比 README 誠實：
+**沒有官方 API 文件，`api.md` 也只收了實際用過的東西**——光 `mainOutput`
+就有 740 個欄位，收錄的遠不到零頭。**這是預期狀態，不是缺陷**：需要沒記載的
+功能時自己挖，挖到了寫回 `api.md`。
 
-- PoB repo 的 `spec/`（實際 API 用例）
-- `.github/workflows/test.yml`（正確的 `LUA_PATH` 與啟動方式）
-- 使用者安裝目錄的 `Modules/Calc*.lua`（數值怎麼算出來的，可直接 grep）
-
-**要查 PoB 內部怎麼算某個東西，直接 grep 使用者的安裝目錄**，那就是完整原始碼：
+底氣來源：**使用者的安裝目錄就是完整的 Lua 原始碼**，而且執行中的物件都能即時列舉。
 
 ```bash
 grep -rn "Manaforged" "$APPDATA/Path of Building Community/Modules/CalcTriggers.lua"
 ```
+
+三種手法（runtime 列舉 / grep 原始碼 / 差分比對）與可直接套用的 recipe
+→ [`references/exploring.md`](references/exploring.md)
+
+**本機沒有 PoB 的原始碼 repo**（這個設計刻意不 clone）。`spec/` 那些官方 API
+用例要上 GitHub 查；但 `Modules/`、`Classes/`、`Data/` 安裝目錄裡都有，
+本機的更快也更準——版本一定對得上。
 
 ---
 
@@ -168,5 +172,6 @@ grep -rn "Manaforged" "$APPDATA/Path of Building Community/Modules/CalcTriggers.
 
 - 首次安裝 → [`references/install.md`](references/install.md)
 - API 速查 → [`references/api.md`](references/api.md)
+- **自己挖沒記載的用法** → [`references/exploring.md`](references/exploring.md)
 - 抓 poe.ninja 角色的 import code → `poe-ninja-builds` skill（角色頁上有個
   `<input>`，值以 `eN` 開頭就是），配 `playwright-cli` 取值

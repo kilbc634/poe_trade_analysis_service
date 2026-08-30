@@ -1,7 +1,10 @@
 # PoB 內部 API 速查
 
 > 全部是讀原始碼確認的，**官方沒有文件**。實測於 PoB **v2.67.2** / POE1 3.29。
-> 要查沒記載的東西，直接 grep 使用者的安裝目錄——那就是完整原始碼。
+>
+> **這份是隨用隨長的，不是完整參考**——光 `mainOutput` 就有 740 個欄位，
+> 這裡收的遠不到零頭。查不到要的東西是正常的，用
+> [`exploring.md`](exploring.md) 的手法自己挖，**挖到了寫回這裡**。
 
 `p.eval(chunk)` 執行一段 Lua，`return` 的東西會被轉成字串傳回 Python。
 要結構化資料就在 Lua 裡 `require("dkjson").encode(...)`，Python 端再 `json.loads`。
