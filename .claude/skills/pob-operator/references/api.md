@@ -255,3 +255,14 @@ Lightning Arrow of Electrocution 的 `dpsMultiplier` 來自層數倍率。拿來
 **存取違規（access violation）**：多半是 ctypes 綁定寫錯。已知一個：
 `lua_tolstring` 的 `restype` **必須是 `c_void_p` 而不是 `c_char_p`**——後者會把回傳值
 轉成 bytes 並在第一個 NUL 截斷，處理壓縮資料時就會讀出界。
+
+---
+
+## 星團珠寶
+
+天賦排位由 `notableSortOrder` 決定（升冪對應軌道索引），以及程式化建立／裝備／配點／存檔
+的完整流程 → [`cluster-jewels.md`](cluster-jewels.md)
+
+三個最容易踩的坑先講：`GetSocketedJewel` 讀的是 `build.spec.jewels[nodeId]` 而不是
+`itemsTab.slots`；`subGraphs` 的 key 是產生的 nodeId 不是插槽 nodeId；
+群組 enchant 有兩行時**兩行都要寫**，否則 `clusterJewelValid` 是 nil。
