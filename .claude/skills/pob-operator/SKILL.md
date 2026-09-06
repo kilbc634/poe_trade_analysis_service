@@ -4,7 +4,7 @@ description: Drive Path of Building (POE1) from code — open a build, swap gems
 allowed-tools: Bash(python:*) Bash(py:*) Read Grep Glob Write Edit AskUserQuestion
 ---
 
-> POE1 only（PoB Community）｜最後實測：**2026-08-31**，PoB **v2.67.2**
+> POE1 only（PoB Community）｜最後實測：**2026-09-05**，PoB **v2.67.2**
 > PoB 有 PoE2 版本（`Path of Building Community (PoE2)`），**尚未實測**，本檔不得直接套用。
 
 # 操作 Path of Building

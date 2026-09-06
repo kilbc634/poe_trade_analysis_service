@@ -266,3 +266,82 @@ Lightning Arrow of Electrocution 的 `dpsMultiplier` 來自層數倍率。拿來
 三個最容易踩的坑先講：`GetSocketedJewel` 讀的是 `build.spec.jewels[nodeId]` 而不是
 `itemsTab.slots`；`subGraphs` 的 key 是產生的 nodeId 不是插槽 nodeId；
 群組 enchant 有兩行時**兩行都要寫**，否則 `clusterJewelValid` 是 nil。
+
+
+---
+
+## 換裝備：用物品原文（raw text）建物件，再指派到插槽
+
+實測 2026-09-05（PoB v2.67.2）。`Item` 的建構子直接吃**遊戲裡 Ctrl+C 的那種物品文字**，
+所以最省事的路徑是：把交易站 fetch 回來的欄位組回一段 raw，丟給 `new("Item", raw)`。
+
+```lua
+local it = build.itemsTab
+local ni = new("Item", [==[
+Rarity: RARE
+Woe Trail
+Murder Boots
+Item Level: 83
+Quality: 20
+Implicits: 0
++117 to maximum Life
++34% to Chaos Resistance
+30% increased Movement Speed
+{crafted}+15% to Cold and Chaos Resistances
+]==])
+if not ni.base then return "NO BASE" end      -- 底基名打錯就是 nil，一定要檢查
+ni:NormaliseQuality(); ni:BuildModList()
+it:AddItem(ni, true)                          -- true = noAutoEquip
+it.slots["Boots"].selItemId = ni.id
+if it.activeItemSet and it.activeItemSet["Boots"] then
+    it.activeItemSet["Boots"].selItemId = ni.id
+end
+it:PopulateSlots(); build.buildFlag = true
+```
+
+要點：
+
+- **raw 用 Lua 長字串 `[==[ ... ]==]` 包**，避開跳脫地獄（同 `pob.py:load_build`）。
+- **格式**：`Rarity:` → 名字 → **底基名** → `Item Level:` / `Quality:`（可省）→
+  `Implicits: N` → N 行隱性 → 其餘詞綴。**`Implicits:` 那個數字是「行數」不是「詞綴數」**，
+  一條顯示成兩行的詞綴要算兩行。
+- **工藝詞綴前面加 `{crafted}`**。想模擬「買回來自己上工藝」就直接多寫一行。
+- 只想算數值時，**把隱性當成一般詞綴、`Implicits: 0`** 也不影響總量——差別只在 UI 分類。
+- **`AddItem(item, true)` 之後一定要自己指派插槽**；傳 `false` 會自動裝到第一個空的合法插槽，
+  雙戒這種要指定左右手的情況不能用。
+- 插槽名就是 XML `<Slot name=...>` 那些字串：`Boots` / `Gloves` / `Body Armour` /
+  `Helmet` / `Ring 1` / `Ring 2` / `Amulet` / `Belt` / `Weapon 1` / `Weapon 2`。
+- `it:AddDisplayItem()` / `it:CreateDisplayItemFromRaw()` 也能用，但前者會清掉 `displayItem`，
+  拿不到 `id`，反而要多繞一圈。上面這條路徑直接握有 `ni.id`。
+- **全程沒有存檔**，`build` 只在記憶體裡改。要保住使用者的 build 就別呼叫任何 save。
+
+## 抗性缺口與「還差多少」：`Missing*Resist`
+
+`mainOutput` 直接有算好的缺口，不用自己拿 75 去減（也就不會踩到最大抗性被改過的坑）：
+
+| 欄位 | 意義 |
+|---|---|
+| `MissingFireResist` / `MissingColdResist` / `MissingLightningResist` / `MissingChaosResist` | 距離**該抗性上限**還差幾點 |
+| `FireResistOver75` 等 | 超過 75 的部分（判斷最大抗性有沒有被拉高：沒被拉高時滿抗的 `Missing` 是 0） |
+| `FireResistTotal` / `ChaosResistTotal` | 未截頂的總值 |
+| `TotemFireResist` 等 | 圖騰的另一套，別拿錯 |
+
+⚠ **`FireResistMax` 這種欄位不存在**（回 `nil`）。想確認最大抗性用 `FireResistOver75`
+或直接看 `Missing*Resist` 在滿抗時是不是 0。
+
+## 驗證「有條件的天賦大師」有沒有生效：對照法，不要找 flag
+
+天賦大師常帶條件（例：Life Mastery「**胸甲上沒有 Life 詞綴時** +15% 最大生命」）。
+去猜 `modDB:Flag()` 的條件名很容易撲空（`Condition:NoLifeModsOnBodyArmour` 就不存在）。
+**可靠的做法是跑兩次比差值**：
+
+```
+A：穿上要驗的胸甲          → Life 4183, Spec:LifeInc 106
+B：同一件多一條 +100 生命  → Life 4079, Spec:LifeInc 91     ← 掉 15
+```
+
+`Spec:LifeInc` 是**天賦樹提供的 %increased Life 總和**，條件不成立時會直接少掉那 15，
+比讀任何 flag 都直接。上例還順便量到：那條 `+100 to maximum Life` 是**淨損 104 血**。
+
+同樣手法可以驗任何條件式加成——**改一個變因、跑兩次、比 `mainOutput`**，
+比在原始碼裡找條件名快也準（見 [`exploring.md`](exploring.md) 的差分比對）。
