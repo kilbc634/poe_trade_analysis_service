@@ -27,6 +27,17 @@ POE1 lives under `/trade/` on the same site as POE2's `/trade2/`. The transport 
 | live websocket | `wss://www.pathofexile.com/api/trade/live/{league}/{query_id}` | 實測 OPEN；加 `/pc/` 的變體 ERROR |
 
 - **給使用者點的結果頁 URL：`https://www.pathofexile.com/trade/search/{league}/{query_id}`**（實測所見，見下方 UI 攔截那節的 `/trade/search/Allflame/EBO2DX8YS5`）。聯盟名要 URL-encode。`../common/tricks.md` 的預設交付規則是「只給連結、不要 `goto` 過去」，連結就照這個格式組。
+- ⭐ **結果頁網址有兩種形式，長的那種不是 query_id**（2026-09-05 實測）：
+  - 短的（例 `EBO2DX8YS5`）是**存下來的查詢**，可以 `GET /api/trade/search/{league}/{id}` 取回。
+  - 長的（`H4sIAAAA…`，數百字元）是**把整個 query 用 gzip 壓縮再 base64url 編碼塞進網址**。
+    拿它去 GET 會回 **404 `{"error":{"code":1,"message":"Resource not found"}}`**——
+    它從來沒被存到伺服器上。**要在本地解**：
+    ```python
+    import base64, gzip, json
+    q = json.loads(gzip.decompress(base64.urlsafe_b64decode(blob + "=" * (-len(blob) % 4))))
+    ```
+    解出來就是完整的 query JSON，可以直接 POST 到 `/api/trade/search/{league}` 重跑。
+    使用者貼這種連結過來時就用這條路，不要先試 GET。
 - **搜尋回應存 100 個 result hash**（與 POE2 相同）——深抓價格階梯可用後段。
 - **`status.option` 五個值，與 POE2 完全相同**：`securable`（Instant Buyout）/ `available`（Instant Buyout and In Person）/ `onlineleague`（In Person, Online in League）/ `online`（In Person, Online）/ `any`。
 - **限流與 POE2 共用同一個池**（實測交錯打兩款遊戲，`trade-search-request-limit` 的 IP 計數連續累加）——詳見 [`../common/tricks.md`](../common/tricks.md)。
@@ -56,6 +67,78 @@ POE1 lives under `/trade/` on the same site as POE2's `/trade2/`. The transport 
 - 判斷工藝詞綴看 `flags.crafted` 或 `domain=="crafted"` 皆可；**別去找 `craftedMods` 欄位，它不存在**。
 - `hash` 一律是 `stat.<group>.<id>` —— 比查詢時用的 id（`crafted.stat_3372524247`）多一個 `stat.` 前綴，比對前要去掉。
 - 每條都自帶 `mods[].tier` 與 `magnitudes` 的 roll 區間，可直接判斷這條是不是接近該階上限，不必另外查表。
+### ⭐ 一條詞綴可以渲染成多行／多條 stat —— 分組鍵是 `mods[].(name, tier)`（2026-09-05 實測）
+
+這是解析 POE1 詞綴最容易靜靜算錯的地方，而且**交易站其實有給我們分組資訊**，只是不在明顯的位置。
+
+> **先講結論（使用者 2026-09-05 指正的重點）**：這些形狀**對數值加總幾乎沒影響**——
+> 複合詞綴的每個 stat 各自生效，合併顯示的數字也是正確總量。
+> **真正會踩坑的是「還有沒有空前綴／空後綴」的判斷**，也就是能不能再上一條工藝詞綴。
+> 那個判斷必須**精準數詞綴數量**，而顯示行數不等於詞綴數量——
+> 作法與實測見 [knowledge/crafting.md](knowledge/crafting.md) 的「備援：從 fetch 回傳自己判斷後綴空位」。
+
+**三種形狀，不要混為一談——其中只有 A 和 C 在現行遊戲裡存在：**
+
+| 形狀 | 長相 | 怎麼判 | 正確處理 |
+|---|---|---|---|
+| **A 換行斷句** | 一條 stat 的句子被折行，第二行是句子的後半 | `description` 內含字面 `\n` | **合成一行判斷條件**。拆開的話後半段會被當成常駐效果 |
+| ~~**B 一條 stat 綁兩個獨立效果**~~ | `+7% to Chaos Resistance` ＋ `Minions deal …` 同一個 `description`<br>⛔ **這形狀在現行遊戲裡不存在**：唯一的實例是 `crucible.mod_28602`，而 **Crucible 已從遊戲移除**（使用者 2026-09-05）| — | **不必處理** |
+| **C 一條詞綴 = 多條 stat** | 神廟手套：暴擊/傷害一行、抗性一行 | **兩個獨立的 `description`，`mods[].(name, tier)` 相同** | 靠 `(name, tier)` 分組，**與換行無關** |
+
+**C 的實測證據**（一隻 Wyrmscale Gauntlets）：
+
+```jsonc
+{ "description": "+46% to Lightning Resistance",
+  "hash": "stat.explicit.stat_1671376347",
+  "mods": [ { "name": "of Puhuarte", "tier": "S0" } ] }
+{ "description": "54% increased Critical Strike Chance against Shocked Enemies",
+  "hash": "stat.explicit.stat_276103140",
+  "mods": [ { "name": "of Puhuarte", "tier": "S0" } ] }   // ← 同一條詞綴
+```
+
+同一件上 `29% increased Armour and Evasion` 與 `13% increased Stun and Block Recovery`
+也共用 `("Rhino's", "P3")`。所以 **`mods[].(name, tier)` 就是「一次 roll 給了什麼」的單位**，
+[knowledge/crafting.md](knowledge/crafting.md) 數空後綴時說的「要數不重複的 `(name, tier)`」用的是同一把鑰匙。
+
+**規模（掃完 `references/stats.tsv` 全部 17325 列，2026-09-05）：**
+
+含字面 `\n` 的共 **2025** 列，但其中 **1682 列是 `crucible`**——**那個機制已經從遊戲移除**
+（見下方「已死的 stat 群組」），所以**現行遊戲裡只有 343 列**，而且全部落在會出現在
+可交易裝備上的 group：`explicit 286`／`fractured 27`／`implicit 17`／`enchant 7`／
+`scourge 3`／`delve 2`／`crafted 1`。
+
+這 343 列裡：
+
+- **只有 1 列**碰到「抗性／生命／屬性」的評分正則：
+  `explicit.stat_3403551644` = `Inflict Fire Exposure on Hit against Enemies with\n5 Cinderflame, applying #% to Fire Resistance`
+  ——形狀 A（條件在第一行、數字在第二行）。
+- 第二行像「新的一句」的有 **56 列**，逐筆看過，**0 列**帶扁平生命／抗性／屬性。
+
+**所以在現行遊戲裡，「換行」只會是形狀 A，不存在需要逐行判條件的反例。**
+
+**由此得到的解析規則**（實作見
+[`../scripts/gear_combo_res4_poe1.py`](../scripts/gear_combo_res4_poe1.py) 的 `_scan_mods`）：
+
+> **條件守衛判「整個 description（換行接起來）」，數值評分「逐行」。**
+
+理由就是上面那組數字：**形狀 A 是唯一會碰到評分的換行情形，而形狀 B 沒有活著的實例**，
+所以這條規則不是取捨、是直接正確的。
+
+反過來「一律逐行判條件」會漏掉 A 的條件、**高估抗性**——那是會交出「看起來達標其實破防」的方向。
+（這個坑我自己踩過：先寫成逐行判，直到使用者質疑「裝備上應該沒有這種複合詞綴」才回頭查，
+發現支撐逐行判的那個例子出自已移除的機制。）
+
+⚠ **不要試著用啟發式去分辨 A 和 B**。那 56 筆的「第二行像不像新句子」分類器只是
+**做那次稽核用的**，不該進解析流程——既然 B 不存在，就沒有要分辨的東西。
+
+那 56 筆的實際內容供參考（都與評分無關）：**藥劑的雙免疫**
+（`Grants Immunity to Chill …` ＋ `Grants Immunity to Freeze …`）、
+**地圖裝置的 `Players have …` 重複行**、**多行的觸發／循環敘述**
+（`Every 5 seconds, gain one of the following …`）。
+
+⚠ **`grep '\n' stats.tsv` 會給你假數字**：BRE 把 `\n` 當成字母 `n`，會 match 到幾乎每一列
+（實測回 15983／17325）。要數字面反斜線加 n **必須用 `grep -F`**。
+
 - `extended.mods` 在這件樣本是**空的**（`{}`）——階級資訊在各詞綴物件裡，不在 extended 底下。
 - **描述文字是純文字，沒有內嵌 wiki 連結括號**（`+31% to Fire Resistance`、`+128 to maximum Life`）。這件樣本的 5 條詞綴都沒有；若之後遇到含括號的再補記。
 - **whisper / 前往藏身處：`POST /api/trade/whisper`**，body `{"token":"<JWT>"}`。角色**離線時回 `400 "Your account must be in-game to use this feature"`**，不會對賣家送出任何東西；線上時會真的執行（實測回 `{"success":true}`，約 1.9 秒）。實作範例見 [`script/wholesalers.py`](../../../../script/wholesalers.py)。
@@ -187,6 +270,32 @@ GET      /api/trade/fetch/{h1},{h2},{h3}?query=EBO2DX8YS5&pseudos[]=pseudo.pseud
 
 格式 `<group>.stat_<hash>`（pseudo 例外，用具名 id 如 `pseudo.pseudo_total_life`）。**14 個群組**，同一段詞綴文字在不同群組是不同 id：
 
+### ⚠ 配裝時要排除的兩個群組——**但理由完全不同，不要混為一談**
+
+（使用者 2026-09-05 逐一確認）
+
+| 群組 | 條目 | 狀態 | 配裝時 | 其他用途 |
+|---|--:|---|---|---|
+| `crucible` | 2492 | ⛔ **機制已從遊戲移除很久** | 排除 | **沒有**。整批死資料 |
+| `mercenary` | 534 | ✅ **機制還在** | 排除 | **有**：它是「**傭兵物品**」（傭兵契約那類）的篩選用詞綴，與裝備詞綴是**完全不同的東西** |
+
+- **`crucible` 是死的**：不要拿它的條目做統計、不要照它的形狀設計解析、也不要花時間驗它的群組結構。
+  `stats.tsv` 還留著它只是因為交易站的篩選定義沒清乾淨；`stats[].type` 的
+  `crucible`（Crucible Passive Tree Path）與 `misc_filters.crucible_item` 同理，都是遺留欄位。
+- **`mercenary` 是活的，只是不屬於裝備這個領域**。所以**不可以**把它當成死資料——
+  它就是傭兵物品查價會用到的那一批。**「配裝時無視」≠「這個群組沒用」**，
+  寫工具時別把它一起黑名單掉。
+  （本專案另有查傭兵契約價的用途，見 `script/` 那邊；把 mercenary 當死資料會直接害到它。）
+
+⚠ **這會影響統計**：報「全表有幾筆」之前，先想清楚問的是哪個領域。
+
+- 問「裝備詞綴的規模」→ 要扣掉 `crucible`（死）**與** `mercenary`（別的領域）：
+  17325 − 2492 − 534 = **14299**。
+- 只扣死資料 → 17325 − 2492 = 14833。
+- 不扣 → 17325，而這個數字曾經讓本檔上面那個換行統計被 1682 筆死資料**放大 6 倍**
+  （2025 vs 實際 343）。順帶一提那 343 筆裡 **`mercenary` 是 0 筆**，
+  所以換行這件事本來就與傭兵無關。
+
 | group | 條目數 | | group | 條目數 |
 |---|--:|---|---|--:|
 | `explicit` | 7433 | | `crucible` | 2492 |
@@ -204,6 +313,8 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 ```
 
 ⚠ 有 2025 筆詞綴原文含換行，TSV 裡轉義成字面 `\n` 以維持「一列一筆」。比對整段文字時記得處理。
+**但其中 1682 筆是已移除的 `crucible`，存活的只有 343 筆**（`mercenary` 0 筆）——
+怎麼正確處理換行見上面「一條詞綴可以渲染成多行／多條 stat」那節。
 
 ### Stat 群組類型（`stats[].type`）— 八種
 
@@ -240,6 +351,23 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 語義是「這些詞綴一條都不能有」。實例：君主之膚排除 16 個不能用的核心天賦，
 在架 3116 → 1982（15 條版本量測），抽驗確認無漏網（見 [knowledge/releveling.md](knowledge/releveling.md)）。
 **核心天賦在 `stats.tsv` 裡就是以天賦英文名為文字的 explicit 詞綴**（例：`explicit.stat_2648570028` = `Ancestral Bond`）。
+
+✅ **`pseudo.pseudo_has_shaper_influence` 實測可用，而且要**不帶 value**送（2026-09-05）**：
+`{"id": "pseudo.pseudo_has_shaper_influence", "disabled": false}`，不要給 `value.min`。
+驗證方式是同一組條件加減這一條看 `total` 變化：鞋子 120 → **67**、
+戒指（未腐化未鏡像＋有空前綴）生命≥90 從 10000+ → **1080**、三抗≥90 從 10000+ → **451**。
+影響力（Shaper/Elder/…）**不在 `misc_filters` 的 18 個布林裡**，只能走 pseudo。
+
+⚠ **`#% increased Cooldown Recovery Rate` 在 `stats.tsv` 有兩個同文字的 id，只有一個是裝備詞綴**
+（2026-09-05 實測，同一組鞋子條件各送一次）：
+
+| id | 同條件在架數 |
+|---|--:|
+| `explicit.stat_1004011302` | **67** ← 這個才是裝備上的 |
+| `explicit.stat_239144` | **0** |
+
+`grep` 出多個同文字 id 時**不要挑一個就用**——把每個單獨送一次看 `total`，0 的那個就是別的東西
+（地圖詞綴／光環之類）。不確定就包成 `count` 群組當 OR，兩邊都涵蓋。
 
 ✅ **`count` 群組實測可用（2026-07-28）**：`{"type":"count","value":{"min":1},"filters":[…]}` 回 200，可用來表達「下列條件至少滿足 N 條」的 OR 語義。實例（找可上工藝抗性的裝備）見 [knowledge/crafting.md](knowledge/crafting.md)。
 
@@ -281,19 +409,21 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
 > **優先度低（使用者 2026-07-27 判定）** —— 這幾項實務上很少用到，**不要主動花時間去補**。等真的碰到需求時再照下面的線索驗一次就好。
 
 - ❓ **`weight2` 的語義與 `weight` 差在哪**（`weight` 本身已於 2026-08-17 實測可用，見上）。
-- ❓ **`crucible` / `mercenary` 兩種群組的條目結構**——型別名確定了，但群組內 filters 長什麼樣沒看過。這兩種在 `references/stats.tsv` 各有 2492 / 534 條專屬詞綴。
+- ~~❓ **`crucible`** 群組的條目結構~~ → **結案：不驗。機制已移除**（使用者 2026-09-05），群組整批作廢，見上面「已死的群組」。
+- ~~❓ **`mercenary`** 群組的條目結構~~ → **配裝這條線結案：機制還在，但它是「傭兵物品」的篩選詞綴，與裝備詞綴無關，配裝一律無視**（使用者 2026-09-05）。**真的要查傭兵物品本身時再驗**，那時它就不是可以跳過的東西了——別把它當成死群組。
 - ❓ **fractured / synthesised / scourge / veiled 等其他旗標的回傳長相**。crafted 已確認（見上），其餘照同樣方法抓一件比對即可。
 
 *（2026-07-28 已結案：`trade_filters.account` 的值形狀、`price.option` 與 `category.option` 的完整清單、結果頁 URL 格式，全部實測完畢並寫進上面各節。）*
 
 ## 配裝工具（多部位聯合求解）
 
-**先照需求挑對腳本**——兩支都是 POE1，差別在目標函數與約束軸數：
+**先照需求挑對腳本**——三支都是 POE1，差別在目標函數、約束軸數與部位結構：
 
 | 需求 | 用哪支 |
 |---|---|
 | 目標只有**生命**、約束只有**三抗** | [`gear_combo_optimizer_poe1.py`](../scripts/gear_combo_optimizer_poe1.py) |
 | 目標是**生命＋ES 加權**、還要顧**力量／敏捷**等屬性 | [`gear_combo_es_poe1.py`](../scripts/gear_combo_es_poe1.py) |
+| 約束含**混沌抗**、或**同一類別要買兩件**（雙戒）、或每個部位各有自己的硬條件 | [`gear_combo_res4_poe1.py`](../scripts/gear_combo_res4_poe1.py) |
 
 **[`../scripts/gear_combo_optimizer_poe1.py`](../scripts/gear_combo_optimizer_poe1.py)** —— POE1 專用，
 2026-07-28 以「30c 配齊六部位補血補抗」實戰驗證過。子命令：
@@ -317,6 +447,26 @@ grep -i "maximum life" references/stats.tsv | grep -E "^(pseudo|explicit)"
   改過候選評分（例如工藝置換的修正）就要重新量。求解前會印 ETA。
 - 多一個子命令 **`reparse`**：快取只存詞綴文字、不存工藝旗標，所以牽涉工藝判定的
   解析修正無法回溯套用，要用它重抓（只抓「可能帶工藝」的列，不是整池）。
+
+**[`../scripts/gear_combo_res4_poe1.py`](../scripts/gear_combo_res4_poe1.py)** —— 2026-09-05 建立，
+以「10 divine 配鞋子／手套／胸甲／雙戒，四軸（火／冰／雷／**混沌**）補到位、最大化總生命」建成。
+**已實際採買驗證（2026-09-05）**：使用者買下 CP 甜蜜點那套（4200c 預算只花 1158c）並回報
+「運作良好都有達到我的要求」——混沌軸、戒指的工藝扣除、同色工藝互斥、胸甲 Life 詞綴閘門、
+價格換算，整條鏈都對得上實機，不只是對得上 selftest。
+與前兩支的差異，每一項都是前兩支做不到而不是重複造輪子：
+
+- **混沌抗是約束軸**。前兩支**完全不解析混沌**——`gear_combo_es_poe1.py` 還特地把
+  `+#% to Fire and Chaos Resistances` 的混沌那一半丟掉（註解寫 "chaos res is out of scope"）。
+- **五個部位，其中兩個是同一個 category**（雙戒）。戒指對必須是**兩筆不同掛單**，
+  所以 J 半邊不是 `combine()` 而是 `ring_pairs()`，會跳過 `a["id"] == b["id"]`。
+  selftest 也多驗這一條。
+- **每個部位有自己的硬條件**（Shaper 影響、移速、CDR、神廟複合詞、「完全不能有 Life 詞綴」、
+  「要留一格前綴給工藝」），所以沒有單一的 `q()`，改成 `slot_query(slot, stats)`。
+- **同色單元素抗性互斥已實作**（前兩支未修，見 [knowledge/crafting.md](knowledge/crafting.md)）：
+  `_scan_mods()` 記下每條抗性的**詞綴群組**，`expand_crafts()` 拒絕群組已被原生佔用的工藝。
+- **工藝展開含元素＋混沌複合（15/15）**，因為**工藝台沒有純混沌抗**這條。
+- 目標函數是純生命，ES／閃避只報告不計分。多一個環境變數 **`POE_TEMPLE=fire`**（見下）。
+- 精確解（`POE_FAST=0`）在這題**跑得完**（候選集比 ES 那題小），實測 200／400／800／0 四階同分。
 
 要點：**端點、欄位名、stat id、詞綴正則都是 POE1 profile**（別跟 `gear_combo_optimizer_poe2.py` 混用）；
 求解器是精確解（抗性截頂＋Pareto＋3-D 後綴最大值），`POE_FAST=75` 可在 6 秒內重算；

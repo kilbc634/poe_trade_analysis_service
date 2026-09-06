@@ -123,7 +123,18 @@ Implicit Modifiers Cannot Be Changed
 但**複合詞綴屬於不同的詞綴群組，不受此限**：已有單火抗的裝備，
 **仍然可以**上 `+20% 火冰複合`（火總量因此變成 native + 20）。
 
-### ⚠ 求解器目前沒有檢查這件事（未修）
+### ✅ 已在第三支求解器實作（2026-09-05）
+
+[`../../scripts/gear_combo_res4_poe1.py`](../../scripts/gear_combo_res4_poe1.py) 修好了：
+`_scan_mods()` 把每一條抗性詞綴歸到一個**群組**
+（`res_fire` / `res_cold` / `res_light` / `res_chaos` / `res_fire_cold` /
+`res_fire_light` / `res_cold_light` / `res_fire_chaos` / `res_cold_chaos` /
+`res_light_chaos` / `res_all`），分開記 native 與 crafted；
+`expand_crafts()` 再把「群組已被原生佔用」的工藝選項剔除。
+複合詞綴照樣可選，因為它們是不同群組——與本節規則一致。
+**另外兩支仍未修**，下面那段留著當說明。
+
+### ⚠ 前兩支求解器沒有檢查這件事（未修）
 
 [`../../scripts/gear_combo_optimizer_poe1.py`](../../scripts/gear_combo_optimizer_poe1.py)
 的 `expand_crafts()` 對每個可工藝候選一律展開全部 6 種工藝選項，
@@ -247,15 +258,49 @@ effective_res = (現有抗性 − 已存在的工藝抗性) + 該部位最佳工
 - `P1` / `P2` / `P8` … = **前綴（prefix）**
 - `S3` / `S6` / `S9` … = **後綴（suffix）**
 
-⚠ **一條顯示文字可能由多條詞綴合成**，所以**要數不重複的 `(name, tier)`，不能數顯示行數**。
-實測樣本：
+⚠ **顯示行數與詞綴數是兩回事，而且會「兩個方向同時發生」**，所以**只能數不重複的
+`(name, tier)`**。使用者 2026-09-05 提供的實例把兩個方向都湊在同一件上
+（`Rage Wrap Conquest Lamellar`，實抓）：
 
 ```jsonc
-{ "description": "+167 to maximum Life",
-  "mods": [ {"name": "Urchin's", "tier": "P2"},    // 複合前綴（同時給護甲）
-            {"name": "Fecund",   "tier": "P1"} ] } // 純生命前綴
-// "Urchin's" 也出現在 '+33 to Armour' 那一行 —— 同一條詞綴、兩行顯示
+{ "description": "+418 to Armour",
+  "mods": [ {"name":"Adaptable","tier":"P2"}, {"name":"Crocodile's","tier":"P1"} ] }
+{ "description": "+292 to Evasion Rating",
+  "mods": [ {"name":"Adaptable","tier":"P2"} ] }
+{ "description": "+226 to maximum Life",
+  "mods": [ {"name":"Prime","tier":"P1"}, {"name":"Crocodile's","tier":"P1"} ] }
 ```
+
+- **一條詞綴 → 多行**：`Adaptable` P2（護甲＋閃避複合）出現在 2 行；`Crocodile's` P1（護甲＋生命複合）也出現在 2 行。
+- **一行 → 多條詞綴**：`+226 to maximum Life` 這一行是 `Prime`（純生命）與 `Crocodile's`（複合）**合併顯示的總量**。
+- 這件實際是 **3 前綴（Adaptable / Crocodile's / Prime）＋ 3 後綴 = 全滿，一格工藝都上不了**，
+  但顯示只有 6 行、其中兩行還是合併值——**用眼睛數行數會判成有空位**。
+
+⛔ **`tier` 單獨不能當鍵，一定要 `(name, tier)`**：上面這件同時有
+`Crocodile's` **P1** 與 `Prime` **P1**（不同詞綴群組、各自都是自己那組的 T1）。
+另一隻 `Empyrean Gyre Two-Stone Ring` 也同時有 `Entombing` P1 與 `Virile` P1。
+只用 tier 去 dedupe 會把 3 前綴數成 2、誤判成還有空位。
+
+✅ **不會污染計數的（2026-09-05 實測）**：
+
+| 來源 | `mods[]` 回什麼 | 佔詞綴位嗎 |
+|---|---|---|
+| `implicitMods`（含 Two-Stone 的抗性隱性、Coral Ring 的生命隱性） | `[(None, None)]` | 不佔。tier 是 `None`，過濾 `if tier` 就跳過了 |
+| `enchantMods`（迷宮附魔，例 `Allocates Twin Terrors`） | `[(None, None)]` | 不佔，同上 |
+| **fractured 詞綴** | **混在 `explicitMods` 裡**、帶 `flags={'fractured': True}`、**有真實階級**（例 `Sapphire` P9、`Athlete's` P1） | **佔**，要算 |
+
+**所以「iterate 全部 mod 陣列 + 只收有 tier 的 + 用 `(name, tier)` 去重」這個作法是安全的**，
+不必為隱性／附魔做特例。⚠ 但**沒有獨立的 `fracturedMods` 陣列**，別去找它。
+
+### ⚠ 這件事對「評分」沒影響，只對「數格子」有影響（使用者 2026-09-05 指正）
+
+> 「上述的例子，在詞綴效果的計算是沒什麼問題的。就算是複合詞綴，他在效果上也是各別生效。
+> 比較容易踩坑的點是，對於是否還有 空前綴/空後綴 的判斷。」
+
+合併顯示的 `+226 to maximum Life` **就是正確總量**，複合詞綴的每個 stat 也都各自生效，
+所以拿顯示文字做數值加總不會錯。**真正會出事的只有「還能不能再上一條工藝」這個判斷**——
+而它偏偏是壓成本的關鍵（買空後綴的便宜貨自己補抗性，見本檔開頭）。
+排查解析器時把力氣放在計數，不要放在加總。
 
 判斷式（稀有裝前綴 3 條、後綴 3 條上限）：
 
@@ -294,6 +339,27 @@ Praetor Crown 3 條（前後綴全滿）、Pig-Faced Bascinet 3 條。**空位�
 
 ⚠ **展開清單尚未包含飾品的全元素 +12（三色各）與三條元素＋混沌 +15**——
 飾品的總點數最優解（36）目前估不到，缺混沌時也沒有工藝選項可挑。下次動這支腳本時補上。
+（[`../../scripts/gear_combo_res4_poe1.py`](../../scripts/gear_combo_res4_poe1.py) 已補上
+**三條元素＋混沌 +15/+15**——那是**工藝台唯一能給混沌抗的路**，工藝台**沒有純混沌抗**這條。
+它的飾品沒有全元素選項是因為那題的戒指工藝格被指定給 `-# to Total Mana Cost of Skills`，
+不是因為不存在。）
+
+## ⛔ 工藝格是**整件共用一格**：前綴工藝與後綴工藝互斥（使用者確認 2026-09-05）
+
+「一件只能一條工藝」不是「一條前綴工藝＋一條後綴工藝」。所以當使用者打算把某件的工藝格
+**指定給某條前綴**（實例：戒指上 `-# to Total Mana Cost of Skills`），
+那件就**不能再上抗性後綴工藝**，估值時：
+
+- **不要對它展開工藝候選**；
+- **要把它現有工藝詞綴的貢獻整個扣掉**（使用者指示：「你要用拿掉他之後的數值做計算」），
+  因為那條工藝會被洗掉換成指定的那條。扣的時候**生命要重算不能相減**
+  （`pseudo_total_life = 平擊 + 力量//2`，整數除法不可分配）。
+- 搜尋端對應的條件是 `count(min 1)` 包住
+  `pseudo_number_of_empty_prefix_mods ≥1` 與 `pseudo_number_of_crafted_prefix_mods ≥1`
+  ——空前綴，或有一條可以洗掉重上的工藝前綴。
+
+**撿到便宜**：實測撈回來的戒指裡，本來就帶著 `Non-Channelling Skills have -7 to Total Mana Cost`
+（`domain=crafted`）的並不罕見——那等於工藝已經幫你做好了，交付時要講，不要叫使用者再做一次。
 
 **同一份市場快照的 A/B**（六部位、F129/C62/L91、三抗各留 +5 緩衝、`POE_FAST=75`）：
 
