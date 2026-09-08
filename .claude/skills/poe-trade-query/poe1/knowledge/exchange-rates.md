@@ -4,6 +4,8 @@
 
 # 通貨匯率 — POE1 怎麼拿真實市場價
 
+> 本檔只管**匯率**。「任何物品的**查價**一律走 poe2scout、不要用交易站 exchange/search 掛牌價」是兩款遊戲共通規則（含 `Currencies/ByCategory` 的用法、掛牌價實測偏差、端點挖法），寫在 [`../../common/tricks.md`](../../common/tricks.md)。
+
 poe2scout 雖然名字叫 poe2，但**同時服務 POE1**。要換算就從這裡拿，不要用猜的，也不要用交易站的通貨掛牌板。
 
 ## 關鍵：路徑段是 RealmApiId，不是遊戲名

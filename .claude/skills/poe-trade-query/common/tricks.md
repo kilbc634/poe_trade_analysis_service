@@ -298,3 +298,75 @@ CLI 的 stdout 會直接進上下文。限流照樣要守：頁內同樣讀得�
 **Rule:** use the equivalent-mode cap only as a coarse pre-filter (pad it generously), then filter by the **actual listed price** from the fetch API. Alternatively run a literal-currency control query (`{"option": "<currency>", "max": N}`) — it matches only listings priced in that currency, but compares by literal amount, no conversion involved.
 
 For real market rates: never guess, and never use the trade-site exchange **listing board** (a thin manual board with bait listings and wide spreads, not the in-game matching market). Each realm's KB documents its own rate source.
+
+## 查價的分工：通貨走 poe2scout、裝備走 trade search、exchange 端點一律不用（使用者定案 2026-09-09）
+
+**三條規則，兩款遊戲共通，別互相套用：**
+
+1. **通貨與大宗可堆疊物品**（通貨、碎片、精華、聖甲蟲……）的行情 → **走 poe2scout**（端點見下）。
+2. **裝備**（rare／unique，逐件議價的東西）→ **只能走交易站 `/api/trade/search` + `/api/trade/fetch`**。
+   poe2scout 沒有裝備的逐件在架資料，這條路無可替代——本檔其他章節（先探頂再撈池、深抓價格階梯、
+   多部位配裝求解）講的全都是這條路，**不受本節影響**。
+3. **`/api/trade/exchange` 端點一律不要再用**，不論查什麼。大宗成交早就搬進遊戲內的通貨交易所
+   （POE1 的 Faustus），那塊掛牌板只剩殘量與釣魚價，「幾乎沒有人在那裡掛牌」。
+
+⚠ **界線畫在「是不是大宗物品」，不是畫在「用哪支端點」。** 同一批碎片改用 `search` 查也一樣不可信，
+因為它讀的是同一批殘量掛牌。search 之所以對裝備成立，是因為裝備本來就是逐件、非大宗的市場，
+它的掛牌就是真實報價本身。
+
+實測代價（2026-09-09，POE1 Allflame，十種 uber 王碎片——**用交易站查大宗物品的後果**）：
+
+| | 交易站掛牌最低 | poe2scout 成交價 | 偏差 |
+|---|--:|--:|--:|
+| Reality Fragment | 353c | 218.9c | 高估 **61%** |
+| Traumatic Fragment | 150c | 59.1c | 高估 **154%** |
+| Awakening Fragment | 30c | 7.3c | 高估 **311%** |
+| Blazing Fragment | **零筆掛單** | 78.1c | 誤判成「沒有行情」 |
+
+這十種在交易站的線上掛單各只有 3–10 筆，其中約半數是同幾個帳號把每一種碎片都掛 10 div 的掃版價。
+**照掛牌價算出來的期望收益排序會整個翻掉**（結論從「刷 Abomination」變成「刷 Ziggurat」）——
+因為便宜品項被高估的倍率遠大於貴品項，掛牌誤差不是均勻的雜訊，是有方向的偏誤。
+
+⚠ 交叉驗證會給假的安心感：查大宗物品時 exchange 端點與 search 端點的數字互相吻合
+（比率式與掛牌式對得上），**但兩者讀的是同一批殘量掛牌**，一致不代表正確。
+這次就是靠這個一致性誤判為可信。（裝備沒有這個問題——那裡只有 search 一個來源，也不需要對帳。）
+
+### 端點（realm 參數化，兩款遊戲同一支）
+
+```bash
+UA="<full browser UA>"
+# 分類查價：category 用複數，fragments 不是 fragment
+curl -s -H "User-Agent: $UA" \
+  "https://poe2scout.com/api/{RealmApiId}/Leagues/{LEAGUE}/Currencies/ByCategory?category=fragments&page=1&perPage=50&referenceCurrency=chaos"
+# 計價幣別清單（確認 Price 的單位）
+curl -s -H "User-Agent: $UA" \
+  "https://poe2scout.com/api/{RealmApiId}/Leagues/{LEAGUE}/ReferenceCurrencies"
+```
+
+`{RealmApiId}` POE1 PC 是 `pc`、POE2 是 `poe2`；完整對照與匯率（div/chaos）的取法留在各 realm 的
+`knowledge/exchange-rates.md`，本節只管「哪一類東西該走哪裡」這條共通規則。
+（poe2scout 另有 `.../Leagues/{league}/Items/{id}` 與 uniques 分類，但那是**聚合**行情，
+不是逐件在架清單——要交付購買連結、要驗某件還在不在架，還是得回 trade search。）
+
+回傳是分頁（`CurrentPage` / `Pages` / `Total` / `Items`），每個 item 的關鍵欄位：
+
+- `ApiId` — **與交易站 static data 的 id 同名**（`reality-fragment`），兩邊可直接對接
+- `CurrentPrice` / `CurrentQuantity` — 現價與目前掛量
+- `PriceLogs[]` — 近 7 天逐日 `Price` + `Quantity`（當日成交量）
+
+**`Quantity` 跟 `Price` 一樣要看**，它決定這個價敢不敢用。同一批碎片裡 Cosmic 標 197c 排第三高，
+但日成交量只有 1,458、掛量 140，是全表最薄的；Reality 12,582/日就穩。薄的品項報價要往下打折。
+`referenceCurrency` 決定 `Price` 的單位，**一定要顯式指定**，別假設預設是 chaos。
+
+### 分類 slug 與端點怎麼挖
+
+沒有 categories 端點，也**沒有可用的 OpenAPI**——`/api/openapi.json`、`/openapi.json`
+2026-09-09 實測分別回 404 與 SPA 殼頁（舊筆記裡那條連結已失效）。試錯很便宜：
+slug 猜錯只是回 `{"Total":0,"Items":[]}`，不會報錯。已驗證有料：`currency`（88 筆）、
+`fragments`（188 筆）、`expedition`（4 筆）；`fragment`（單數）、`essence`、`delirium`、
+`ritual`、`breachcatalyst`、`runes` 都是空的。
+
+要窮舉端點就去挖前端：`GET /` 的 HTML 裡有 `/assets/manifest-*.js`，那份列出所有 route chunk；
+抓下對應 chunk 再 grep `/api/`，模板字串會直接露出路徑——這次就是這樣挖到
+`Currencies/ByCategory` 與 `Leagues/{league}/Items/{id}`。注意站台根路徑對任何未知路徑
+都回 200 + SPA HTML，所以**要用「404」而不是「HTML」來判斷『路徑錯了但 API 活著』**。

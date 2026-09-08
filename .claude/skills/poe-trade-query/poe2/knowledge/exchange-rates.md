@@ -1,6 +1,7 @@
 > ⛔ **POE2 ONLY** ｜ 遊戲版本：**POE2 0.5 "Runes of Aldur"** ｜ 最後整理：**2026-07-27**（各條事實的日期見檔內逐條標註）
-> poe2scout 是 POE2 專屬資料源，幣別體系（exalted 為基準）也是 POE2 的。
-> POE1 的匯率來源另尋，寫進 `../../poe1/knowledge/`。若 `REALM=poe1`，停止並改讀那裡。
+> ⚠ **poe2scout 並非 POE2 專屬，它同時服務兩款遊戲**（路徑段是 RealmApiId，POE2 是 `poe2`）——本檔只有幣別體系（exalted 為基準）與讀數是 POE2 專屬。
+> POE1 的對應檔是 `../../poe1/knowledge/exchange-rates.md`。若 `REALM=poe1`，停止並改讀那裡。
+> 「**查價一律走 poe2scout，不要用交易站 exchange 掛牌**」是兩款遊戲共通規則，見 [`../../common/tricks.md`](../../common/tricks.md)。
 
 # Currency exchange rates — how to get real market rates (通貨匯率查詢)
 
@@ -36,7 +37,7 @@ Notes:
 - Snapshots are hourly (`GET .../ExchangeSnapshot` → current `Epoch`; source has ~5 min delay).
 - `RelativePrice` is per-pair: the same currency can differ slightly between pairs (e.g. divine 709.6 in divine|exalted vs 804.8 in chaos|divine at one reading — the latter reflects that pair's own trades). For a headline rate use the pair against exalted; for cross rates divide within one pair.
 - Prefer high-`VolumeTraded` pairs; thin pairs are noisy.
-- Other routes: `/api/Realms` (realm ids), `.../Currencies/ByCategory`, per-pair history `.../Currencies/Pairs/{id1}/{id2}/History`. OpenAPI spec: `https://poe2scout.com/api/openapi.json`.
+- Other routes: `/api/Realms` (realm ids), `.../Currencies/ByCategory`, per-pair history `.../Currencies/Pairs/{id1}/{id2}/History`. ~~OpenAPI spec~~ 已失效（2026-09-09 實測 `/api/openapi.json` 回 404、`/openapi.json` 回 SPA 殼頁）；端點挖法見 [`../../common/tricks.md`](../../common/tricks.md)。
 
 Reference reading 2026-07 (Runes of Aldur), verified against the user's in-game screen (690–710): **1 div = 709.6 ex, 1 chaos ≈ 108 ex, 1 div ≈ 7.46 chaos**.
 
