@@ -345,3 +345,13 @@ B：同一件多一條 +100 生命  → Life 4079, Spec:LifeInc 91     ← 掉 1
 
 同樣手法可以驗任何條件式加成——**改一個變因、跑兩次、比 `mainOutput`**，
 比在原始碼裡找條件名快也準（見 [`exploring.md`](exploring.md) 的差分比對）。
+
+## 寶石品質的隱藏來源：插槽顏色相符 +10%（實測 2026-11-11，PoB v2.67.2）
+
+`SkillsTab:UpdateSocketGroups()` 會替「連線有指定 `slot`、該插槽有裝備、且寶石顏色與對應插槽顏色相同」
+的寶石設 `gemInstance.matchesSocket = true`，計算時品質 **+10**（`data.misc.MatchingSocketQualityBonus`）。
+
+- 連線沒指定 `slot`、或插槽沒裝備 → **沒有這 10%**。空白 build 量品質類效果時要先決定要不要算它，否則前後對照會差 10。
+- 用 raw 建的測試裝沒寫 `Sockets:` 時，PoB 給的預設插槽顏色不一定跟寶石相符（實測紅色輔助吃到、藍色主動技能沒吃到）。要精準就自己寫 `Sockets: B-R-...`。
+- 讀實際生效品質：`mainSkill.effectList[i].quality`（`srcInstance.quality` 是寶石本身的品質）。
+- 「Socketed Skill Gems」類詞綴只作用於主動技能寶石；「all Skill Gems」（Ashes of the Stars）也不加輔助。
