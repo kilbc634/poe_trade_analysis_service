@@ -101,3 +101,13 @@ vs `1457-20260829-44826`）。`timemachine` 空字串＝最新，不是「全部
 | `weaponmode` | `Bow / Quiver` | 5,627 |
 
 數字本身是 Allflame 當期快照，換聯盟即失效；這張表的用途是**證明參數名可用**。
+
+## 10. `Only show items of type` 是原生 `<select>`，可以用 `selectOption` 逐部位讀使用率（2026-11-11，Allflame）
+
+Items 面板預設只列前 12 名，幾乎全是「Rare 某部位」，看不到武器／盾／胸甲各自的分佈。
+那顆下拉是原生 `<select>`（用 `getByText` 點會 timeout），在 `playwright-cli run-code` 裡找出
+選項同時含 `Tincture` 與 `Weapon` 的那顆，`sel.selectOption({label: 'Weapon'})` 後再讀面板文字即可。
+**切部位不發請求**，所以一個群體把十個部位掃完仍只算一次查詢。
+
+從 Python 用 `subprocess` 呼叫 `playwright-cli goto <url>` 時，URL 裡的 `&` 會被 cmd 切斷、
+靜默落回未篩選的頁面（`Found N` 跟全體一樣就是中招）——改走 `bash -c` 並把 URL 用單引號包起來。
