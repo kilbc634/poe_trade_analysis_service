@@ -21,6 +21,6 @@ QUERY_IDS = [x.strip() for x in QUERY_IDS_RAW.split(",") if x.strip()]
 
 # 交易站 realm：'poe1' 或 'poe2'
 REALM = os.getenv('REALM', 'poe1')
-# 聯盟名稱，必須與 REALM 成對修改（POE1 例：Allflame；POE2 例：Runes of Aldur）
+# 聯盟名稱，必須與 REALM 成對修改（POE1 例：Covens；POE2 例：Runes of Aldur）
 # 只改 REALM 忘了改 LEAGUE 會拿另一款遊戲的聯盟名去打端點，通常回空結果而非報錯
-LEAGUE = os.getenv('LEAGUE', 'Allflame')
+LEAGUE = os.getenv('LEAGUE', 'Covens')
