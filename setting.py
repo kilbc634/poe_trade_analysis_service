@@ -1,4 +1,5 @@
 import os
+import re
 
 REDIS_HOST = os.getenv('REDIS_HOST', '172.17.0.1')
 REDIS_AUTH = os.getenv('REDIS_AUTH', 'cv*****')
@@ -17,7 +18,8 @@ if not POESESSID:
     except OSError:
         pass
 QUERY_IDS_RAW = os.getenv('QUERY_IDS', '')
-QUERY_IDS = [x.strip() for x in QUERY_IDS_RAW.split(",") if x.strip()]
+# 一行一個（Jenkins 文字參數），也相容舊的逗號分隔；id 本身是 base64url，不含空白與逗號
+QUERY_IDS = [x for x in re.split(r'[\s,]+', QUERY_IDS_RAW) if x]
 
 # 交易站 realm：'poe1' 或 'poe2'
 REALM = os.getenv('REALM', 'poe1')
