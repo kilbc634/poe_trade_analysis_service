@@ -343,6 +343,25 @@ curl -s -H "User-Agent: $UA" \
   "https://poe2scout.com/api/{RealmApiId}/Leagues/{LEAGUE}/ReferenceCurrencies"
 ```
 
+> ⚠ **2026-11-16 實測：API 搬家了。** `https://poe2scout.com/api/...` 現在對任何路徑都回 200 + SPA HTML
+> （不是 JSON、也不是 404）。真正的位址是 **`https://api.poe2scout.com/{RealmApiId}/...`——沒有 `/api` 前綴**
+> （例：`https://api.poe2scout.com/pc/Leagues`；Swagger 在 `https://api.poe2scout.com/swagger`）。
+> 本檔與各 realm `exchange-rates.md` 裡的舊網址都要照這個換。
+>
+> ⚠ **備用方案：poe.ninja——只在 poe2scout 用不了時才用**（使用者定案 2026-11-16）。通貨／大宗物品查價的
+> 首選永遠是 poe2scout；每次都先試 poe2scout，確認它真的沒有該聯盟或拿不到資料，才退到下面這組端點，
+> 並在回覆裡講明這次用的是備用來源。不要因為這次用過 poe.ninja 就把它當成常態路徑。
+>
+> 目前唯一一次觸發（同日實測，使用者也是第一次遇到，**不是已知的固定規律**）：POE1 3.30 Covens 開季第 3 天，
+> `/pc/Leagues` 仍把上一季標成 `IsCurrent`，查 Covens 回 `400 "Invalid league."`。當時改用的 poe.ninja 端點：
+> - 聯盟清單：`https://poe.ninja/poe1/api/data/index-state`（`economyLeagues`）
+> - 總覽：`https://poe.ninja/poe1/api/economy/exchange/current/overview?league={LEAGUE}&type={Currency|Fragment|...}`
+>   （`primaryValue` 以 chaos 計；`sparkline.data` 是相對 7 天前第一個有值日的累計 % 變化，可反推逐日價）
+> - 單品逐日歷史：`.../exchange/current/details?league={LEAGUE}&type={type}&id={tradeId}`
+>   → `pairs[]` 各幣別的 `history[]{timestamp, rate, volumePrimaryValue}`；`rate` 是「一個該物品值多少該幣」。
+> - 這些是**遊戲內通貨交易所**的成交資料。同站的 `economy/stash/...` 是掛牌價，別用
+>   （同日 Voidborn Reliquary Key：exchange 142c、stash 掛牌 5c，差了近 30 倍）。
+
 `{RealmApiId}` POE1 PC 是 `pc`、POE2 是 `poe2`；完整對照與匯率（div/chaos）的取法留在各 realm 的
 `knowledge/exchange-rates.md`，本節只管「哪一類東西該走哪裡」這條共通規則。
 （poe2scout 另有 `.../Leagues/{league}/Items/{id}` 與 uniques 分類，但那是**聚合**行情，
