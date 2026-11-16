@@ -17,9 +17,21 @@ if not POESESSID:
             POESESSID = _f.read().strip()
     except OSError:
         pass
+# 查詢 id 有兩個來源，合併後去重（保留順序）：
+#   QUERY_IDS      逗號分隔的一串（也容忍空白 / 換行）
+#   QUERY_ID_<n>   一格一個（Jenkins 上是 QUERY_ID_1 ~ QUERY_ID_10），依 n 由小到大接在後面
+# id 本身是 base64url，不含空白與逗號。多行值過不了 Jenkins 的 docker 外掛（只剩第一行），所以才拆成多格。
+def _split_ids(raw):
+    return [x for x in re.split(r'[\s,]+', raw) if x]
+
 QUERY_IDS_RAW = os.getenv('QUERY_IDS', '')
-# 一行一個（Jenkins 文字參數），也相容舊的逗號分隔；id 本身是 base64url，不含空白與逗號
-QUERY_IDS = [x for x in re.split(r'[\s,]+', QUERY_IDS_RAW) if x]
+_numbered = sorted(
+    (int(m.group(1)), v) for k, v in os.environ.items()
+    if (m := re.fullmatch(r'QUERY_ID_(\d+)', k))
+)
+QUERY_IDS = list(dict.fromkeys(
+    _split_ids(QUERY_IDS_RAW) + [x for _, v in _numbered for x in _split_ids(v)]
+))
 
 # 交易站 realm：'poe1' 或 'poe2'
 REALM = os.getenv('REALM', 'poe1')

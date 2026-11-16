@@ -41,7 +41,8 @@ Path of Exile（流亡黯道）官方交易站的**自動監聽 + 自動購買**
 | `REALM` | `poe2` | `poe1` 或 `poe2` |
 | `LEAGUE` | `Runes of Aldur` | 聯盟名稱（POE1 例：`Keepers`） |
 | `POESESSID` | （空） | 登入 session cookie。Live Search / 搶快購買需要；`getPayloadByUrlV2` 不需要 |
-| `QUERY_IDS` | （空） | 已存搜尋 id，一行一個（也接受逗號或空白分隔）。Live Search 監聽用全部；`scavenger.py` / `wholesalers.py` 為單線程，**只取第一個**（`QUERY_IDS[0]`） |
+| `QUERY_IDS` | （空） | 已存搜尋 id，逗號分隔。Live Search 監聽用全部；`scavenger.py` / `wholesalers.py` 為單線程，**只取第一個**（`QUERY_IDS[0]`） |
+| `QUERY_ID_1` … `QUERY_ID_<n>` | （空） | 一格一個 id，依編號接在 `QUERY_IDS` 之後並去重。id 很長時用這組較好貼（Jenkins job 開了 1~10）；多行值過不了 Jenkins 的 docker 外掛，所以不用多行 |
 | `SERVICE_HOST` | `http://tsukumonet.ddns.net:16666/` | Local 端呼叫服務端的位址 |
 | `REDIS_HOST` | `172.17.0.1` | Redis 位址（容器內連主機用 docker bridge gateway） |
 | `REDIS_AUTH` | `cv*****`（**需覆蓋為真實密碼**） | Redis 密碼 |
