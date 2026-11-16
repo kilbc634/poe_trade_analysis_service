@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import ssl
 import certifi
 import json
@@ -56,11 +57,34 @@ HEADERS_WHISPER = {
 fetch_queues = {}
 
 
+# === 短代號 ===
+# query id 是「查詢 JSON gzip 後的 base64url」，條件越多越長（實測 180~255+ 字元），
+# 直接當檔名會超過 Linux 的 255 bytes 上限，放在 console 前綴也難讀。
+# 所以檔名與 console 一律用 id 的 sha1 前 8 碼；同一個 id 每次算出來都一樣，重跑會接續寫同一個 log。
+def build_tags(query_ids):
+    digests = {qid: hashlib.sha1(qid.encode()).hexdigest() for qid in query_ids}
+    tags = {qid: d[:8] for qid, d in digests.items()}
+
+    # 8 碼撞號的那幾個改用 12 碼；12 碼還撞就直接失敗，不讓兩個查詢寫進同一個 log
+    values = list(tags.values())
+    for qid in query_ids:
+        if values.count(tags[qid]) > 1:
+            tags[qid] = digests[qid][:12]
+
+    if len(set(tags.values())) != len(tags):
+        raise RuntimeError(f"query id 的短代號取到 12 碼仍重複：{tags}")
+    return tags
+
+
+TAGS = build_tags(QUERY_IDS)
+
+
 # === Fetch Worker（每個 Query ID 有自己一個）===
 async def fetch_worker(session, query_id):
-    log_path = f"fetch_{query_id}.log"
+    tag = TAGS[query_id]
+    log_path = f"fetch_{tag}.log"
 
-    print(f"[WORKER] Start worker for {query_id}, log={log_path}")
+    print(f"[WORKER {tag}] Start worker, log={log_path}")
 
     while True:
         item_id = await fetch_queues[query_id].get()
@@ -104,9 +128,13 @@ async def fetch_worker(session, query_id):
         # log2_line += f"( Whisper {t2_elapsed*1000:.2f} ms )\n"
 
         # 追加寫入 log
-        with open(log_path, "a", encoding="utf-8") as f:
-            f.write(log_line)
-            # f.write(log2_line)
+        # 寫檔失敗只印出來、不讓 worker 結束，否則這個查詢之後的掛單都沒人處理
+        try:
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write(log_line)
+                # f.write(log2_line)
+        except OSError as e:
+            print(f"[WORKER {tag}] LOG WRITE FAILED {log_path}: {e}")
 
         fetch_queues[query_id].task_done()
 
@@ -115,9 +143,10 @@ async def fetch_worker(session, query_id):
 async def websocket_listener(query_id, session):
     ws_url = f"wss://www.pathofexile.com/api/{API_BASE}/live/{WS_LEAGUE_PATH}/{query_id}"
     ssl_context = ssl.create_default_context(cafile=certifi.where())
+    tag = TAGS[query_id]
 
     for times in range(3):
-        print(f"[WS {query_id}] Connecting...")
+        print(f"[WS {tag}] Connecting...")
 
         try:
             async with connect(
@@ -126,7 +155,7 @@ async def websocket_listener(query_id, session):
                 additional_headers=HEADERS,
                 ping_interval=None,
             ) as ws:
-                print(f"[WS {query_id}] Connected")
+                print(f"[WS {tag}] Connected")
 
                 async for raw_msg in ws:
                     msg = json.loads(raw_msg)
@@ -136,18 +165,21 @@ async def websocket_listener(query_id, session):
                         await fetch_queues[query_id].put(item_id)
 
         except websockets.exceptions.ConnectionClosed as e:
-            print(f"[WS {query_id}] CLOSED code={e.code} reason={e.reason}")
+            print(f"[WS {tag}] CLOSED code={e.code} reason={e.reason}")
 
         except Exception as e:
-            print(f"[WS {query_id}] ERROR {e}")
+            print(f"[WS {tag}] ERROR {e}")
 
-        print(f"[WS {query_id}] Reconnecting in 3s... ({times})")
+        print(f"[WS {tag}] Reconnecting in 3s... ({times})")
         await asyncio.sleep(5)
 
 
 # === Main Entry ===
 async def main():
-    print(f"[MAIN] REALM={REALM} LEAGUE={LEAGUE} API_BASE={API_BASE} QUERY_IDS={QUERY_IDS}")
+    print(f"[MAIN] REALM={REALM} LEAGUE={LEAGUE} API_BASE={API_BASE} 共 {len(QUERY_IDS)} 個查詢")
+    # 短代號 ↔ 完整 id 對照，之後的 console 與 log 檔名都只出現短代號
+    for qid in QUERY_IDS:
+        print(f"[MAIN] {TAGS[qid]} = {qid}")
 
     # 在 running loop 中建立每個 query_id 的 queue
     for qid in QUERY_IDS:
@@ -169,7 +201,7 @@ async def main():
 
         # 逐個啟動 WebSocket 監聽，每個間隔 5 秒
         for qid in QUERY_IDS:
-            print(f"[MAIN] Starting listener for {qid} in staggered mode...")
+            print(f"[MAIN] Starting listener for {TAGS[qid]} in staggered mode...")
             task = asyncio.create_task(websocket_listener(qid, session))
             listeners.append(task)
             await asyncio.sleep(5)   # 延遲 5 秒再啟動下一個 listener
