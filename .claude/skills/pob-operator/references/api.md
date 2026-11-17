@@ -212,8 +212,21 @@ build.buildFlag = true ; runCallback("OnFrame")
 build.calcsTab.calcsEnv.player.breakdown.SkillTriggerRate   -- 字串陣列
 ```
 
-實測 `calcsEnv` 可能落後一個 frame。要強制重建可以試
-`build.calcsTab.calcs.buildOutput(build, "CALCS")`（本 session 未跑通，若要用需自行排查）。
+實測 `calcsEnv` 可能落後一個 frame。**跑通的重建方式（2026-11-16，v2.67.2）**是呼叫分頁自己的
+`BuildOutput()`，而且可以順便指定要看哪一條連線、連線裡的哪個技能（不必改主技能）：
+
+```lua
+local ct = build.calcsTab
+ct.input.skill_number = idx                         -- socketGroupList 的索引
+local sg = build.skillsTab.socketGroupList[idx]
+sg.mainActiveSkillCalcs = k                         -- 連線內第幾個主動技能（displaySkillList 的索引）
+build.buildFlag = true; runCallback("OnFrame")
+ct:BuildOutput()
+local o  = ct.calcsEnv.player.output
+local bd = ct.calcsEnv.player.breakdown             -- 例：bd.MainHand.ShockDPS（字串陣列，結果行以 "= " 開頭）
+```
+
+（`build.calcsTab.calcs.buildOutput(build, "CALCS")` 那條路之前沒跑通，不用再試。）
 
 ---
 
@@ -355,3 +368,100 @@ B：同一件多一條 +100 生命  → Life 4079, Spec:LifeInc 91     ← 掉 1
 - 用 raw 建的測試裝沒寫 `Sockets:` 時，PoB 給的預設插槽顏色不一定跟寶石相符（實測紅色輔助吃到、藍色主動技能沒吃到）。要精準就自己寫 `Sockets: B-R-...`。
 - 讀實際生效品質：`mainSkill.effectList[i].quality`（`srcInstance.quality` 是寶石本身的品質）。
 - 「Socketed Skill Gems」類詞綴只作用於主動技能寶石；「all Skill Gems」（Ashes of the Stars）也不加輔助。
+
+---
+
+以下各節實測 2026-11-15～17，PoB v2.67.2。使用情境是「拿別人的 build 當範本，換成使用者的裝備與條件」，
+整個流程見 `poe-build-upgrade` skill。
+
+## 天賦樹上的珠寶：清除與插入都要動 `spec.jewels`
+
+天賦樹珠寶的插槽也在 `itemsTab.slots` 裡（有 `slot.nodeId` 的那些），但**真正生效的是
+`build.spec.jewels[nodeId]`**。只把 `slot.selItemId` 設成 0，畫面上的欄位清了，珠寶還在算。
+實際踩過：範本作者的四顆珠寶（含一顆星團）因此留在兩個版本的結果裡。
+
+```lua
+-- 清空全部
+local it, spec = build.itemsTab, build.spec
+for name, slot in pairs(it.slots) do
+  if slot.nodeId then
+    slot:SetSelItemId(0)
+    spec.jewels[slot.nodeId] = 0
+    if it.activeItemSet and it.activeItemSet[name] then it.activeItemSet[name].selItemId = 0 end
+  end
+end
+for nodeId in pairs(spec.jewels) do spec.jewels[nodeId] = 0 end
+spec:BuildClusterJewelGraphs()        -- 星團長出來的節點要靠這個收掉
+spec:BuildAllDependsAndPaths()
+it:PopulateSlots(); build.buildFlag = true; runCallback("OnFrame")
+-- 一定要回頭數：spec.jewels 裡非 0 的、以及有 nodeId 而 selItemId ~= 0 的插槽，兩者都要是 0
+```
+
+插入一顆：照「換裝備」那節建物件之後，`slot:SetSelItemId(ni.id)` 加上 `spec.jewels[slot.nodeId] = ni.id`。
+插槽節點本身要已經配點（`spec.nodes[slot.nodeId].alloc`），否則不生效。
+星團被清掉之後，原本花在星團裡的點數會空出來，總點數要重新對。
+
+## 匯入公開角色（官網的 character-window）
+
+無頭模式沒有 PoB 自己的下載函式，所以由外面抓三個端點，再交給匯入分頁：
+
+| 端點（`https://www.pathofexile.com/character-window/…`） | 參數 |
+|---|---|
+| `get-characters` | `accountName`（含 `#` 數字尾碼）、`realm=pc` |
+| `get-passive-skills` | 另加 `character` |
+| `get-items` | 另加 `character` |
+
+角色公開時不需要 cookie。User-Agent 照專案規矩從 `.poe_cookies.json` 讀，不要寫死；請求之間留間隔。
+
+```lua
+local dkjson = require "dkjson"
+local tab = build.importTab
+pas.bandit_choice = pas.bandit_choice or build.configTab.input.bandit or "None"   -- 官網不回傳盜賊選擇
+local cd = copyTable(char); cd.passives = pas; cd.jewels = pas.items
+tab:ImportPassiveTreeAndJewels(cd, true)
+local cd2 = copyTable(char); cd2.equipment = itm.items; cd2.guardian = itm.guardian
+tab:ImportItemsAndSkills(cd2, true, true, true)
+```
+
+- **盜賊、萬神殿、設定頁的一切都不會匯入**。盜賊要問使用者（預設值不能當真，實際踩過：假設幫 Alira，使用者是全殺）。
+  先 `load_build` 一份已經設好的檔再匯入，就能保留設定頁。
+- 存檔：`build:SaveDB("code")` 回傳 XML 字串，自己寫到檔案。
+- 使用者之後在 GUI 裡調過的檔是**他的**，只讀不寫；要試東西就在記憶體裡改，或另存新檔名。
+
+## 感電效果：設定頁那格是手填的，PoB 不會自己算
+
+`build.configTab.input.conditionShockEffect` 是使用者打的數字。PoB 計算頁有「依敵人閾值的感電效果」表，
+算式在 `Modules/CalcOffence.lua`（約 5210～5233 行）：
+
+```
+效果 = 50 × (感電傷害 ÷ 敵人異常閾值)^0.4 × 感電效果加成      （上限 output.MaximumShock）
+```
+
+- 感電傷害：上一節的方式切到「真正負責上感電的那條連線」，讀 `breakdown.MainHand.ShockDPS` 的結果行。
+  負責上感電的不一定是主技能（實例：魔改箭矢觸發的 Lightning Arrow 配 Overcharge）。
+- 敵人閾值：`data.monsterAilmentThresholdTable[enemyLevel]` × 頭目 7.68 × `mapLevelBossLifeMult` ×
+  `mapLevelBossAilmentMult` × `enemyDB:More(nil,"Life")` × `enemyDB:More(nil,"AilmentThreshold")`。
+  設定頁選巔峰頭目（Pinnacle）時實算 6,349,995。
+- 感電效果加成：`output.MainHand.ShockEffectMod`。
+- **算出來的值會被目前填的值影響**（被感電的敵人受到更多傷害，感電傷害跟著變）。
+  要把結果填回去重算，重複到不變為止；從一個低的起點（例如 15）開始，實測幾輪內就收斂（迴圈上限設 8 就夠）。
+- 驗證過：作者影片裡口述的 44%，用這個算法在他的原檔上重現為 44.4%。
+
+## 雜項
+
+- **`CombinedDPS` 對 `TotalDPS`**：有幻影射手（Mirage Archer）這類分身時，`TotalDPS` 只有本體，
+  `CombinedDPS` 才是合計，兩者可以差到一倍。比較昇華或輔助寶石時用錯指標會量到「沒有效果」。
+- **PoB 沒模擬的效果會量到「完全沒變」**：例如 Barrage of Volley Fire 的品質（每 5% 讓首尾兩發多 1 個投射物）。
+  量到零差異時去看寶石或物品的實際敘述，不要直接下結論。
+- **傳奇的數值範圍**：物品詞綴帶 `(a-b)` 時由該行的 `range`（0～1）決定取值。
+  要算特定數值就在 raw 裡直接寫死數字，最不會出錯。
+- **藥劑開關**：`build.itemsTab.slots["Flask 1"].active = true/false`，改完重算。
+  量一瓶藥劑的價值時只切這一瓶，並且要試「它取代哪一瓶」。
+- **天賦專精**：專精節點的選項記在 `spec.masterySelections[node.id] = effectId`，設完要
+  `spec.tree:ProcessStats(node)` 再 `AllocNode`，否則節點點了但沒有效果。
+- **只配指定的昇華大點**：先 `DeallocNode` 不要的大點、`BuildAllDependsAndPaths()`，再 `AllocNode` 要的，路徑小點會自動補。
+- **依點數修剪天賦樹**：候選是 `#node.depends == 1` 的葉節點（排除專精、珠寶插槽、起點），
+  每次拿掉「損失最少」的一個。要另外設保護條件（生命、屬性、壓制不得下降），否則會先砍掉防禦。
+- **Lua 語法陷阱**：`t[[==[key]==]]` 會被解析成長字串的開頭而報錯，要寫成 `t[ [==[key]==] ]`（中括號後留空格）。
+- **設定頁改值**：`build.configTab.input[key] = v` 之後要 `build.configTab:BuildModList()` 才會生效。
+- **角色等級**：`build.characterLevel = n; build.characterLevelAutoMode = false; build.configTab:UpdateLevel()`。
