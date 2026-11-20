@@ -288,6 +288,16 @@ Lightning Arrow of Electrocution 的 `dpsMultiplier` 來自層數倍率。拿來
 實測 2026-09-05（PoB v2.67.2）。`Item` 的建構子直接吃**遊戲裡 Ctrl+C 的那種物品文字**，
 所以最省事的路徑是：把交易站 fetch 回來的欄位組回一段 raw，丟給 `new("Item", raw)`。
 
+> ⚠ **建構子的寫法會隨 PoB 更新改變（2026-11-21 實測）。** PoB 自動更新後，`new("Item", raw)` 會丟
+> `Extra argument passed to new() during creation of class Item`，新寫法是 **`new("Item"):Item(raw)`**
+> （PoB 自己的 `Classes/ItemListControl.lua`、`CompareTab.lua` 都是這樣呼叫的）。
+> 要兩個版本都能跑就包一層：
+> ```lua
+> local ok, ni = pcall(new, "Item", raw)
+> if not ok then ni = new("Item"):Item(raw) end
+> ```
+> 同一類錯誤再出現時，直接 grep 安裝目錄的 `Classes/*.lua` 看 PoB 自己怎麼建那個類別，比猜快。
+
 ```lua
 local it = build.itemsTab
 local ni = new("Item", [==[
