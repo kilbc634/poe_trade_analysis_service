@@ -66,7 +66,7 @@ Hard-won API/parsing facts baked in (don't remove casually):
   - RING-ONLY: mana mods scale with "Quality (Mana Modifiers)" catalysts:
     uncorrupted -> value/(1+curQ) * 1.2, floored; corrupted -> as displayed.
     Belts CANNOT take quality (user-corrected 2026-07-08) — displayed = final.
-  - CURRENCY_RATES go stale: refresh from poe2scout
+  - CURRENCY_RATES go stale: refresh with the poe-currency-price skill (cx.py --realm poe2; was poe2scout)
     (../poe2/knowledge/exchange-rates.md -- POE2-only source)
 
 Optimizer scaling lessons (learned the hard way at 6 slots / ~1500 candidates):
@@ -104,7 +104,7 @@ if hasattr(sys.stdout, "reconfigure"):
 # ------------------------- CONFIG -------------------------
 LEAGUE = "Runes%20of%20Aldur"          # keep URL-encoded; read from setting.py
 WORKDIR = "./gear_pools"                # s_*.json / pool_*.json cache dir
-CURRENCY_RATES = {"divine": 1.0, "exalted": 1/600.2, "chaos": 1/7.72}  # -> div; REFRESH ME (poe2scout 2026-07-08)
+CURRENCY_RATES = {"divine": 1.0, "exalted": 1/600.2, "chaos": 1/7.72}  # -> div; REFRESH ME (reading: poe2scout 2026-07-08; now use poe-currency-price)
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
 BUDGET_TIERS = (60, 80, 100, 120)       # div; last tier = the budget
 EXCLUDE_IDS = set()                     # item ids sold mid-session -> re-optimize without them

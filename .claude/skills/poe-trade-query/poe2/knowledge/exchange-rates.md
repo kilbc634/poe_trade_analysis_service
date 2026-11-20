@@ -3,6 +3,13 @@
 > POE1 的對應檔是 `../../poe1/knowledge/exchange-rates.md`。若 `REALM=poe1`，停止並改讀那裡。
 > 「**查價一律走 poe2scout，不要用交易站 exchange 掛牌**」是兩款遊戲共通規則，見 [`../../common/tricks.md`](../../common/tricks.md)。
 
+> 🔁 **2026-11-20 改版：匯率與通貨查價改走 `poe-currency-price` skill**（`.claude/skills/poe-currency-price/cx.py --realm poe2`，
+> 讀 GGG 官方公開的 Currency Exchange API）。**本檔以下的 poe2scout 做法已停用，只留作歷史紀錄。**
+> 仍然成立的結論：不要猜匯率、不要用交易站掛牌板；同一種通貨在不同交易對算出來的價格會不一樣
+> （2026-11-20 Forbidden Rites 實測：div|ex 市場一小時只成交 164 div、匯率在 418–522 ex 間跳，
+> div|chaos 市場一小時成交 14,022 div、穩定在 11.7 c——div 與 chaos 互換要讀直接市場，別用兩個 ex 匯率相除。
+> 使用者說明：當時賽季快結束、基本上沒有玩家，市場不流動導致價格奇怪是正常的，不代表 POE2 平常如此）。
+
 # Currency exchange rates — how to get real market rates (通貨匯率查詢)
 
 Whenever a task needs a currency conversion (budget in divine, prices in exalted, "what's X worth"), get the rate from here — do NOT guess and do NOT use the trade-site listing board.
@@ -43,7 +50,7 @@ Reference reading 2026-07 (Runes of Aldur), verified against the user's in-game 
 
 ## Alternative & rejected sources
 
-- **Official `GET api.pathofexile.com/currency-exchange/poe2`** — the upstream (hourly `volume_traded`, `lowest/highest_ratio` per market). Requires OAuth scope `service:cxapi` (approved apps only; apply via oauth@grindinggear.com). POESESSID and POETOKEN are both rejected (401/403) — don't retry them. Worth applying for if this project wants first-party data.
+- **Official Currency Exchange API** — ~~requires OAuth scope `service:cxapi`~~ **outdated.** Since POE1 3.29.0 (2026-07-21) GGG serves it as a Public API at `https://web.poecdn.com/api/currency-exchange[/<realm>]/<epoch>` with no login (verified 2026-11-20). It is now the primary source — use the `poe-currency-price` skill.
 - **Trade-site `POST /api/trade2/exchange/...` listing board — UNRELIABLE for rates.** A thin manual-listing board, not the in-game matching market: observed asks 550–600 ex/div vs true 710 (-15~20%), huge bid/ask spreads, bait listings (great ratio, stock 1) at the top. Only use it to see what's listed for direct website trade.
 
 Related: the trade search's exalted-equivalent price cap uses yet another (hidden, lagging) internal rate — see [api-quirks.md](api-quirks.md) and [`../../common/tricks.md`](../../common/tricks.md).

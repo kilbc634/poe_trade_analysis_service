@@ -2,6 +2,12 @@
 > 以下路徑、基準幣別與行情**只適用 POE1**。若 `REALM=poe2`，停止並改讀 `../../poe2/knowledge/exchange-rates.md`。
 > ⚠ 下面「2026-07-27 讀數」那張表**已經過期**——07-28 實測 1 div = 120.70c，一天漂了 +19%。**表裡的數字只能當形狀看，任何換算都要照下面的方法重抓。**
 
+> 🔁 **2026-11-20 改版：匯率與通貨查價改走 `poe-currency-price` skill**（`.claude/skills/poe-currency-price/cx.py`，
+> 讀 GGG 官方公開的 Currency Exchange API）。例：`python cx.py price "Divine Orb"`、`python cx.py pair "Divine Orb" "Chaos Orb"`。
+> **本檔以下的 poe2scout 端點與做法已停用，只留作歷史紀錄，不要再照著打**——poe2scout 在 3.30 Covens 開季後沒有跟上
+> （`/pc/Leagues` 仍把上一季標成現行、查 Covens 回 `400 "Invalid league."`）。仍然成立的只有結論：
+> POE1 的基準幣別是 chaos、匯率一天可以漂兩成所以每次都要重抓、不要用交易站的通貨掛牌板。
+
 # 通貨匯率 — POE1 怎麼拿真實市場價
 
 > 本檔只管**匯率**。「任何物品的**查價**一律走 poe2scout、不要用交易站 exchange/search 掛牌價」是兩款遊戲共通規則（含 `Currencies/ByCategory` 的用法、掛牌價實測偏差、端點挖法），寫在 [`../../common/tricks.md`](../../common/tricks.md)。

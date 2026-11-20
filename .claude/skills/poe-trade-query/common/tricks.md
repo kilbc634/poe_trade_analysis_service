@@ -299,13 +299,15 @@ CLI 的 stdout 會直接進上下文。限流照樣要守：頁內同樣讀得�
 
 For real market rates: never guess, and never use the trade-site exchange **listing board** (a thin manual board with bait listings and wide spreads, not the in-game matching market). Each realm's KB documents its own rate source.
 
-## 查價的分工：通貨走 poe2scout、裝備走 trade search、exchange 端點一律不用（使用者定案 2026-09-09）
+## 查價的分工：通貨走 poe-currency-price skill、裝備走 trade search、exchange 端點一律不用（使用者定案 2026-09-09；通貨來源 2026-11-20 改版）
 
 **三條規則，兩款遊戲共通，別互相套用：**
 
-1. **通貨與大宗可堆疊物品**（通貨、碎片、精華、聖甲蟲……）的行情 → **走 poe2scout**（端點見下）。
+1. **通貨與大宗可堆疊物品**（通貨、碎片、命運卡、精華……凡是遊戲內通貨交易所買得到的）的行情 →
+   **走 `poe-currency-price` skill**（`.claude/skills/poe-currency-price/`，一支腳本 `cx.py`，用法與判讀都在它的 SKILL.md）。
+   它讀的是 GGG 官方公開的 Currency Exchange API，是實際成交資料、不用登入。匯率（幾 c 換 1 div）也從這裡拿。
 2. **裝備**（rare／unique，逐件議價的東西）→ **只能走交易站 `/api/trade/search` + `/api/trade/fetch`**。
-   poe2scout 沒有裝備的逐件在架資料，這條路無可替代——本檔其他章節（先探頂再撈池、深抓價格階梯、
+   通貨交易所沒有裝備，這條路無可替代——本檔其他章節（先探頂再撈池、深抓價格階梯、
    多部位配裝求解）講的全都是這條路，**不受本節影響**。
 3. **`/api/trade/exchange` 端點一律不要再用**，不論查什麼。大宗成交早就搬進遊戲內的通貨交易所
    （POE1 的 Faustus），那塊掛牌板只剩殘量與釣魚價，「幾乎沒有人在那裡掛牌」。
@@ -314,9 +316,10 @@ For real market rates: never guess, and never use the trade-site exchange **list
 因為它讀的是同一批殘量掛牌。search 之所以對裝備成立，是因為裝備本來就是逐件、非大宗的市場，
 它的掛牌就是真實報價本身。
 
-實測代價（2026-09-09，POE1 Allflame，十種 uber 王碎片——**用交易站查大宗物品的後果**）：
+實測代價（2026-09-09，POE1 Allflame，十種 uber 王碎片——**用交易站查大宗物品的後果**；
+成交價當時取自 poe2scout，它轉發的就是同一份通貨交易所資料）：
 
-| | 交易站掛牌最低 | poe2scout 成交價 | 偏差 |
+| | 交易站掛牌最低 | 通貨交易所成交價 | 偏差 |
 |---|--:|--:|--:|
 | Reality Fragment | 353c | 218.9c | 高估 **61%** |
 | Traumatic Fragment | 150c | 59.1c | 高估 **154%** |
@@ -331,61 +334,42 @@ For real market rates: never guess, and never use the trade-site exchange **list
 （比率式與掛牌式對得上），**但兩者讀的是同一批殘量掛牌**，一致不代表正確。
 這次就是靠這個一致性誤判為可信。（裝備沒有這個問題——那裡只有 search 一個來源，也不需要對帳。）
 
-### 端點（realm 參數化，兩款遊戲同一支）
+### 首選：`poe-currency-price` skill
 
 ```bash
-UA="<full browser UA>"
-# 分類查價：category 用複數，fragments 不是 fragment
-curl -s -H "User-Agent: $UA" \
-  "https://poe2scout.com/api/{RealmApiId}/Leagues/{LEAGUE}/Currencies/ByCategory?category=fragments&page=1&perPage=50&referenceCurrency=chaos"
-# 計價幣別清單（確認 Price 的單位）
-curl -s -H "User-Agent: $UA" \
-  "https://poe2scout.com/api/{RealmApiId}/Leagues/{LEAGUE}/ReferenceCurrencies"
+python .claude/skills/poe-currency-price/cx.py price "Divine Orb" "Reality Fragment"   # 指定物品（英文或繁中名）
+python .claude/skills/poe-currency-price/cx.py list --match fragment                # 一整類
+python .claude/skills/poe-currency-price/cx.py pair "Divine Orb" "Chaos Orb"        # 匯率的逐小時歷史
+# POE2 加 --realm poe2；指定聯盟加 --league "<名稱>"（不給則自動挑交易對最多的聯盟）
 ```
 
-> ⚠ **2026-11-16 實測：API 搬家了。** `https://poe2scout.com/api/...` 現在對任何路徑都回 200 + SPA HTML
-> （不是 JSON、也不是 404）。真正的位址是 **`https://api.poe2scout.com/{RealmApiId}/...`——沒有 `/api` 前綴**
-> （例：`https://api.poe2scout.com/pc/Leagues`；Swagger 在 `https://api.poe2scout.com/swagger`）。
-> 本檔與各 realm `exchange-rates.md` 裡的舊網址都要照這個換。
->
-> ⚠ **備用方案：poe.ninja——只在 poe2scout 用不了時才用**（使用者定案 2026-11-16）。通貨／大宗物品查價的
-> 首選永遠是 poe2scout；每次都先試 poe2scout，確認它真的沒有該聯盟或拿不到資料，才退到下面這組端點，
-> 並在回覆裡講明這次用的是備用來源。不要因為這次用過 poe.ninja 就把它當成常態路徑。
->
-> 目前唯一一次觸發（同日實測，使用者也是第一次遇到，**不是已知的固定規律**）：POE1 3.30 Covens 開季第 3 天，
-> `/pc/Leagues` 仍把上一季標成 `IsCurrent`，查 Covens 回 `400 "Invalid league."`。當時改用的 poe.ninja 端點：
-> - 聯盟清單：`https://poe.ninja/poe1/api/data/index-state`（`economyLeagues`）
-> - 總覽：`https://poe.ninja/poe1/api/economy/exchange/current/overview?league={LEAGUE}&type={Currency|Fragment|...}`
->   （`primaryValue` 以 chaos 計；`sparkline.data` 是相對 7 天前第一個有值日的累計 % 變化，可反推逐日價）
-> - 單品逐日歷史：`.../exchange/current/details?league={LEAGUE}&type={type}&id={tradeId}`
->   → `pairs[]` 各幣別的 `history[]{timestamp, rate, volumePrimaryValue}`；`rate` 是「一個該物品值多少該幣」。
-> - 這些是**遊戲內通貨交易所**的成交資料。同站的 `economy/stash/...` 是掛牌價，別用
->   （同日 Voidborn Reliquary Key：exchange 142c、stash 掛牌 5c，差了近 30 倍）。
+查價前先讀那個 skill 的 SKILL.md，特別是「判讀」一節：資料是**已結束小時的成交價**（最多落後一小時）、
+成交量低的價格不可靠、`!! markets disagree` 出現時綜合價不能用、賽季末期沒人玩時價格很怪是正常的。
 
-`{RealmApiId}` POE1 PC 是 `pc`、POE2 是 `poe2`；完整對照與匯率（div/chaos）的取法留在各 realm 的
-`knowledge/exchange-rates.md`，本節只管「哪一類東西該走哪裡」這條共通規則。
-（poe2scout 另有 `.../Leagues/{league}/Items/{id}` 與 uniques 分類，但那是**聚合**行情，
-不是逐件在架清單——要交付購買連結、要驗某件還在不在架，還是得回 trade search。）
+**成交量跟價格一樣要看**，它決定這個價敢不敢用。當年同一批碎片裡 Cosmic 標 197c 排第三高，
+但日成交量只有 1,458，是全表最薄的；Reality 12,582/日就穩。薄的品項報價要往下打折。
 
-回傳是分頁（`CurrentPage` / `Pages` / `Total` / `Items`），每個 item 的關鍵欄位：
+腳本回報「沒有市場」時通常就是真的沒有（物品已移除或不能在交易所買賣），**不是該換來源的訊號**。
+實例：POE1 3.30 移除了所有聖甲蟲，查 `scarab` 會得到「名稱表有、市場沒有」，這是正確結果。
 
-- `ApiId` — **與交易站 static data 的 id 同名**（`reality-fragment`），兩邊可直接對接
-- `CurrentPrice` / `CurrentQuantity` — 現價與目前掛量
-- `PriceLogs[]` — 近 7 天逐日 `Price` + `Quantity`（當日成交量）
+### 備援：poe.ninja——只在首選用不了時才用（使用者定案 2026-11-16，2026-11-20 沿用）
 
-**`Quantity` 跟 `Price` 一樣要看**，它決定這個價敢不敢用。同一批碎片裡 Cosmic 標 197c 排第三高，
-但日成交量只有 1,458、掛量 140，是全表最薄的；Reality 12,582/日就穩。薄的品項報價要往下打折。
-`referenceCurrency` 決定 `Price` 的單位，**一定要顯式指定**，別假設預設是 chaos。
+首選永遠是 `poe-currency-price`。只有在**腳本本身失敗**（API 回錯誤、連續幾個小時都沒有資料），
+或要查的東西確定存在但通貨交易所沒有成交時，才退到下面這組端點，並在回覆裡講明這次用的是備用來源。
+不要因為這次用過 poe.ninja 就把它當成常態路徑。
 
-### 分類 slug 與端點怎麼挖
+- 聯盟清單：`https://poe.ninja/poe1/api/data/index-state`（`economyLeagues`）
+- 總覽：`https://poe.ninja/poe1/api/economy/exchange/current/overview?league={LEAGUE}&type={Currency|Fragment|...}`
+  （`primaryValue` 以 chaos 計；`sparkline.data` 是相對 7 天前第一個有值日的累計 % 變化，可反推逐日價）
+- 單品逐日歷史：`.../exchange/current/details?league={LEAGUE}&type={type}&id={tradeId}`
+  → `pairs[]` 各幣別的 `history[]{timestamp, rate, volumePrimaryValue}`；`rate` 是「一個該物品值多少該幣」。
+- 這些是**遊戲內通貨交易所**的成交資料。同站的 `economy/stash/...` 是掛牌價，別用
+  （2026-11-16 Voidborn Reliquary Key：exchange 142c、stash 掛牌 5c，差了近 30 倍）。
 
-沒有 categories 端點，也**沒有可用的 OpenAPI**——`/api/openapi.json`、`/openapi.json`
-2026-09-09 實測分別回 404 與 SPA 殼頁（舊筆記裡那條連結已失效）。試錯很便宜：
-slug 猜錯只是回 `{"Total":0,"Items":[]}`，不會報錯。已驗證有料：`currency`（88 筆）、
-`fragments`（188 筆）、`expedition`（4 筆）；`fragment`（單數）、`essence`、`delirium`、
-`ritual`、`breachcatalyst`、`runes` 都是空的。
+### 已停用：poe2scout（2026-11-20）
 
-要窮舉端點就去挖前端：`GET /` 的 HTML 裡有 `/assets/manifest-*.js`，那份列出所有 route chunk；
-抓下對應 chunk 再 grep `/api/`，模板字串會直接露出路徑——這次就是這樣挖到
-`Currencies/ByCategory` 與 `Leagues/{league}/Items/{id}`。注意站台根路徑對任何未知路徑
-都回 200 + SPA HTML，所以**要用「404」而不是「HTML」來判斷『路徑錯了但 API 活著』**。
+2026-09 到 2026-11 的首選來源，現已不用。它只是把同一份官方通貨交易所資料抓下來再加工轉發
+（原始碼公開在 github.com/poe2scout/poe2scout），而官方 API 在 POE1 3.29.0 起可以直接讀；
+它的站台在 POE1 3.30 Covens 開季後沒有跟上（`/pc/Leagues` 仍把上一季標成 `IsCurrent`，
+查 Covens 回 `400 "Invalid league."`）。各 realm 的 `exchange-rates.md` 與舊腳本註解裡提到的
+poe2scout 端點都當作歷史紀錄，不要再照著打。

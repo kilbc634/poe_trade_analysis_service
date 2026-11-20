@@ -143,7 +143,7 @@ N_PER_POOL = 30                     # listings fetched per pool (price asc)
 # the build is under cap. Buffered is the recommendation; set MARGIN=0 to see the
 # theoretical max.
 
-# chaos-denominated. REFRESH ME: poe2scout /api/pc/Leagues + .../SnapshotPairs,
+# chaos-denominated. REFRESH ME: poe-currency-price skill (cx.py price <names>; was poe2scout),
 # see ../poe1/knowledge/exchange-rates.md. 1 div moved +19% in a single day and
 # ~2% within one day, so anything cross-day must be re-fetched.
 RATES = {"chaos": 1.0, "divine": 118.3763, "exalted": 0.934, "vaal": 0.5633,

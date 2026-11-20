@@ -106,7 +106,8 @@ N_PER_POOL = 30
 
 TIERS = (600, 1200, 2000, 3000, BUDGET)
 
-# chaos-denominated, poe2scout /api/pc/Leagues/Allflame/SnapshotPairs 2026-09-05.
+# chaos-denominated, poe2scout /api/pc/Leagues/Allflame/SnapshotPairs 2026-09-05
+# (poe2scout is retired; refresh with the poe-currency-price skill: cx.py price <names>).
 # ALWAYS re-fetch: 1 div moved 174 -> 420 between 2026-08-02 and 2026-09-05.
 # `mirror` is deliberately absent -- out of budget by definition, and an unknown
 # currency makes parse_item() drop the listing rather than mis-price it.

@@ -72,7 +72,7 @@ LEAGUE = "Allflame"
 WORKDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gear_pools_poe1_es")
 
 # --- the request -------------------------------------------------------
-DIV = 174.1874               # 1 divine in chaos. REFRESH: poe2scout /api/pc/Leagues
+DIV = 174.1874               # 1 divine in chaos. REFRESH: poe-currency-price skill (cx.py price "Divine Orb")
 BUDGET = round(10 * DIV, 2)  # 10 divine
 NEED_RES = (142, 73, 112)    # (fire, cold, lightning) shortfall to cover
 NEED_STR = 95
@@ -85,7 +85,8 @@ N_PER_POOL = 30
 
 TIERS = (30, 60, 120, 250, 500, 900, BUDGET)
 
-# chaos-denominated, poe2scout /api/pc/Leagues/Allflame/SnapshotPairs 2026-08-02.
+# chaos-denominated, poe2scout /api/pc/Leagues/Allflame/SnapshotPairs 2026-08-02
+# (poe2scout is retired; refresh with the poe-currency-price skill: cx.py price <names>).
 # 1 div moved 118.38 -> 172.73 in five days; ALWAYS re-fetch, never reuse.
 # `mirror` is deliberately absent: a mirror-priced listing is out of budget by
 # definition, and an unknown currency is dropped by parse_item().
