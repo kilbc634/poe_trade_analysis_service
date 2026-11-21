@@ -174,5 +174,6 @@ grep -rn "Manaforged" "$APPDATA/Path of Building Community/Modules/CalcTriggers.
 - API 速查 → [`references/api.md`](references/api.md)
 - **自己挖沒記載的用法** → [`references/exploring.md`](references/exploring.md)
 - 星團珠寶（天賦排位機制、程式化建立與配點） → [`references/cluster-jewels.md`](references/cluster-jewels.md)
+- **把遊戲內的角色同步進 PoB**（登入匯入優先、公開角色匯入當退路） → [`references/character-sync.md`](references/character-sync.md)
 - 抓 poe.ninja 角色的 import code → `poe-ninja-builds` skill（角色頁上有個
   `<input>`，值以 `eN` 開頭就是），配 `playwright-cli` 取值

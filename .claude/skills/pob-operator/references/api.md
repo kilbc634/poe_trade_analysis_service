@@ -413,6 +413,9 @@ it:PopulateSlots(); build.buildFlag = true; runCallback("OnFrame")
 
 ## 匯入公開角色（官網的 character-window）
 
+> **同步角色的完整流程在 [`character-sync.md`](character-sync.md)**：PoB 存有有效的登入憑證時要優先走登入匯入
+> （只需要角色名稱，資料含聯盟限定部位），這一節的公開匯入是退路。
+
 無頭模式沒有 PoB 自己的下載函式，所以由外面抓三個端點，再交給匯入分頁：
 
 | 端點（`https://www.pathofexile.com/character-window/…`） | 參數 |
