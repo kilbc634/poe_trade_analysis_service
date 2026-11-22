@@ -7,7 +7,8 @@ import httpx
 # 取得根目錄路徑
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
-from setting import POESESSID, REALM, LEAGUE, SERVICE_HOST, QUERY_IDS
+from setting import POESESSID, REALM, LEAGUE, QUERY_IDS
+from content.common import decode_query_id
 from loading_wait import wait_until_stash_visible
 from stash_click import click_slot, go_hideout
 
@@ -36,9 +37,6 @@ else:
 SEARCH_URL  = f"https://www.pathofexile.com/api/{API_BASE}/search/{LEAGUE_PATH}"
 WHISPER_URL = f"https://www.pathofexile.com/api/{API_BASE}/whisper"
 
-# 由 QUERY_ID 組出交易頁網址，向雲端 payload 服務(getPayloadByUrlV2)換取查詢 payload
-TRADE_URL = f"https://www.pathofexile.com/{API_BASE}/search/{LEAGUE_PATH}/{QUERY_ID}"
-
 HEADERS = {
     "Origin": "https://www.pathofexile.com",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
@@ -49,73 +47,23 @@ HEADERS_XHR = {
     "X-Requested-With": "XMLHttpRequest",
 }
 
-# === 錯誤訊息：把「自架服務掛了」跟「官方 API 有問題」明確區分開 ===
-def _print_service_error(url, what, cause):
-    print("=" * 78)
-    print(f"[ERR] 取不到查詢 payload：{what}")
-    print(f"      服務位址：{url}")
-    print(f"      可能原因：{cause}")
-    print("      ── 這是 SERVICE_HOST 指到的『自架 payload 服務』(app.py) 的問題，")
-    print("         不是官方交易 API 擋你，也不是這支腳本的邏輯有錯。")
-    print("      ── 先確認那台服務（Docker container）還活著、對外 port 有開。")
-    print("=" * 78)
+# === 取得查詢 payload：直接把 QUERY_ID 解碼 ===
+def get_payload():
+    """把長碼 QUERY_ID 在本地解成查詢 payload；解不出來就印出原因並回 None。
 
-
-# === 取得查詢 payload（來自雲端 payload 服務，內部走 Redis）===
-def get_payload(client):
-    """向雲端 payload 服務取查詢 payload；失敗時印出可直接對症的訊息並回 None。"""
-    url = SERVICE_HOST.rstrip("/") + "/trade/getPayloadByUrlV2"
-
-    try:
-        resp = client.post(url, json={"siteUrl": TRADE_URL}, timeout=30.0)
-    except httpx.TimeoutException:
-        _print_service_error(url, "連線逾時（30 秒內沒有任何回應）",
-                             "服務卡住、或防火牆把封包丟掉了")
-        return None
-    except httpx.RequestError as e:
-        _print_service_error(url, f"連不上（{type(e).__name__}: {e}）",
-                             "服務沒有啟動、port 沒開、或 SERVICE_HOST 設錯了")
-        return None
-
-    if resp.status_code != 200:
-        _print_service_error(url, f"服務回了 HTTP {resp.status_code}",
-                             "服務活著但處理失敗，請看服務端 log")
-        print(f"      回應內容：{(resp.text or '')[:200]}")
-        return None
-
-    try:
-        payload = resp.json().get("payloadData")
-    except Exception:
-        _print_service_error(url, "回應不是合法的 JSON",
-                             "SERVICE_HOST 可能指到了別的服務")
-        print(f"      回應內容：{(resp.text or '')[:200]}")
-        return None
-
-    if not payload:
-        # 這種情況服務是活的，問題在查詢本身，訊息要往另一個方向指
+    官方交易網站的查詢 ID 現在是查詢 JSON 本身的 gzip + base64（H4sI 開頭），
+    不需要再向任何服務換取。舊的短碼（如 12bdck）已不支援。
+    """
+    query = decode_query_id(QUERY_ID)
+    if not query:
         print("=" * 78)
-        print("[ERR] payload 服務有正常回應，但查不到這個查詢的 payload（payloadData 是空的）")
-        print(f"      服務位址：{url}")
-        print(f"      查詢網址：{TRADE_URL}")
-        print("      ── 服務本身沒問題。請檢查 QUERY_IDS / LEAGUE / REALM 是否設對，")
-        print("         以及該查詢是否真的存在（用瀏覽器打開上面那個網址看看）。")
+        print("[ERR] QUERY_ID 解不出查詢內容")
+        print(f"      QUERY_ID：{QUERY_ID}")
+        print("      ── 這裡只支援官方新版的長碼（H4sI 開頭，交易網址最後那一段）。")
+        print("         請確認整段都有貼到、沒有被截斷；舊的短碼已不能用。")
         print("=" * 78)
         return None
-
-    return payload
-
-
-# === 備援：雲端服務掛掉時，直接跟官方 GET 已存搜尋 API 要 query 定義 ===
-# 2026-08-09 使用者決定先不啟用，維持 getPayloadByUrlV2 為唯一來源；日後視情況再導入。
-# 啟用方式：解除註解，並在 get_payload() 失敗的分支改成 return get_payload_from_official(client)
-# def get_payload_from_official(client):
-#     """GET /api/trade/search/{league}/{id} 會回 {"id", "query"}（省略 null 等預設值，不影響查詢），
-#     補上 sort 後即可直接 POST 給搜尋 API。與服務端 content/trade_api.py 同一支端點。"""
-#     url = f"{SEARCH_URL}/{QUERY_ID}" + ("?realm=poe2" if REALM == "poe2" else "")
-#     resp = client.get(url, headers=HEADERS_XHR, timeout=30.0)
-#     resp.raise_for_status()
-#     query = resp.json().get("query")
-#     return {"query": query, "sort": {"price": "asc"}} if query else None
+    return {"query": query, "sort": {"price": "asc"}}
 
 
 # === 一般搜尋：POST 完整 payload，回傳 (query_id, [result hashes]) ===
@@ -187,13 +135,13 @@ def main():
 
     seen = set()  # 已處理過的 listing id，避免每輪重複密語／重複判斷同一筆
 
+    # 1) 把 QUERY_ID 解成查詢 payload；失敗原因已由 get_payload() 印出
+    payload = get_payload()
+    if not payload:
+        return
+    print("[OK] 已解出查詢 payload，開始輪詢一般搜尋...")
+
     with httpx.Client(timeout=30.0) as client:
-        # 1) 先向雲端 payload 服務取得查詢 payload（只取一次）
-        #    失敗原因已由 get_payload() 分類印出，這裡直接結束就好
-        payload = get_payload(client)
-        if not payload:
-            return
-        print("[OK] 已取得查詢 payload，開始輪詢一般搜尋...")
 
         bought = 0
         # 2) 持續輪詢一般搜尋

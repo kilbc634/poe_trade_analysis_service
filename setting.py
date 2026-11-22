@@ -4,7 +4,7 @@ import re
 REDIS_HOST = os.getenv('REDIS_HOST', '172.17.0.1')
 REDIS_AUTH = os.getenv('REDIS_AUTH', 'cv*****')
 BROKER_URL = os.getenv('BROKER_URL', f'redis://:{REDIS_AUTH}@{REDIS_HOST}:6379/0')
-SERVICE_HOST = os.getenv('SERVICE_HOST', 'http://tsukumonet.ddns.net:16666/')
+# ↑ REDIS_* / BROKER_URL 只有已棄用的雲端 payload 服務（app.py）在用。
 
 # POESESSID 來源順序：環境變數 → 專案根目錄的 .poesessid（單行純文字，已 gitignore）。
 # 本檔在版控裡，所以預設值必須永遠留空。手貼進下面那個引號的 token 會被

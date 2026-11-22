@@ -1,3 +1,14 @@
+"""【已棄用 DEPRECATED — 2026-11-23】雲端 payload 服務（交易網址 → 查詢 payload）。
+
+官方交易網站把查詢 ID 從伺服器存的短碼改成「長碼」：查詢 JSON 本身的
+gzip + base64（H4sI 開頭）。payload 直接從 ID 解得出來
+（content/common.py 的 decode_query_id），不需要再靠這台服務去換，
+repo 內也已經沒有任何程式呼叫它（script/wholesalers.py 改成本地解碼）。
+
+本檔與它專用的配件保留只為了查舊帳，不再維護，也不必再部署：
+  content/redis_lib.py、content/trade_api.py、
+  worker/selenium_runner.py、worker/interceptor.js
+"""
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sys
@@ -6,6 +17,8 @@ from worker.selenium_runner import open_site_to_send_payload_data
 from content.redis_lib import set_trade_payload, get_trade_payload
 from content.common import parse_trade_url
 from content.trade_api import fetch_query_payload
+
+print("[DEPRECATED] app.py（雲端 payload 服務）已棄用，查詢 payload 請改用 decode_query_id 本地解碼。")
 
 app = Flask(__name__)
 CORS(app)  # ✅ 允許瀏覽器跨來源呼叫

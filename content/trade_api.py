@@ -1,7 +1,7 @@
 import urllib.parse
 import requests
 from setting import POESESSID
-from content.common import parse_trade_url
+from content.common import parse_trade_url, decode_query_id
 
 _HEADERS = {
     "Origin": "https://www.pathofexile.com",
@@ -36,6 +36,11 @@ def fetch_query_payload(site_url):
     if not url_data:
         print(f"[trade_api] URL 格式錯誤: {site_url}")
         return None
+
+    # 新版長碼：ID 本身就是查詢內容，本地解開即可，不必（也不能）跟官方要
+    query = decode_query_id(url_data["tradeId"])
+    if query:
+        return {"query": query, "sort": {"price": "asc"}}
 
     api_url = _build_saved_search_url(url_data)
     headers = {**_HEADERS, "Cookie": f"POESESSID={POESESSID}"}
