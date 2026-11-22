@@ -86,6 +86,14 @@ async def fetch_worker(session, query_id):
 
     print(f"[WORKER {tag}] Start worker, log={log_path}")
 
+    # 開始監聽時就先把 log 檔建出來（"a" 模式：已存在就原樣保留，不會清掉舊內容）
+    # 建檔失敗只印出來，之後每筆資料寫入時還會再試
+    try:
+        with open(log_path, "a", encoding="utf-8"):
+            pass
+    except OSError as e:
+        print(f"[WORKER {tag}] LOG CREATE FAILED {log_path}: {e}")
+
     while True:
         item_id = await fetch_queues[query_id].get()
 
@@ -99,7 +107,10 @@ async def fetch_worker(session, query_id):
                     data = await resp.json()
 
                     log_line = f"[{timestamp}] FETCH OK => {json.dumps(data, ensure_ascii=False)}\n"
-                    log_line += f" >>> {data['result'][0]['item']['name']} {data['result'][0]['item']['baseType']} - {data['result'][0]['listing']['price']['amount']} {data['result'][0]['listing']['price']['currency']}\n"
+                    summary = f"{data['result'][0]['item']['name']} {data['result'][0]['item']['baseType']} - {data['result'][0]['listing']['price']['amount']} {data['result'][0]['listing']['price']['currency']}"
+                    log_line += f" >>> {summary}\n"
+                    # console 只印摘要，完整 JSON 只進 log 檔
+                    print(f"[WORKER {tag}] [{timestamp}] >>> {summary}")
                 else:
                     log_line = f"[{timestamp}] FETCH ERROR {resp.status} {item_id}\n"
 
