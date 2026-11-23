@@ -134,6 +134,12 @@ from pob import PoB
 
 ## 一定要知道的坑
 
+**PoB 的資料檔不是詞綴池或權重的來源。** `Data/Mod*.lua` 裡有 `weightKey`／`weightVal`，看起來能拿來算
+「這個基底骰到某詞綴的機率」，但它收錄了絕版與實際骰不出來的條目，加總出來的分母是錯的
+（實例：Searching Eye Jewel 的後綴總權重，PoB 資料是 47,775，poedb 是 38,875）。
+詞綴能不能骰、每一階的物品等級與權重，一律用 `poedb-mods` skill 查，數字有出入時以 poedb 為準。
+PoB 只用來算它擅長的事：把已經存在的裝備放上去算數值。
+
 **PoB 的輸出是緩衝的**，Lua 的 `ConPrintf` 會在行程結束時才一次沖出來，
 所以終端機上的訊息順序**不代表實際執行順序**。要判斷時序請用 Python 端的 print。
 
