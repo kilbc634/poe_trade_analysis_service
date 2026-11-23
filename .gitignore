@@ -228,3 +228,7 @@ search_results_*.md
 # 配裝優化器的搜尋/抓取快取（市場快照暫存，幾分鐘就過期）
 # gear_pools/ = POE2 版；gear_pools_poe1/ = POE1 版
 gear_pools*/
+
+# jewel_crafter 的點擊位置與參數（每台機器不同）
+script/jewel_crafter.ini
+script/jewel_crafter_logs/
