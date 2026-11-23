@@ -1,6 +1,6 @@
 ---
 name: poe-wiki
-description: Read the Path of Exile wiki (poewiki.net) — the community's authoritative reference for game mechanics, item and gem details, and above all whether something still exists in the current league (drop-disabled / legacy / removed in which patch). Use whenever a task needs a mechanic confirmed ("does X stack with Y", "what exactly does this keyword do"), an item's or gem's source or availability checked, a list page read (tattoos, uniques, runegrafts…), or structured item data queried. The wiki's article pages refuse automated clients (bot protection), so do NOT WebFetch or open them in a browser — this skill reads the same content through the wiki's own API, which is open. NOT for prices (poe-trade-query), popularity/META (poe-ninja-builds) or damage maths (pob-operator); mod pools and tier ranges are still best read on poedb.tw.
+description: Read the Path of Exile wiki (poewiki.net) — the community's authoritative reference for game mechanics, item and gem details, and above all whether something still exists in the current league (drop-disabled / legacy / removed in which patch). Use whenever a task needs a mechanic confirmed ("does X stack with Y", "what exactly does this keyword do"), an item's or gem's source or availability checked, a list page read (tattoos, uniques, runegrafts…), or structured item data queried. The wiki's article pages refuse automated clients (bot protection), so do NOT WebFetch or open them in a browser — this skill reads the same content through the wiki's own API, which is open. NOT for prices (poe-trade-query), popularity/META (poe-ninja-builds) or damage maths (pob-operator); mod pools, tier ranges and spawn weights are read with the poedb-mods skill (poedb.tw is the authority for modifiers; for everything else poedb remains a normal second source to cross-check against).
 allowed-tools: Bash(python:*) Bash(py:*) Read Grep
 ---
 
@@ -135,6 +135,6 @@ python wiki.py page "Battlemage" --section 1
 
 - **清單類頁面的內容是範本即時產生的。** `--wikitext` 只會看到 `{{Drop enabled base item table …}}` 這種範本呼叫，看不到物品；要用預設的渲染輸出。反過來，想知道一張清單是「依什麼條件」產生的，`--wikitext` 裡的 `where=` 就是答案，可以直接搬去 `cargo` 用。
 - **wiki 更新比遊戲慢。** 剛開季或剛出 patch notes 時，當季的新內容可能還沒寫進去；新東西以官方 patch notes 和 poedb 為準。`removal_version` 等於即將上線的版本號時，代表「這一版起絕版」。
-- **詞綴池、階級數值、製作權重**仍以 poedb.tw 為主，wiki 不是最好的來源。
+- **詞綴池、階級數值、製作權重**以 poedb.tw 為最高權威，wiki 不是最好的來源。查法見 `poedb-mods` skill（只有詞綴表要用瀏覽器讀；poedb 的其他頁面照常直接讀，並與 wiki 互相對照）。
 - 輸出已去掉 wiki 在每個連結後面夾帶的物品提示框；如果看到一段文字後面黏著一大串重複的物品說明，是那個提示框沒被濾掉，改用 `--json` 看原始內容。
 - 腳本對外只會連 `www.poewiki.net/w/api.php`，User-Agent 是固定的工具名稱，不帶任何使用者資訊。
