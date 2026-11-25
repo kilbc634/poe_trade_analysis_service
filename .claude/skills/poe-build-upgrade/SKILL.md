@@ -6,6 +6,8 @@ description: End-to-end workflow for upgrading or converting a Path of Exile 1 c
 > **POE1 only**｜首次實戰：**2026-11-16～17**（Covens 聯盟開季第 3～4 天，PoB Community 2.67.2，天賦樹 3.29）
 > 一隻 Lv82 銳眼從非暴擊閃電箭矢轉成暴擊彈幕．齊射，兩階段共約 290c，
 > PoB 預估結合秒傷 18 萬 → 718 萬（這個數字還含三樣當時尚未購買的佔位物品）。
+> 第二次實戰：**2026-11-20～25**（同聯盟第 2 週）。同一隻銳眼從零改組成命中堆疊閃現打擊，
+> 啟動版實際買齊並跑圖驗證，打王約 7000 萬；個案見 [knowledge/accuracy-stack-flicker.md](knowledge/accuracy-stack-flicker.md)。
 > POE2 沒有實測過，不得直接套用。
 
 # 預算內升級／轉型一隻角色
@@ -52,6 +54,8 @@ description: End-to-end workflow for upgrading or converting a Path of Exile 1 c
 1. **匯入使用者的角色**（官網公開資料，三支 `character-window` 端點，交給 PoB 的 `ImportTab` 函式）。
    公開資料**不含盜賊選擇和萬神殿**，一定要問。
 2. **取得範本**（作者的 PoB 連結、影片說明欄、文檔）。
+   作者有多個版本時，**從零組一隻要用最早的那份當底**，後期版只用來查之後往哪走（pitfalls 第 14 條）。
+   拿到之後先做**逐行審計**：每件裝備的每一行、設定頁的每個勾選，標出使用者拿不拿得到、有沒有來源（pitfalls 第 10、12 條）。
 3. **以範本為底，把使用者的現實放回去**，而不是在使用者的 build 上一項一項改：
    範本已經有整套寶石連結、天賦、昇華，從那邊出發只要換掉「使用者沒有的東西」。要換的有：
    - 等級、盜賊、使用者自己的 PoB 設定
@@ -70,6 +74,7 @@ description: End-to-end workflow for upgrading or converting a Path of Exile 1 c
 - **感電效果要算到自洽**，不要沿用使用者或作者手填的數字（見 pitfalls）。
 - **主要指標先講清楚。** 有幻影射手這類分身時，`TotalDPS` 只有本體，`CombinedDPS` 才是作者口中的數字。
 - **每次只換一樣東西。** 量某一件的價值時，其他部位必須完全不動。
+- **靠「數量」生效的東西（空插槽數、球數、層數）要自己指定並對總數**，不要讓 PoB 從範本裝備推算（pitfalls 第 11 條）。
 
 ### 3. 把要買的東西分成兩類
 
@@ -122,6 +127,7 @@ description: End-to-end workflow for upgrading or converting a Path of Exile 1 c
 
 買完請使用者把東西匯入 PoB，**再讀一次他的檔案核對**：實際數值對不對、有沒有漏詞綴、
 哪些部位還是佔位裝備。這次核對出一顆珠寶匯入時少了一條詞綴。
+總數對不上時做**來源差分**（計畫版與匯入版各列一次同一個數值的來源），見 pitfalls 第 15 條。
 
 ---
 
@@ -141,6 +147,7 @@ description: End-to-end workflow for upgrading or converting a Path of Exile 1 c
 - [knowledge/fast-solve.md](knowledge/fast-solve.md) — 快速解的做法、實測規模與耗時、弱點
 - [knowledge/pitfalls.md](knowledge/pitfalls.md) — 串接 PoB 與交易站時踩過的坑
 - [knowledge/league-start-market.md](knowledge/league-start-market.md) — 開季市場的實際節奏、甜蜜點怎麼定
+- [knowledge/accuracy-stack-flicker.md](knowledge/accuracy-stack-flicker.md) — 個案：銳眼命中堆疊閃現打擊從零組到啟動版（機制、配置、升級順位）
 
 新的經驗照 `INDEX.md` 開頭的規則歸檔：**只屬於單一工具的事實寫回那個工具的 skill**，
 這裡只收「要兩個以上的工具一起用才會遇到」的事。

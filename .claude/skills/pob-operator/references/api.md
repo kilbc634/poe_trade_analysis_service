@@ -478,3 +478,106 @@ tab:ImportItemsAndSkills(cd2, true, true, true)
 - **Lua 語法陷阱**：`t[[==[key]==]]` 會被解析成長字串的開頭而報錯，要寫成 `t[ [==[key]==] ]`（中括號後留空格）。
 - **設定頁改值**：`build.configTab.input[key] = v` 之後要 `build.configTab:BuildModList()` 才會生效。
 - **角色等級**：`build.characterLevel = n; build.characterLevelAutoMode = false; build.configTab:UpdateLevel()`。
+
+---
+
+以下各節實測 2026-11-20～25。期間 PoB 自動更新了幾次，3.30 的天賦樹與 Viscera 資料已上線
+（啟動時會印 `Loading passive tree data for version '3.30'` 與 `Viscera loaded`）。使用情境是從零組一隻命中堆疊閃現打擊，
+流程面的教訓在 `poe-build-upgrade` 的 pitfalls 第 10–16 條。
+
+## 建物件的語法改了：`new("Item"):Item(raw)`
+
+更新後 `new("Item", raw)` 會直接丟錯：
+`Extra argument passed to new() during creation of class Item. Extra arguments are not allowed.`
+現在的寫法是先建空物件再呼叫同名的建構函式：
+
+```lua
+local ni = new("Item"):Item(raw)
+if not ni.base then return "NO BASE" end
+ni:BuildModList(); build.itemsTab:AddItem(ni, true)
+```
+
+本檔前面「換裝備」那節的範例是舊寫法，照這裡的為準。其他類別同理（`Classes/ItemsTab.lua` 裡全部是這個形式）。
+
+## 空插槽數（The Untouched Soul 這類物品）
+
+- 計數在 `build.calcsTab.mainEnv.itemModDB.multipliers.EmptyGreenSocketsInAnySlot`（另有 White／Red／Blue）。
+- **預設是從裝備的插槽自己算**：把該部位連線裡啟用的寶石「依插槽順序填進去，不管顏色」，剩下的才算空。
+  所以數出來的顏色分佈通常跟實際不一樣。
+- 設定頁有四個覆寫：`overrideEmptyGreenSockets`、`overrideEmptyWhiteSockets`、`overrideEmptyRedSockets`、`overrideEmptyBlueSockets`。
+  **只覆寫其中一個，其他三個仍然自動算**，四個加起來可以超過實際的插槽數。
+- **覆寫成 0 在記憶體裡有效，但存檔重載後不會保留**（回到自動計算）。
+  要讓存出去的檔案正確，直接改物品文字裡的 `Sockets:` 行，讓自動計數等於真實值，再把覆寫清成 `nil`。
+- 沒有插槽的頭盔上若掛著技能連線，那幾顆寶石不佔任何插槽；要反映實際情況得把連線的 `slot` 改到真正放它的部位。
+
+## 3.30 的新詞綴寫法：有的認得，有的不認得
+
+從官網匯入的 3.30 物品，詞綴開頭多了 `Players have`：
+
+| 詞綴 | 這版 PoB |
+|---|---|
+| `Players have Resonating Shrine Buff while affected by no Flasks` | 認得（13 種神殿都有實作，在 `Modules/CalcPerform.lua`） |
+| `Players have +270 to Accuracy Rating for each Empty Green Socket on any Equipped Item` | **不認得，整條當成 0** |
+
+後者還會被拆成兩行（`on any Equipped Item` 掉到下一行）。處理方式是把文字改回舊寫法
+`+270 to Accuracy Rating for each Empty Green Socket on any Equipped Item`。
+使用者自己在 GUI 重新匯入時會再出現。**匯入後某個數值突然少一大截，先懷疑是詞綴沒被解析。**
+
+## 瓦爾技能寶石：匯入後可能只剩瓦爾版
+
+Vaal Flicker Strike 匯入後連線的 `displaySkillList` 只有瓦爾版，主技能也指到它（攻速與傷害完全不同）。
+
+```lua
+for _, g in ipairs(sg.gemList) do
+  if g.nameSpec == "Vaal Flicker Strike" then g.enableGlobal1 = true; g.enableGlobal2 = true end
+end
+build.skillsTab:ProcessSocketGroup(sg); build.buildFlag = true; runCallback("OnFrame")
+for k, ds in ipairs(sg.displaySkillList) do
+  if ds.activeEffect.grantedEffect.name == "Flicker Strike" then sg.mainActiveSkill = k end
+end
+```
+
+匯入後 `build.mainSocketGroup` 也可能指到別的連線（這次指到手套自帶的 Assassin's Mark），要自己設。
+
+## 球數與其他計數的覆寫
+
+- `overrideFrenzyCharges`（同理有 Power／Endurance）可以把球數固定在某個值；
+  上限讀 `mainOutput.FrenzyChargesMax`。要模擬「上限 −2」得先不覆寫量一次上限，再設覆寫。
+- `usePowerCharges`、`useEnduranceCharges`、`conditionFocused`、`conditionEnemyBlinded`、`conditionLeeching`、
+  `configUnholyResonanceCount` 都是手動的假設，PoB 不會檢查有沒有來源。
+- 第三個戒指欄位 `Ring 3` 只有在 `modDB:Flag(nil, "AdditionalRingSlot")` 為真時才計入（Nameless Bloodline 的 The Unseen Hand）。
+
+## 來源差分：兩份 build 的同一個數值差在哪
+
+```lua
+local skill = build.calcsTab.mainEnv.player.mainSkill
+for _, row in ipairs(skill.skillModList:Tabulate("INC", skill.skillCfg, "Accuracy")) do
+  -- row.value、row.mod.source（"Tree:<id>"、"Item:<id>:<名稱>"、"Skill:<名稱>"、"Base"）
+end
+```
+
+- `"BASE"`／`"INC"`／`"MORE"` 各列一次，依來源加總後兩份相減，差異最大的排前面。
+- 屬性用 `env.player.modDB:Tabulate("BASE", nil, "Dex")`。
+- **有些加成不會出現在 Tabulate**（這次是「每 200 命中 +2% 暴擊率」這種依其他數值計算的）。
+  列出來的總和跟實際對不上時，改用「拿掉那一項重算」的方式量。
+
+## 天賦樹與珠寶的幾個細節
+
+- **星團內的珠寶槽節點 id 小於 65536**，`dn` 是 `Medium Jewel Socket`；星團長出來的其他節點 id 才 ≥ 65536。
+  只用 id 範圍清星團節點會漏掉珠寶槽，連帶把插在上面的珠寶算沒了。
+- **範圍型珠寶**：`spec.nodes[socketId].nodesInRadius[idx]` 是該半徑內的節點表（Medium 是 `[2]`）。
+  表裡的是天賦樹節點，要用 `spec.nodes[id].alloc` 判斷有沒有點，不要讀表內物件的 `alloc`。
+- **找最佳珠寶槽**：列出 `type == "Socket"`、id < 65536、沒被佔用、`pathDist` 在可接受範圍內的節點，逐一放上去重算。
+- **可塗油的大點**：節點有 `recipe` 欄位（三瓶油的名稱）。窮舉時把物品上的 `Allocates <名稱>` 換掉即可，約 450 個、每個重算約 2 秒。
+- **依點數補點**：候選取 `pathDist` 1～2 的未點節點，`AllocNode` 後量、再還原，每次取「每點效益」最高的。
+  還原時把 `node.path` 上的節點逐一 `alloc = false` 並從 `allocNodes` 移除，再 `BuildAllDependsAndPaths()`。
+- **Elegant Hubris**：小天賦會變成 `Price of Glory`（沒有效果），核心依征服者變化（Caspiro → Supreme Ostentation）。
+  headless 能模擬，第一次會載入 `ElegantHubris.bin`。
+
+## 匯入角色與存檔
+
+- 匯入腳本在入口的 `output/import_my_character.py`。**不指定角色名時會挑到等級最高的**（可能是標準聯盟的角色），要明確傳角色名。
+- 第四個參數給一份現有的 build 檔當底，設定頁會保留；但保留下來的勾選是那份檔的假設，匯入後要重新檢查。
+- 要讓 GUI 的清單看得到，存到 `文件\Path of Building\Builds\`；存完重新 `load_build` 一次核對。
+- 多個腳本各自把 `sys.stdout` 包一層 `TextIOWrapper` 時，後包的會把前一個關掉，出現 `I/O operation on closed file`。
+  只在最先被匯入的那個模組包一次。
