@@ -72,6 +72,7 @@ session 從專案往上一層就找得到。
 D="<選定路徑>/pob-headless"
 mkdir -p "$D/output"
 cp "<skill 目錄>/template/pob.py"        "$D/"
+cp "<skill 目錄>/template/slot.py"       "$D/"
 cp "<skill 目錄>/template/make_boot.py"  "$D/"
 cp "<skill 目錄>/template/README.md"     "$D/"
 cp "<skill 目錄>/template/output_README.md" "$D/output/README.md"

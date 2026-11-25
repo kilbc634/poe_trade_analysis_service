@@ -41,8 +41,10 @@ allowed-tools: Bash(python:*) Bash(py:*) Read Grep Glob Write Edit AskUserQuesti
 確認入口後，之後所有指令都在那個資料夾裡跑：
 
 ```bash
-cd <入口>/pob-headless && python -c "from pob import PoB; ..."
+cd <入口>/pob-headless && python slot.py list
 ```
+
+入口裡沒有 `slot.py`（舊安裝）→ 從這個 skill 的 `template/slot.py` 複製過去即可，不必重裝。
 
 ---
 
@@ -85,11 +87,52 @@ pob.py  →  安裝目錄的 lua51.dll  →  headless_boot.lua  →  安裝目�
 
 ---
 
-## 常用操作
+## 預設用法：slot（常駐引擎，不要每次重開 PoB）
+
+PoB 開機一次要 5~13 秒、佔 300~400 MB。`slot.py` 讓引擎常駐，之後每個指令約 0.2 秒。
+**單純讀值、載入、改一點再讀，一律用 slot 指令，不要為此寫腳本檔。**
+
+```bash
+python slot.py list                                   # 先看有哪些 slot（執行中／休眠、佔用、載了哪份 build）
+python slot.py new --name <你取的名字> --load "…\Builds\x.xml"   # 印出自動產生的 id（pob-xxxx）
+python slot.py -s <id或名字> eval "return tostring(build.calcsTab.mainOutput.Dex)"
+python slot.py -s <id或名字> eval --file change.lua    # Lua 較長或引號麻煩時寫成檔案
+python slot.py -s <id或名字> load other.xml            # xml 或存著分享碼的檔案都可以
+python slot.py -s <id或名字> recalc | export [--out f] | snapshot | sleep | close
+```
+
+**讀值與修改一律走 `eval`**——CLI 刻意不包「讀某欄位」「搜欄位」這類便利指令：PoB 更新頻繁，
+包得越多越容易壞。Lua 怎麼寫看 [`references/api.md`](references/api.md)。
+
+規則：
+
+- **先 `list` 再決定**。載的正是你要的 build、而且是你自己這次工作建立的 slot → 直接用；
+  否則 `new` 一個。**不要動別人的 slot**（別的 agent 可能正改到一半），看名字與 build 判斷。
+- **`new` 時取一個認得出來的名字**（例如 `flicker-upgrade`），之後所有指令都帶 `-s`。
+  沒有預設 slot，漏了 `-s` 會直接報錯（也可設環境變數 `POB_SLOT`）。
+- **閒置 10 分鐘會自動休眠**：把當下的 build 匯出成分享碼存到
+  `<入口>/.pob-operator/<id>-<時間戳>.code`，然後行程結束、記憶體全部歸還。
+  下次對它下指令會自動喚醒並還原（多等一次開機），不用手動處理。
+  記憶體超過 800 MB 也會在請求做完後走同一條路。
+- **休眠只保存 build 本身**（PoB 存檔會存的東西：天賦、裝備、寶石、設定）。
+  用 `eval` 定義的 Lua 全域變數、直接塞進 modDB 的東西**不會**跟著回來。
+  喚醒時若主要數值與休眠前不同，會印 `WARNING numbers differ…`，看到就要查。
+- **工作結束、不會再用就 `close`**（會留最後一份快照）。只是暫時不用就放著讓它自己休眠。
+- 要大量量測（幾十上百個候選）仍然可以寫腳本，但在腳本裡用
+  `from slot import Slot; p = Slot("<名字>")`——介面與 `PoB()` 相同
+  （`eval`／`load_build`／`load_build_code`／`recalc`／`export_code`），不必再付開機。
+
+`.pob-operator/` 的位置固定在入口資料夾裡（不是當前工作目錄），所以整台機器的 agent 看到同一份清單。
+`slots/` 是每個 slot 的狀態、`logs/` 是引擎輸出（喚醒失敗時看這裡）、`*.code` 是快照（每個 slot 留最近 20 份，
+要找回舊狀態就 `load` 那個檔）。
+
+## 直接開引擎（`PoB()`）
+
+只有在不想留常駐行程、或要平行開很多個引擎時才用。
 
 ```python
 from pob import PoB
-p = PoB()                        # 開機（約 10~20 秒，載天賦樹與物品資料）
+p = PoB()                        # 開機（約 5~13 秒，載天賦樹與物品資料）
 
 # 三種載入方式
 p.load_build(r"C:\...\Documents\Path of Building\Builds\某個build.xml")
@@ -117,8 +160,8 @@ python pob.py "路徑\某個build.xml"
 
 **跑分析產生的任何東西——腳本、量測 json、報告、log——一律寫進
 `<入口>/pob-headless/output/`，不要丟在入口根目錄。** 根目錄只該有
-`pob.py`、`make_boot.py`、`headless_boot.lua`、`README.md`、`cache/`、`output/`
-（外加 Python 自己產生的 `__pycache__/`）。
+`pob.py`、`slot.py`、`make_boot.py`、`headless_boot.lua`、`README.md`、`cache/`、`output/`、
+`.pob-operator/`（外加 Python 自己產生的 `__pycache__/`）。
 
 在 `output/` 裡跑腳本要 import `pob`，記得把上層加進路徑：
 

@@ -10,17 +10,29 @@
 
 ```
 pob.py              Python host：掛載 PoB 的 LuaJIT，載入 build，讀數值
+slot.py             常駐引擎（slot）：開一次、之後每個指令 0.2 秒
 make_boot.py        產生 headless_boot.lua
 headless_boot.lua   開機入口（產生物，不要手改）
 cache/              下載的官方 HeadlessWrapper.lua，依版本存放
 output/             分析產出的暫存區（可隨時清空）
+.pob-operator/      slot 的狀態、引擎 log、休眠時存下的分享碼快照
 ```
 
 ## 用法
 
 ```bash
-python pob.py "路徑\某個build.xml"      # 快速檢查一份 build
+python slot.py list                                  # 有哪些 slot、各佔多少記憶體
+python slot.py new --name my --load "路徑\某個build.xml"
+python slot.py -s my eval "return tostring(build.calcsTab.mainOutput.Dex)"   # 讀數值
+python slot.py -s my close                           # 用完關掉
+python pob.py "路徑\某個build.xml"                    # 不用 slot，一次性檢查一份 build
 ```
+
+每個 slot 是一個常駐的 PoB 行程（約 300~400 MB）。**閒置 10 分鐘會自動休眠**：
+把當下的 build 存成 `.pob-operator/<id>-<時間戳>.code` 後結束行程、歸還記憶體，
+下次再對它下指令時自動開機還原。想立刻收回記憶體：`python slot.py -s <id> sleep`。
+`.pob-operator/` 整個刪掉也沒關係（先確認 `slot.py list` 沒有執行中的 slot），
+失去的只是休眠快照。
 
 ```python
 from pob import PoB
