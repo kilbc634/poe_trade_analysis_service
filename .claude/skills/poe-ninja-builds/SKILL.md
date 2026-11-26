@@ -13,7 +13,7 @@ allowed-tools: Bash(playwright-cli:*) Bash(npx:*) Read Grep
 玩某個技能的人點哪些核心天賦、某件裝備的使用率、開聯盟第一週到第五週流派怎麼漂。
 
 **不做查價。** 價格、掛單、物品搜尋走 `poe-trade-query` + `open-poe-trade`。
-瀏覽器機制走 `playwright-cli`。
+瀏覽器機制走 `playwright-cli`，**一律 `--headed` 開、用完自己關**（見下方「操作方式」）。
 
 ---
 
@@ -56,8 +56,20 @@ allowed-tools: Bash(playwright-cli:*) Bash(npx:*) Read Grep
 點擊會遇到 ref 失效（見 gotchas），組 URL 不會。
 
 ```bash
-playwright-cli open "https://poe.ninja/poe1/builds/allflame?class=Occultist&skills=Winter+Orb&keypassives=Chaos+Inoculation&min-level=95&columns=character,level,dps,ehp"
+playwright-cli open --headed "https://poe.ninja/poe1/builds/allflame?class=Occultist&skills=Winter+Orb&keypassives=Chaos+Inoculation&min-level=95&columns=character,level,dps,ehp"
+# …後續用 goto 換篩選、eval 讀面板…
+playwright-cli close
 ```
+
+### 一律 `--headed` 開，用完自己關（2026-11-26 實測）
+
+- **開**：`playwright-cli open` 一定帶 `--headed`。poe.ninja 自 2026-11 中起掛 Cloudflare 驗證，
+  無頭瀏覽器會整站卡在「Performing security verification」（頁面標題 `請稍候...`／`Just a moment...`），
+  等再久也不會過；有畫面的視窗直接正常載入。細節見 [`knowledge/gotchas.md`](knowledge/gotchas.md) §11。
+- **關**：這次要查的東西讀完就 `playwright-cli close`，不要把視窗留在使用者桌面上。
+  **例外**：使用者明講要看畫面、要留著視窗時才留，並在回覆裡告訴他視窗還開著。
+- **headed 也出現驗證畫面時**：停手，不要偽裝或解驗證。請使用者在那個視窗手動通過，
+  或請他自己看了把內容貼過來。
 
 ### 語法規則（2026-08-30 實測）
 

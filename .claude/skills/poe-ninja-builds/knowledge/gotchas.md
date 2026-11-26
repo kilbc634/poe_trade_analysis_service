@@ -111,3 +111,26 @@ Items 面板預設只列前 12 名，幾乎全是「Rare 某部位」，看不�
 
 從 Python 用 `subprocess` 呼叫 `playwright-cli goto <url>` 時，URL 裡的 `&` 會被 cmd 切斷、
 靜默落回未篩選的頁面（`Found N` 跟全體一樣就是中招）——改走 `bash -c` 並把 URL 用單引號包起來。
+
+## 11. 無頭瀏覽器會被 Cloudflare 驗證擋住，要用 `--headed`（2026-11-26，Covens）
+
+2026-11 中起（外部專案記錄的日期是 2026-11-18），`playwright-cli open <url>` 預設的無頭模式開 poe.ninja
+任何頁面都停在「Performing security verification」，頁面標題是 `請稍候...`，等 25 秒不會過；
+不經瀏覽器直接抓是 HTTP 403。同一台機器改成 `playwright-cli open --headed <url>` 就直接載入，沒有驗證畫面。
+
+同機比對兩種模式看得到的差別：
+
+| 項目 | 有畫面 | 無頭 |
+|---|---|---|
+| User-Agent | `… Chrome/158.0.0.0 …` | `… HeadlessChrome/158.0.0.0 …` |
+| `navigator.userAgentData.brands` | 有 | 沒有 |
+| 視窗外框 vs 內容區 | 不同（有標題列） | 完全相同 |
+| `navigator.webdriver`、外掛數、語言 | 相同 | 相同 |
+
+Cloudflare 實際靠哪一項判斷不公開，也沒測過「無頭但改 UA」——那是偽裝，不做。
+
+做法：
+
+- 一律 `--headed` 開；讀完就 `playwright-cli close`，除非使用者要求留著視窗。
+- 判斷有沒有被擋：`document.title` 是 `請稍候...`／`Just a moment...`，或內文有 `security verification`。
+- headed 也被擋時不要繞，請使用者在視窗裡手動過，或請他貼內容。
